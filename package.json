@@ -1,0 +1,24 @@
+{
+  "name": "cli-apps",
+  "version": "1.0.0",
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
+  "scripts": {
+    "build": "yarn wsrun --stages --report build",
+    "lint": "yarn wsrun --stages --report lint",
+    "lint:fix": "yarn wsrun --stages --report lint:fix",
+    "test": "yarn wsrun run test",
+    "clean": "rm -rf ./node_modules ./packages/*/node_modules"
+  },
+  "devDependencies": {
+    "rimraf": "^3.0.2",
+    "wsrun": "5.2.4"
+  },
+  "resolutions": {
+    "vite": "^4.0.0"
+  },
+  "packageManager": "yarn@4.0.2"
+}

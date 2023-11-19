@@ -1,0 +1,7 @@
+{
+  "extends": "@wix/cli-app/tsconfig.app.json",
+  "compilerOptions": {
+    "types": ["react"]
+  },
+  "include": ["src", "test"]
+}
