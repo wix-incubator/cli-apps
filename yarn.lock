@@ -2575,9 +2575,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"contentful-velo@workspace:packages/contentful":
+"contentful@npm:^10.6.4":
+  version: 10.6.11
+  resolution: "contentful@npm:10.6.11"
+  dependencies:
+    "@contentful/rich-text-types": ^16.0.2
+    axios: ^1.6.0
+    contentful-resolve-response: ^1.8.1
+    contentful-sdk-core: ^8.1.0
+    json-stringify-safe: ^5.0.1
+    type-fest: ^4.0.0
+  checksum: a03a5a844db4cca7cc75a74a72ca1c9f8a03e422746a527623fa3b7bdfc0634a8789f2685616011f97efab03c8262bbb0ca7f6f9aff873d299e73998740149f1
+  languageName: node
+  linkType: hard
+
+"contentful@workspace:packages/contentful":
   version: 0.0.0-use.local
-  resolution: "contentful-velo@workspace:packages/contentful"
+  resolution: "contentful@workspace:packages/contentful"
   dependencies:
     "@tanstack/react-query": ^4.36.1
     "@testing-library/react": ^12.1.5
@@ -2610,20 +2624,6 @@ __metadata:
     vitest: ^0.34.6
   languageName: unknown
   linkType: soft
-
-"contentful@npm:^10.6.4":
-  version: 10.6.11
-  resolution: "contentful@npm:10.6.11"
-  dependencies:
-    "@contentful/rich-text-types": ^16.0.2
-    axios: ^1.6.0
-    contentful-resolve-response: ^1.8.1
-    contentful-sdk-core: ^8.1.0
-    json-stringify-safe: ^5.0.1
-    type-fest: ^4.0.0
-  checksum: a03a5a844db4cca7cc75a74a72ca1c9f8a03e422746a527623fa3b7bdfc0634a8789f2685616011f97efab03c8262bbb0ca7f6f9aff873d299e73998740149f1
-  languageName: node
-  linkType: hard
 
 "cookie@npm:^0.5.0":
   version: 0.5.0
