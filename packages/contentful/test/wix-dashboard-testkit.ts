@@ -1,4 +1,4 @@
-import { Host, ObserveState, StateObserver, ProviderAPI } from '@wix/dashboard-react';
+import { Host, ObserveState, StateObserver } from '@wix/dashboard-react';
 import { vi } from 'vitest';
 
 export function dashboardPageProps() {
