@@ -1,0 +1,48 @@
+{
+  "name": "contentful-velo",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@tanstack/react-query": "^4.36.1",
+    "@testing-library/react": "^12.1.5",
+    "@testing-library/user-event": "^14.5.1",
+    "@types/chance": "^1.1.6",
+    "@types/lodash": "^4.14.201",
+    "@wix/dashboard-react": "^1.0.3",
+    "@wix/data": "^1.0.55",
+    "@wix/design-system": "^1.0.0",
+    "@wix/sdk": "^1.5.6",
+    "@wix/sdk-react": "^0.3.6",
+    "@wix/wix-ui-icons-common": "^3.0.34",
+    "chance": "^1.1.11",
+    "contentful": "^10.6.4",
+    "eslint": "^8.54.0",
+    "i18next": "^22.5.1",
+    "lodash": "^4.17.21",
+    "msw": "^2.0.6",
+    "react-i18next": "^12.3.1",
+    "vitest": "^0.34.6"
+  },
+  "devDependencies": {
+    "@types/react": "^16.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.11.0",
+    "@typescript-eslint/parser": "^6.11.0",
+    "@wix/cli": "^1.0.0",
+    "@wix/cli-app": "^1.0.0",
+    "eslint-plugin-react": "^7.33.2",
+    "jsdom": "^22.1.0",
+    "react": "16.14.0",
+    "react-dom": "16.14.0",
+    "typescript": "^5.2.2"
+  },
+  "scripts": {
+    "build": "wix app build",
+    "test": "vitest",
+    "lint": "eslint . --ext .ts,.tsx",
+    "create-version": "wix app create-version",
+    "dev": "wix app dev",
+    "preview": "wix app preview",
+    "serve": "wix app serve",
+    "typecheck": "tsc --noEmit"
+  }
+}
