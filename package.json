@@ -7,7 +7,7 @@
     ]
   },
   "scripts": {
-    "build": "yarn wsrun --stages --report build",
+    "build": "yarn wsrun --stages --report build && yarn wsrun --stages --report typecheck",
     "lint": "yarn wsrun --stages --report lint",
     "lint:fix": "yarn wsrun --stages --report lint:fix",
     "test": "yarn wsrun run test",
