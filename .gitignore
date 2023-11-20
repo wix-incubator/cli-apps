@@ -7,6 +7,8 @@ serverless
 storybook-static
 .env*.local
 lefthook-local.yml
+.idea
+.wix
 
 # Logs
 logs
@@ -22,7 +24,7 @@ yarn-error.log*
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-!.yarn/cache
+.yarn/cache
 
 # Misc
 .DS_Store
