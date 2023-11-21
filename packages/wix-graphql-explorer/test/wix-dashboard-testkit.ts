@@ -1,15 +1,14 @@
-import { Host, ObserveState, StateObserver } from "@wix/dashboard-react";
+import { LocalHost, ObserveState, StateObserver } from "@wix/dashboard-react";
 
 export function dashboardPageProps() {
-  const host: Host = {
+  const host: LocalHost = {
     channel: {
-      observeState: ((callback: StateObserver<{}, {}>) => {
-        callback({}, {});
+      observeState: ((callback: StateObserver<{}, { locale: string }>) => {
+        callback({}, { locale: "en" });
         return {
           disconnect() {},
         };
       }) as ObserveState,
-      updateHeight: () => {},
       closeModal: () => {},
       openModal: () => ({
         modalClosed: Promise.resolve(null),

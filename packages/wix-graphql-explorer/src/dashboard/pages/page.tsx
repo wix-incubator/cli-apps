@@ -86,6 +86,7 @@ function useGraphQLFetcher() {
               const { headers: authHeaders } = await wix.auth.getAuthHeaders();
               headers.set("Authorization", authHeaders.Authorization);
             }
+            // @ts-expect-error fetch types from DOM and node are not compatible
             return fetch(input, { ...init, headers });
           },
         }),
