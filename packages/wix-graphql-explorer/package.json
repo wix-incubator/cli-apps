@@ -1,0 +1,45 @@
+{
+  "name": "wix-graphql-explorer",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@graphiql/toolkit": "^0.9.1",
+    "@tanstack/react-query": "^4.36.1",
+    "@wix/dashboard-react": "^1.0.4",
+    "@wix/design-system": "^1.74.4",
+    "@wix/sdk-react": "^0.3.6",
+    "@wix/wix-ui-icons-common": "^3.11.0",
+    "graphiql": "^3.0.9"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "5.0.0",
+    "@graphql-codegen/client-preset": "4.1.0",
+    "@graphql-codegen/typescript-msw": "^2.1.0",
+    "@testing-library/jest-dom": "^6.1.4",
+    "@testing-library/react": "^12.1.5",
+    "@testing-library/user-event": "^14.5.1",
+    "@types/react": "^16.14.51",
+    "@wix/cli": "^1.0.0",
+    "@wix/cli-app": "^1.0.0",
+    "autoprefixer": "^10.4.16",
+    "is-ci": "^3.0.1",
+    "msw": "^2.0.8",
+    "postcss": "^8.4.31",
+    "react": "16.14.0",
+    "react-dom": "16.14.0",
+    "tailwindcss": "^3.3.5",
+    "typescript": "^5.2.2",
+    "vitest": "^0.34.6",
+    "vitest-teamcity-reporter": "^0.2.0"
+  },
+  "scripts": {
+    "build": "wix app build",
+    "create-version": "wix app create-version",
+    "dev": "wix app dev",
+    "preview": "wix app preview",
+    "serve": "wix app serve",
+    "typecheck": "tsc --noEmit",
+    "codegen": "graphql-codegen --config codegen.ts",
+    "test": "vitest"
+  }
+}
