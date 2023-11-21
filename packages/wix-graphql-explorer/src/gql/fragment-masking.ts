@@ -34,10 +34,10 @@ export function useFragment<TType>(
   fragmentType: ReadonlyArray<FragmentType<DocumentTypeDecoration<TType, any>>> | null | undefined
 ): ReadonlyArray<TType> | null | undefined;
 export function useFragment<TType>(
-  _documentNode: DocumentTypeDecoration<TType, any>,
-  fragmentType: FragmentType<DocumentTypeDecoration<TType, any>> | ReadonlyArray<FragmentType<DocumentTypeDecoration<TType, any>>> | null | undefined
+	_documentNode: DocumentTypeDecoration<TType, any>,
+	fragmentType: FragmentType<DocumentTypeDecoration<TType, any>> | ReadonlyArray<FragmentType<DocumentTypeDecoration<TType, any>>> | null | undefined
 ): TType | ReadonlyArray<TType> | null | undefined {
-  return fragmentType as any;
+	return fragmentType as any;
 }
 
 
@@ -45,18 +45,18 @@ export function makeFragmentData<
   F extends DocumentTypeDecoration<any, any>,
   FT extends ResultOf<F>
 >(data: FT, _fragment: F): FragmentType<F> {
-  return data as FragmentType<F>;
+	return data as FragmentType<F>;
 }
 export function isFragmentReady<TQuery, TFrag>(
-  queryNode: TypedDocumentString<TQuery, any>,
-  fragmentNode: TypedDocumentString<TFrag, any>,
-  data: FragmentType<TypedDocumentString<Incremental<TFrag>, any>> | null | undefined
+	queryNode: TypedDocumentString<TQuery, any>,
+	fragmentNode: TypedDocumentString<TFrag, any>,
+	data: FragmentType<TypedDocumentString<Incremental<TFrag>, any>> | null | undefined
 ): data is FragmentType<typeof fragmentNode> {
-  const deferredFields = queryNode.__meta__?.deferredFields as Record<string, (keyof TFrag)[]>;
-  const fragName = fragmentNode.__meta__?.fragmentName as string | undefined;
+	const deferredFields = queryNode.__meta__?.deferredFields as Record<string, (keyof TFrag)[]>;
+	const fragName = fragmentNode.__meta__?.fragmentName as string | undefined;
 
-  if (!deferredFields || !fragName) return true;
+	if (!deferredFields || !fragName) return true;
 
-  const fields = deferredFields[fragName] ?? [];
-  return fields.length > 0 && fields.every(field => data && field in data);
+	const fields = deferredFields[fragName] ?? [];
+	return fields.length > 0 && fields.every(field => data && field in data);
 }
