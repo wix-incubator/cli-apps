@@ -7,14 +7,14 @@
     ]
   },
   "scripts": {
-    "build": "yarn workspaces foreach --since run build && yarn workspaces foreach --since run typecheck",
-    "lint": "yarn workspaces foreach --since run lint",
-    "lint:fix": "yarn workspaces foreach --since run lint:fix",
-    "test": "yarn workspaces foreach --since run run test",
+    "build:all": "turbo build",
+    "lint:all": "turbo lint",
+    "lint:fix:all": "yarn workspaces foreach --all run lint --fix",
+    "test:all": "turbo test",
     "clean": "rm -rf ./node_modules ./packages/*/node_modules"
   },
   "devDependencies": {
-    "rimraf": "^3.0.2"
+    "turbo": "^1.10.16"
   },
   "packageManager": "yarn@4.0.2"
 }
