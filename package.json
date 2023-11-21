@@ -11,6 +11,7 @@
     "lint:all": "turbo lint",
     "lint:fix:all": "yarn workspaces foreach --all run lint --fix",
     "test:all": "turbo test",
+    "typecheck:all": "turbo typecheck",
     "clean": "rm -rf ./node_modules ./packages/*/node_modules"
   },
   "devDependencies": {
