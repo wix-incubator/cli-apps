@@ -11811,16 +11811,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest-teamcity-reporter@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "vitest-teamcity-reporter@npm:0.2.0"
-  peerDependencies:
-    typescript: 3.x || 4.x || 5.x
-    vitest: ">=0.34.0"
-  checksum: b72346ae7b4e6f7bcf596d8e3366940d00ec3e061c624b1bc5544e083f728026de10644eba92a8f0b800dec66f8a271cdfc9e2e7fa8eb653f17831744c7fcf5d
-  languageName: node
-  linkType: hard
-
 "vitest@npm:^0.34.6":
   version: 0.34.6
   resolution: "vitest@npm:0.34.6"
@@ -12152,7 +12142,6 @@ __metadata:
     tailwindcss: "npm:^3.3.5"
     typescript: "npm:^5.2.2"
     vitest: "npm:^0.34.6"
-    vitest-teamcity-reporter: "npm:^0.2.0"
   languageName: unknown
   linkType: soft
 
