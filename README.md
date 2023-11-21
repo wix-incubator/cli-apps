@@ -1,7 +1,6 @@
-<center>
-    <h1>Wix CLI Apps</h1>
-    <h3>Home for open source Wix Apps developed and maintained by Wix</h3>
-</center>
+<h1 align="center">Wix CLI Apps</h1>
+<h3 align="center">Home for open source Wix Apps developed and maintained by Wix</h3>
+<hr />
 
 This repository contains a collection of open source Wix Apps developed with the Wix CLI for Apps. The Apps are maintained by the Wix team and are available for use by the Wix community.
 
