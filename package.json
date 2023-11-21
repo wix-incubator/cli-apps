@@ -8,8 +8,8 @@
   },
   "scripts": {
     "build": "yarn wsrun --report build && yarn wsrun --report typecheck",
-    "lint": "yarn wsrun --report -if lint",
-    "lint:fix": "yarn wsrun --stages --report -if lint:fix",
+    "lint": "yarn wsrun --report -m lint",
+    "lint:fix": "yarn wsrun --stages --report -m lint:fix",
     "test": "yarn wsrun run test",
     "clean": "rm -rf ./node_modules ./packages/*/node_modules"
   },
