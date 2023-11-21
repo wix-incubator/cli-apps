@@ -7,9 +7,9 @@
     ]
   },
   "scripts": {
-    "build": "yarn wsrun --stages --report build && yarn wsrun --stages --report typecheck",
-    "lint": "yarn wsrun --stages --report lint",
-    "lint:fix": "yarn wsrun --stages --report lint:fix",
+    "build": "yarn wsrun --report build && yarn wsrun --report typecheck",
+    "lint": "yarn wsrun --report -if lint",
+    "lint:fix": "yarn wsrun --stages --report -if lint:fix",
     "test": "yarn wsrun run test",
     "clean": "rm -rf ./node_modules ./packages/*/node_modules"
   },
