@@ -7,15 +7,14 @@
     ]
   },
   "scripts": {
-    "build": "yarn wsrun --stages --report build && yarn wsrun --stages --report typecheck",
-    "lint": "yarn wsrun --stages --report lint",
-    "lint:fix": "yarn wsrun --stages --report lint:fix",
-    "test": "yarn wsrun run test",
+    "build": "yarn workspaces foreach --since run build && yarn workspaces foreach --since run typecheck",
+    "lint": "yarn workspaces foreach --since run lint",
+    "lint:fix": "yarn workspaces foreach --since run lint:fix",
+    "test": "yarn workspaces foreach --since run run test",
     "clean": "rm -rf ./node_modules ./packages/*/node_modules"
   },
   "devDependencies": {
-    "rimraf": "^3.0.2",
-    "wsrun": "5.2.4"
+    "rimraf": "^3.0.2"
   },
   "packageManager": "yarn@4.0.2"
 }
