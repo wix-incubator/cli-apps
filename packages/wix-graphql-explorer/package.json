@@ -26,7 +26,6 @@
     "autoprefixer": "^10.4.16",
     "eslint": "^8.54.0",
     "eslint-plugin-react": "^7.33.2",
-    "is-ci": "^3.0.1",
     "msw": "^2.0.8",
     "postcss": "^8.4.31",
     "react": "16.14.0",
