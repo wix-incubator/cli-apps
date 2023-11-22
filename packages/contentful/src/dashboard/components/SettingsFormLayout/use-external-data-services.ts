@@ -19,24 +19,24 @@ export const useListingExternalDataServices = () => {
 	});
 };
 
-export const useUpdateExternalDataServices = ({
-	configuration,
-	endpoint,
-	name,
-}: {
-    configuration: Record<string, string>;
-    endpoint: string;
-    name: string;
-}) => {
+export const useUpdateExternalDataServices = () => {
 	const {updateExternalDatabaseConnection} = useWixModules(externalDatabaseConnections);
 
 	const updateService = useMemo(
 		() =>
-			updateExternalData(updateExternalDatabaseConnection, {configuration, endpoint, name}),
-		[updateExternalDatabaseConnection, configuration, endpoint],
+			updateExternalData(updateExternalDatabaseConnection),
+		[updateExternalDatabaseConnection],
 	);
 	return useMutation({
 		mutationKey: ['external-data-update-mutation'],
-		mutationFn: () => updateService.updateExternalDatabaseConnection(),
+		mutationFn: ({
+						 configuration,
+						 endpoint,
+						 name,
+					 }: {
+			configuration: Record<string, string>;
+			endpoint: string;
+			name: string;
+		}) => updateService.updateExternalDatabaseConnection({configuration, endpoint, name}),
 	});
 };

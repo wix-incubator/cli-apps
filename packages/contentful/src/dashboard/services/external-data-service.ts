@@ -15,18 +15,17 @@ export const listExternalData = (fn: Function) => {
 
 export const updateExternalData = (
 	fn: Function,
-	{
-		configuration,
-		endpoint,
-		name,
-	}: {
-        configuration: Record<string, string>;
-        endpoint: string;
-        name: string;
-    },
 ) => {
 	return {
-		updateExternalDatabaseConnection: async () => {
+		updateExternalDatabaseConnection: async ({
+													 configuration,
+													 endpoint,
+													 name,
+												 }: {
+			configuration: Record<string, string>;
+			endpoint: string;
+			name: string;
+		}) => {
 			return fn(name, {
 				configuration,
 				endpoint,

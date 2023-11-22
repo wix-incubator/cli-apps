@@ -67,9 +67,7 @@ export const SettingsForm = memo(() => {
 	);
 	const { data: listExternalData, isLoading: isListExternalDataLoading } =
     useListingExternalDataServices();
-	const updateExternalData = useUpdateExternalDataServices(
-		externalDatabaseConnection
-	);
+	const updateExternalData = useUpdateExternalDataServices();
 	const [contentfulClient, setContentfulClient] = useState<
     ContentfulClientApi<undefined> | undefined
   >(undefined);
@@ -172,7 +170,10 @@ export const SettingsForm = memo(() => {
 			...prevState,
 			configuration: configure,
 		}));
-		updateExternalData.mutate();
+		updateExternalData.mutate({
+			...externalDatabaseConnection,
+			configuration: configure,
+		});
 	};
 
 	const handleErrors = (err: boolean, ...args: FormState<string>[]) => {
