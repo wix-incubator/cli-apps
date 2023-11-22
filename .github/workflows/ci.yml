@@ -23,10 +23,13 @@ jobs:
         run: yarn
 
       - name: Build
-        run: yarn run build
+        run: yarn run build:all
 
       - name: Lint
-        run: yarn run lint
+        run: yarn run lint:all
+
+      - name: Typecheck
+        run: yarn run typecheck:all
 
       - name: Test
-        run: yarn run test
+        run: yarn run test:all
