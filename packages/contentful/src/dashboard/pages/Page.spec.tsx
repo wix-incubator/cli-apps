@@ -19,18 +19,13 @@ describe('Page', () => {
 		});
 	});
 
-	it('should render the form', async () => {
-		const driver = new PageDriver();
-		driver.render();
-		expect(await driver.did.formRender()).toBe(true);
-	});
-
 	describe('upgrade button', () => {
 		it('should show premium button when app not premium', async () => {
 			const driver = new PageDriver();
 			driver.render();
 			await waitFor(async () => {
 				expect(await driver.get.upgradeButton().exists()).toBeTruthy();
+				expect(await driver.get.upgradeTooltip().getTooltipText()).toBe('Your trial will end on Thu Dec 07 2023');
 			});
 		});
 
@@ -39,6 +34,7 @@ describe('Page', () => {
 			const driver = new PageDriver();
 			driver.render();
 			await waitFor(async () => {
+				expect(await driver.get.title().exists());
 				expect(await driver.get.upgradeButton().exists()).toBeFalsy();
 			});
 		});

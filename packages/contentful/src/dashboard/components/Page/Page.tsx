@@ -8,19 +8,19 @@ import { getInstanceId } from '../../utils';
 
 export const Page = () => {
 	const {t} = useTranslation();
-	const [showUpgradeButton, setShowUpgradeButton] = useState(false);
+	const [upgradeButton, setUpgradeButton] = useState({show: false, endOfTrialDate: ''});
 
 	useEffect(() => {
 		const instanceId = getInstanceId();
 		fetch(`https://ronnyr34.wixsite.com/oauth-contentful/_functions/connectionPermissions?instanceId=${instanceId}`)
 			.then((res) => res.json())
 			.then((data) => {
-				setShowUpgradeButton(!data.hasPremiumPlan);
+				setUpgradeButton({show: !data.hasPremiumPlan, endOfTrialDate: new Date(data.trialEndDate).toDateString()});
 			});
 	}, []);
 
 	return (
-		<PageLayout title={t('app.title')!} dataHook="app-title" showUpgradeButton={showUpgradeButton}>
+		<PageLayout title={t('app.title')!} dataHook="app-title" showUpgradeButton={upgradeButton.show} endOfTrialDate={upgradeButton.endOfTrialDate}>
 			<Cell>
 				<CardLayout
 					title={`${t('app.title')} ${t('contentful.settings.card.title')}`}

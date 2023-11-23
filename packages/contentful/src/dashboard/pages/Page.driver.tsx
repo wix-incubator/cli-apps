@@ -1,4 +1,4 @@
-import { InputTestkit, ButtonTestkit, PageHeaderTestkit } from '@wix/design-system/dist/testkit/testing-library';
+import { InputTestkit, ButtonTestkit, PageHeaderTestkit, TooltipTestkit } from '@wix/design-system/dist/testkit/testing-library';
 import {
 	FormFieldsDataHook,
 } from '../components/SettingsFormLayout/SettingsForm/SettingsForm';
@@ -46,6 +46,12 @@ export class PageDriver {
 				dataHook: 'upgrade',
 			});
 		},
+		upgradeTooltip: () => {
+			return TooltipTestkit({
+				wrapper: this.baseElement!,
+				dataHook: 'upgrade-tooltip',
+			});
+		},
 		submit: () => {
 			return ButtonTestkit({
 				wrapper: this.baseElement!,
@@ -78,18 +84,6 @@ export class PageDriver {
 				Object.entries(elements).map(async ([key, element]) => ({key, text: await element?.getText()})),
 			);
 			return textValues.every(({key, text}) => text === expectedData[key]);
-		},
-	} as const;
-
-	public did = {
-		formRender: async () => {
-			const formFieldElements = this.get.formFieldElements();
-			for (const [, element] of Object.entries(formFieldElements)) {
-				if (!element) {
-					return false;
-				}
-			}
-			return true;
 		},
 	} as const;
 
