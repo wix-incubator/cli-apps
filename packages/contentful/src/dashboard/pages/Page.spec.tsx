@@ -1,16 +1,57 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { PageDriver } from './Page.driver';
 import { anExternalDatabaseConnection } from '../services/external-data-builder';
 import { waitFor } from '@testing-library/react';
-import { envsMock, localesMock, spacesMock } from '../../../test/wix-apis-mock-server';
+import { envsMock, givenAppPremium, localesMock, spacesMock } from '../../../test/wix-apis-mock-server';
+
+Object.defineProperty(window, 'location', {
+	writable: true,
+	value: { search: '?origin=https%3A%2F%2Fmanage.wix.com&inBizMgr=true&instance=PvKjWDfmEl3wTnbAZ5rKRCDU26YaCyEiQI1ZW0VDW6M.eyJpbnN0YW5jZUlkIjoiN2JkZjBiNWUtZWIxNi00ZjQ4LTg0YmQtNzBlMTliMzcxOWI3IiwiYXBwRGVmSWQiOiI5ZjZkNTc2Ny00YWVhLTRkZTAtOTNiYy1hZTM4MWM1MTMzNjUiLCJzaWduRGF0ZSI6IjIwMjMtMTEtMjNUMTM6MzQ6MzAuNTE1WiIsInVpZCI6ImU3NmQ3MTQ0LTQyOTMtNGVhZi1hOGQ5LTAwYzI4OWY0N2I1YiIsInBlcm1pc3Npb25zIjoiT1dORVIiLCJkZW1vTW9kZSI6ZmFsc2UsInNpdGVPd25lcklkIjoiZTc2ZDcxNDQtNDI5My00ZWFmLWE4ZDktMDBjMjg5ZjQ3YjViIiwic2l0ZU1lbWJlcklkIjoiZTc2ZDcxNDQtNDI5My00ZWFmLWE4ZDktMDBjMjg5ZjQ3YjViIiwiZXhwaXJhdGlvbkRhdGUiOiIyMDIzLTExLTIzVDE3OjM0OjMwLjUxNVoiLCJsb2dpbkFjY291bnRJZCI6ImU3NmQ3MTQ0LTQyOTMtNGVhZi1hOGQ5LTAwYzI4OWY0N2I1YiIsInBhaSI6bnVsbCwibHBhaSI6bnVsbCwiYW9yIjp0cnVlfQ&locale=en&dashboardSdkAvailable=true&lang=en&authorizationCode=JWS.eyJraWQiOiJZVjZIa2ZKYyIsImFsZyI6IkhTMjU2In0.eyJkYXRhIjoie1wiZGVjb2RlZFRva2VuXCI6e1widXNlcklkXCI6XCJlNzZkNzE0NC00MjkzLTRlYWYtYThkOS0wMGMyODlmNDdiNWJcIixcImFjY291bnRJZFwiOlwiZTc2ZDcxNDQtNDI5My00ZWFmLWE4ZDktMDBjMjg5ZjQ3YjViXCIsXCJzaXRlSWRcIjpcIjllM2Y5ZmFhLTdhN2QtNDY1My04NWIxLTJjOTkwYWJmYjM4OVwiLFwiYXBwSWRcIjpcIjlmNmQ1NzY3LTRhZWEtNGRlMC05M2JjLWFlMzgxYzUxMzM2NVwiLFwib3JpZ2luRG9tYWluXCI6XCJodHRwOi8vbG9jYWxob3N0OjUxNzNcIixcImluc3RhbmNlSWRcIjpcIjdiZGYwYjVlLWViMTYtNGY0OC04NGJkLTcwZTE5YjM3MTliN1wiLFwic2l0ZVZlbG9JbnN0YW5jZUlkXCI6XCI1YTNmYzMyYS0yNGJlLTQ3OGItYWNhNS1kZTcxZDBmYjgyM2FcIixcInNpdGVIdG1sV2ViSW5zdGFuY2VJZFwiOlwiMDkxYjc4YjctYjFkOS00ZDZiLTllNTMtMjg0NzYzNDJlZTE0XCIsXCJ2ZWxvUGVybWlzc2lvblwiOlwiT1dORVJcIixcImFwcFZlcnNpb25cIjpcImxhdGVzdFwiLFwid2l4Q29kZUFkbWluXCI6dHJ1ZSxcImlzTG9nZ2VkSW5BY2NvdW50T3duZXJcIjp0cnVlLFwiaG9zdFNpdGVPd25lclwiOlwiZTc2ZDcxNDQtNDI5My00ZWFmLWE4ZDktMDBjMjg5ZjQ3YjViXCJ9LFwidG9rZW5NZXRhZGF0YVwiOntcInNpdGVJZFwiOlwiOWUzZjlmYWEtN2E3ZC00NjUzLTg1YjEtMmM5OTBhYmZiMzg5XCIsXCJhcHBJZFwiOlwiOWY2ZDU3NjctNGFlYS00ZGUwLTkzYmMtYWUzODFjNTEzMzY1XCIsXCJvcmlnaW5Eb21haW5cIjpcImh0dHA6Ly9sb2NhbGhvc3Q6NTE3M1wifSxcInRva2VuSWRcIjpcIjg4ZTVkMWYzLTYyNDAtNGFiMS1iYjhmLWQ3MDcwZDAzNDNiNFwiLFwiZXhwaXJhdGlvbkRhdGVcIjpcIjIwMjMtMTEtMjNUMTQ6MzQ6MzRaXCIsXCJjcmVhdGVkRGF0ZVwiOlwiMjAyMy0xMS0yM1QxMzozNDozNFpcIn0iLCJpYXQiOjE3MDA3NDY0NzQsImV4cCI6MTcwMDc1MDA3NH0.c03hiHIY73pGtKSAyHhDExOncquOebNFbjZfVUvb3wY' },
+});
 
 describe('Page', () => {
 	const externalData = anExternalDatabaseConnection();
+	it('should render title', async () => {
+		const driver = new PageDriver();
+		driver.render();
+		await waitFor(async () => {
+			expect(await driver.get.title().titleText()).toBe('app.title');
+		});
+	});
 
 	it('should render the form', async () => {
 		const driver = new PageDriver();
 		driver.render();
 		expect(await driver.did.formRender()).toBe(true);
+	});
+
+	describe('upgrade button', () => {
+		it('should show premium button when app not premium', async () => {
+			const driver = new PageDriver();
+			driver.render();
+			await waitFor(async () => {
+				expect(await driver.get.upgradeButton().exists()).toBeTruthy();
+			});
+		});
+
+		it('should not show premium button when app premium', async () => {
+			givenAppPremium();
+			const driver = new PageDriver();
+			driver.render();
+			await waitFor(async () => {
+				expect(await driver.get.upgradeButton().exists()).toBeFalsy();
+			});
+		});
+
+		it('should open upgrade modal on button click', async () => {
+			const openSpy = vi.spyOn(window, 'open');
+			const driver = new PageDriver();
+			driver.render();
+			await waitFor(async () => {
+				await driver.get.upgradeButton().click();
+			});
+			expect(openSpy).toHaveBeenCalledWith('https://www.wix.com/apps/upgrade/9f6d5767-4aea-4de0-93bc-ae381c513365?appInstanceId=7bdf0b5e-eb16-4f48-84bd-70e19b3719b7', '_blank');
+		});
 	});
 
 	it('should render all fields with test values', async () => {
