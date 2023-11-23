@@ -13,12 +13,22 @@ export const wixApisMockServer = setupServer(http.get('https://api.contentful.co
 	return HttpResponse.json(envsMock);
 }), http.get('https://api.contentful.com/spaces', () => {
 	return HttpResponse.json(spacesMock);
+}), http.get('https://ronnyr34.wixsite.com/oauth-contentful/_functions/connectionPermissions', () => {
+	return HttpResponse.json({hasPremiumPlan: false});
 }));
 
 export function givenConnection(externalDatabaseConnections: externalDatabaseConnections.ExternalDatabaseConnection[]) {
 	wixApisMockServer.use(
 		http.get('https://readonly.wixapis.com/wix-data/v1/external-database-connections', () => {
 			return HttpResponse.json({externalDatabaseConnections});
+		})
+	);
+}
+
+export function givenAppPremium() {
+	wixApisMockServer.use(
+		http.get('https://ronnyr34.wixsite.com/oauth-contentful/_functions/connectionPermissions', () => {
+			return HttpResponse.json({hasPremiumPlan: true});
 		})
 	);
 }

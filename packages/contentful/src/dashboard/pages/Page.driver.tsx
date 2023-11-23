@@ -1,4 +1,4 @@
-import { InputTestkit, ButtonTestkit } from '@wix/design-system/dist/testkit/testing-library';
+import { InputTestkit, ButtonTestkit, PageHeaderTestkit } from '@wix/design-system/dist/testkit/testing-library';
 import {
 	FormFieldsDataHook,
 } from '../components/SettingsFormLayout/SettingsForm/SettingsForm';
@@ -33,6 +33,18 @@ export class PageDriver {
 				secretKey: this.findInputByTestId(FormFieldsDataHook.OAUTH_TOKEN),
 				locale: this.findInputByTestId(FormFieldsDataHook.LANGUAGE),
 			};
+		},
+		title: () => {
+			return PageHeaderTestkit({
+				wrapper: this.baseElement!,
+				dataHook: 'app-title',
+			});
+		},
+		upgradeButton: () => {
+			return ButtonTestkit({
+				wrapper: this.baseElement!,
+				dataHook: 'upgrade',
+			});
 		},
 		submit: () => {
 			return ButtonTestkit({
