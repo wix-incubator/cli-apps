@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { PageDriver } from './Page.driver';
 import { anExternalDatabaseConnection } from '../services/external-data-builder';
 import { waitFor } from '@testing-library/react';
+import { envsMock, localesMock, spacesMock } from '../../../test/wix-apis-mock-server';
 
 describe('Page', () => {
 	const externalData = anExternalDatabaseConnection();
@@ -14,26 +15,30 @@ describe('Page', () => {
 
 	it('should render all fields with test values', async () => {
 		const driver = new PageDriver();
+		const expectedData = {
+			...externalData.configuration,
+			locale: localesMock.items[1].name,
+			spaceId: spacesMock.items[1].name,
+			environmentId: envsMock.items[1].name,
+		};
 		driver.given.anExternalDataList([externalData]);
 		driver.render();
 
 		await waitFor(async () => {
-			const result = await driver.check.inputTestFieldsValues(externalData);
+			const result = await driver.check.inputTestFieldsValues(expectedData);
 			expect(result).toBe(true);
 		});
 	});
 
 	describe('input validation', () => {
-		it.each(['spaceId', 'environmentId', 'secretKey'])('field %s should be required', async (field) => {
+		it('field secret key should be required', async () => {
 			const driver = new PageDriver();
 			driver.given.anExternalDataList([externalData]);
 			driver.render();
 			await waitFor(async () => {
-				// @ts-expect-error returns driver
-				await driver.get.formFieldElements()[field].enterText('');
+				await driver.get.formFieldElements().secretKey.enterText('');
 			});
-			// @ts-expect-error returns driver
-			expect(await driver.get.formFieldElements()[field].getStatusMessage()).not.toEqual('');
+			expect(await driver.get.formFieldElements().secretKey.getStatusMessage()).not.toEqual('');
 		});
 
 		it('field oauth key should not be required', async () => {

@@ -7,8 +7,8 @@ const externalData = {
 	name: chance.name().replace(' ', '_'),
 	endpoint: chance.url(),
 	configuration: {
-		spaceId: chance.guid(),
-		environmentId: chance.guid(),
+		spaceId: 'space-id',
+		environmentId: 'env-id',
 		locale: 'en-US',
 		apiKey: chance.guid(),
 		secretKey: chance.guid(),

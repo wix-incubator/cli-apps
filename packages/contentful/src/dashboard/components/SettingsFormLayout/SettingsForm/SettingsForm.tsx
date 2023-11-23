@@ -4,7 +4,7 @@ import {
 	useUpdateExternalDataServices,
 } from '../use-external-data-services';
 import useFormState, { FormState } from '../../../hooks/useFormState';
-import { languageType } from '../../../types';
+import { optionType } from '../../../types';
 import { LoadingLayout } from '../../LoadingLayout/LoadingLayout';
 import { Box, Button, Cell, FormField, Layout, Loader } from '@wix/design-system';
 import SettingsFormField from '../SettingsFormField/SettingsFormField';
@@ -15,7 +15,7 @@ import {
 	oauthTokenField,
 	spaceIdField,
 } from '../../../constants/settingsField';
-import LanguageInput from '../LanguageInput/LanguageInput';
+import Dropdown from '../Dropdown/Dropdown';
 import { ContentfulClientApi, createClient } from 'contentful';
 import { HOST } from '../../../constants/constants';
 import { useTranslation } from 'react-i18next';
@@ -60,8 +60,9 @@ export const SettingsForm = memo(() => {
 	const selectedLanguageState = useFormState('');
 	const apiKeyState = useFormState('');
 	const oauthTokenState = useFormState('');
-	const predicateInputState = useFormState('');
-	const [languageOptions, setLanguageOptions] = useState<languageType[]>([]);
+	const [languageOptions, setLanguageOptions] = useState<optionType[]>([]);
+	const [spacesOptions, setSpacesOptions] = useState<optionType[]>([]);
+	const [envsOptions, setEnvsOptions] = useState<optionType[]>([]);
 	const [externalDatabaseConnection, setExternalDatabaseConnection] = useState<externalDatabaseConnections.ExternalDatabaseConnection>({});
 	const { data: listExternalData, isLoading: isListExternalDataLoading } =
     useListingExternalDataServices();
@@ -101,15 +102,41 @@ export const SettingsForm = memo(() => {
 	useEffect(() => {
 		contentfulClient?.getLocales().then((res) => {
 			const languages = res.items.map(
-				(item, index) =>
+				(item) =>
 					({
-						id: index,
-						value: item.code,
-					} as languageType)
+						id: item.code,
+						value: item.name,
+					} as optionType)
 			);
 			setLanguageOptions(languages);
 		});
 	}, [contentfulClient]);
+
+	useEffect(() => {
+		oauthTokenState.value && fetch('https://api.contentful.com/spaces',{headers: { Authorization: `Bearer ${oauthTokenState.value}` }})
+			.then((res) => res.json())
+			.then((data : any) => {
+				setSpacesOptions(
+					data.items.map((space: any) => ({
+						id: space.sys.id,
+						value: space.name,
+					}))
+				);
+			});
+	}, [oauthTokenState.value]);
+
+	useEffect(() => {
+		spaceIdState.value && fetch(`https://api.contentful.com/spaces/${spaceIdState.value}/environments`,{headers: { Authorization: `Bearer ${oauthTokenState.value}` }})
+			.then((res) => res.json())
+			.then((data : any) => {
+				setEnvsOptions(
+					data.items.map((space: any) => ({
+						id: space.sys.id,
+						value: space.name,
+					}))
+				);
+			});
+	}, [spaceIdState.value]);
 
 	useEffect(() => {
 		if (
@@ -132,10 +159,6 @@ export const SettingsForm = memo(() => {
 		updateExternalData.isError,
 		updateExternalData.isSuccess,
 	]);
-	const searchInputHandler = (value: string) => {
-		predicateInputState.setValue(value);
-		selectedLanguageState.setValue('');
-	};
 
 	const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -185,37 +208,43 @@ export const SettingsForm = memo(() => {
 		<form onSubmit={submitHandler}>
 			<Layout>
 				<Cell>
-					<SettingsFormField
-						required
-						label={t(spaceIdField.label)}
-						placeholder={t(spaceIdField.placeholder)!}
-						formState={spaceIdState}
-						errorStatusMessage={t(spaceIdField.errorStatusMessage)!}
-						dataHook={FormFieldsDataHook.SPACE_ID}
-					/>
+					<FormField label={t(spaceIdField.label)}>
+						<Dropdown
+							required
+							keys={spaceIdField}
+							options={spacesOptions}
+							selected={spaceIdState.value}
+							setSelected={spaceIdState.setValue}
+							setSelectedError={spaceIdState.setError}
+							selectedError={spaceIdState.error}
+							dataHook={FormFieldsDataHook.SPACE_ID}
+						/>
+					</FormField>
 				</Cell>
 				<Cell>
-					<SettingsFormField
-						required
-						label={t(environmentIdField.label)}
-						errorStatusMessage={t(environmentIdField.errorStatusMessage)!}
-						placeholder={t(environmentIdField.placeholder)!}
-						formState={environmentIdState}
-						dataHook={FormFieldsDataHook.ENVIRONMENT_ID}
-					/>
+					<FormField label={t(environmentIdField.label)}>
+						<Dropdown
+							required
+							keys={environmentIdField}
+							options={envsOptions}
+							selected={environmentIdState.value}
+							setSelected={environmentIdState.setValue}
+							setSelectedError={environmentIdState.setError}
+							selectedError={environmentIdState.error}
+							dataHook={FormFieldsDataHook.ENVIRONMENT_ID}
+						/>
+					</FormField>
 				</Cell>
 				<Cell>
 					<FormField label={t(languageField.label)}>
-						<LanguageInput
+						<Dropdown
 							required
-							languageOptions={languageOptions}
-							selectedLanguage={selectedLanguageState.value}
-							setSelectedLanguage={selectedLanguageState.setValue}
-							predicateInputValue={predicateInputState.value}
-							setPredicateInputValue={predicateInputState.setValue}
-							searchInputHandler={searchInputHandler}
-							setSelectedLanguageError={selectedLanguageState.setError}
-							selectedLanguageError={selectedLanguageState.error}
+							keys={languageField}
+							options={languageOptions}
+							selected={selectedLanguageState.value}
+							setSelected={selectedLanguageState.setValue}
+							setSelectedError={selectedLanguageState.setError}
+							selectedError={selectedLanguageState.error}
 							dataHook={FormFieldsDataHook.LANGUAGE}
 						/>
 					</FormField>

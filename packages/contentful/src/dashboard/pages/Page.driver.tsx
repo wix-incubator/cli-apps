@@ -60,12 +60,12 @@ export class PageDriver {
 	};
 
 	public check = {
-		inputTestFieldsValues: async (externalData: externalDatabaseConnections.ExternalDatabaseConnection) => {
+		inputTestFieldsValues: async (expectedData: any) => {
 			const elements = this.get.formFieldElements();
 			const textValues = await Promise.all(
 				Object.entries(elements).map(async ([key, element]) => ({key, text: await element?.getText()})),
 			);
-			return textValues.every(({key, text}) => text === externalData.configuration![key]);
+			return textValues.every(({key, text}) => text === expectedData[key]);
 		},
 	} as const;
 
