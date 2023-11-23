@@ -17,10 +17,10 @@ import {
 } from '../../../constants/settingsField';
 import LanguageInput from '../LanguageInput/LanguageInput';
 import { ContentfulClientApi, createClient } from 'contentful';
-import { defaultExternalDatabaseConnection } from '../../../constants/defaults';
 import { HOST } from '../../../constants/constants';
 import { useTranslation } from 'react-i18next';
 import { useDashboard} from '@wix/dashboard-react';
+import { externalDatabaseConnections } from '@wix/data';
 
 export enum FormFieldsDataHook {
   SPACE_ID = 'spaceId',
@@ -62,9 +62,7 @@ export const SettingsForm = memo(() => {
 	const oauthTokenState = useFormState('');
 	const predicateInputState = useFormState('');
 	const [languageOptions, setLanguageOptions] = useState<languageType[]>([]);
-	const [externalDatabaseConnection, setExternalDatabaseConnection] = useState(
-		defaultExternalDatabaseConnection
-	);
+	const [externalDatabaseConnection, setExternalDatabaseConnection] = useState<externalDatabaseConnections.ExternalDatabaseConnection>({});
 	const { data: listExternalData, isLoading: isListExternalDataLoading } =
     useListingExternalDataServices();
 	const updateExternalData = useUpdateExternalDataServices();
@@ -75,17 +73,7 @@ export const SettingsForm = memo(() => {
 
 	useEffect(() => {
 		if (listExternalData && listExternalData[0]) {
-			setExternalDatabaseConnection({
-				configuration: {
-					spaceId: listExternalData[0].configuration?.spaceId,
-					environmentId: listExternalData[0].configuration?.environmentId,
-					secretKey: listExternalData[0].configuration?.secretKey,
-					apiKey: listExternalData[0].configuration?.apiKey,
-					locale: listExternalData[0].configuration?.locale,
-				},
-				endpoint: listExternalData[0].endpoint!,
-				name: listExternalData[0].name!,
-			});
+			setExternalDatabaseConnection(listExternalData[0]);
 			spaceIdState.setValue(
 				listExternalData ? listExternalData[0].configuration?.spaceId : ''
 			);
@@ -159,20 +147,25 @@ export const SettingsForm = memo(() => {
 		) {
 			return;
 		}
-		const configure = {
+		const configuration = {
 			spaceId: spaceIdState.value,
 			environmentId: environmentIdState.value,
 			secretKey: oauthTokenState.value,
 			apiKey: apiKeyState.value,
 			locale: selectedLanguageState.value,
 		};
+		const mergedConfiguration = {
+			...externalDatabaseConnection.configuration,
+			...configuration,
+		};
 		setExternalDatabaseConnection((prevState) => ({
 			...prevState,
-			configuration: configure,
+			configuration: mergedConfiguration,
 		}));
 		updateExternalData.mutate({
-			...externalDatabaseConnection,
-			configuration: configure,
+			name: externalDatabaseConnection.name!,
+			endpoint: externalDatabaseConnection.endpoint!,
+			configuration: mergedConfiguration,
 		});
 	};
 

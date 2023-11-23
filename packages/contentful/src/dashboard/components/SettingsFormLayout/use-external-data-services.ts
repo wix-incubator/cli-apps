@@ -1,20 +1,20 @@
-import { useMemo } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import {
-	listExternalData, updateExternalData,
-} from '../../services/external-data-service';
 import { useWixModules } from '@wix/sdk-react';
 import { externalDatabaseConnections } from '@wix/data';
 
 export const useListingExternalDataServices = () => {
 	const {listExternalDatabaseConnections} = useWixModules(externalDatabaseConnections);
-	const listingService = useMemo(
-		() => listExternalData(listExternalDatabaseConnections),
-		[listExternalDatabaseConnections],
-	);
+
 	return useQuery({
 		queryKey: ['external-data-listing-query'],
-		queryFn: () => listingService.listExternalDatabaseConnections(),
+		queryFn: async () => {
+			const {externalDatabaseConnections} =  await listExternalDatabaseConnections({
+				paging: {
+					limit: 1,
+				},
+			});
+			return externalDatabaseConnections;
+		},
 		refetchOnWindowFocus: false,
 	});
 };
@@ -22,11 +22,6 @@ export const useListingExternalDataServices = () => {
 export const useUpdateExternalDataServices = () => {
 	const {updateExternalDatabaseConnection} = useWixModules(externalDatabaseConnections);
 
-	const updateService = useMemo(
-		() =>
-			updateExternalData(updateExternalDatabaseConnection),
-		[updateExternalDatabaseConnection],
-	);
 	return useMutation({
 		mutationKey: ['external-data-update-mutation'],
 		mutationFn: ({
@@ -37,6 +32,6 @@ export const useUpdateExternalDataServices = () => {
 			configuration: Record<string, string>;
 			endpoint: string;
 			name: string;
-		}) => updateService.updateExternalDatabaseConnection({configuration, endpoint, name}),
+		}) => updateExternalDatabaseConnection(name, {configuration, endpoint}),
 	});
 };
