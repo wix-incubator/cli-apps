@@ -12,6 +12,7 @@ const externalData = {
 		locale: 'en-US',
 		apiKey: chance.guid(),
 		secretKey: chance.guid(),
+		appInstanceId: chance.guid(),
 	},
 };
 
