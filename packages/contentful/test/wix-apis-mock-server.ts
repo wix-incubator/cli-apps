@@ -3,8 +3,16 @@ import { setupServer } from 'msw/node';
 import { externalDatabaseConnections } from '@wix/data';
 import _ from 'lodash';
 
+export const localesMock = {items: [{code: 'he', name: 'Hebrew'}, {code: 'en-US', name: 'English'}]};
+export const envsMock = {items: [{sys: {id: 'env-id1'}, name: 'master1'}, {sys: {id: 'env-id'}, name: 'master'}]};
+export const spacesMock = {items: [{sys: {id: 'space-id1'}, name: 'my space1'}, {sys: {id: 'space-id'}, name: 'my space'}]};
+
 export const wixApisMockServer = setupServer(http.get('https://api.contentful.com/spaces/*/environments/*/locales', () => {
-	return HttpResponse.json({items: [{code: 'en-US', name: 'English'}]});
+	return HttpResponse.json(localesMock);
+}), http.get('https://api.contentful.com/spaces/*/environments', () => {
+	return HttpResponse.json(envsMock);
+}), http.get('https://api.contentful.com/spaces', () => {
+	return HttpResponse.json(spacesMock);
 }));
 
 export function givenConnection(externalDatabaseConnections: externalDatabaseConnections.ExternalDatabaseConnection[]) {
