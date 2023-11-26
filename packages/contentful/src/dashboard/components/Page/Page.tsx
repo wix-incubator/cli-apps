@@ -23,7 +23,7 @@ export const Page = () => {
 		<PageLayout title={t('app.title')!} dataHook="app-title" showUpgradeButton={upgradeButton.show} endOfTrialDate={upgradeButton.endOfTrialDate}>
 			<Cell>
 				<CardLayout
-					title={`${t('app.title')} ${t('contentful.settings.card.title')}`}
+					title={t('contentful.settings.card.title')!}
 				>
 					<SettingsForm/>
 				</CardLayout>
