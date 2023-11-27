@@ -7,7 +7,7 @@ import { withDashboard } from '@wix/dashboard-react';
 import { I18nextProvider } from 'react-i18next';
 import { Page } from '../components/Page/Page';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({defaultOptions: {queries: {retry: false}}});
 
 const i18n = createI18n()
 	.use({

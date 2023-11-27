@@ -1,4 +1,10 @@
-import { InputTestkit, ButtonTestkit, PageHeaderTestkit, TooltipTestkit } from '@wix/design-system/dist/testkit/testing-library';
+import {
+	InputTestkit,
+	ButtonTestkit,
+	PageHeaderTestkit,
+	TooltipTestkit,
+	SectionHelperTestkit,
+} from '@wix/design-system/dist/testkit/testing-library';
 import {
 	FormFieldsDataHook,
 } from '../components/SettingsFormLayout/SettingsForm/SettingsForm';
@@ -44,6 +50,12 @@ export class PageDriver {
 			return ButtonTestkit({
 				wrapper: this.baseElement!,
 				dataHook: 'upgrade',
+			});
+		},
+		missingConnectionSection: () => {
+			return SectionHelperTestkit({
+				wrapper: this.baseElement!,
+				dataHook: 'missing-connection',
 			});
 		},
 		upgradeTooltip: () => {

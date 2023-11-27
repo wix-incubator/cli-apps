@@ -50,6 +50,31 @@ describe('Page', () => {
 		});
 	});
 
+	describe('missing connection', () => {
+		it('should show message when missing connection', async () => {
+			const openSpy = vi.spyOn(window, 'open');
+			const driver = new PageDriver();
+			driver.given.anExternalDataList([]);
+			driver.render();
+			await waitFor(async () => {
+				expect(await driver.get.missingConnectionSection().exists()).toBeTruthy();
+				expect(await driver.get.missingConnectionSection().titleText()).toBe('contentful.settings.form.missingConfiguration.title');
+				expect(await driver.get.missingConnectionSection().actionText()).toBe('contentful.settings.form.missingConfiguration.action');
+			});
+			await driver.get.missingConnectionSection().clickAction();
+			expect(openSpy).toHaveBeenCalledWith('https://ronnyr34.wixsite.com/oauth-contentful/_functions/redirectToContentfulFromBM?authorization=PvKjWDfmEl3wTnbAZ5rKRCDU26YaCyEiQI1ZW0VDW6M.eyJpbnN0YW5jZUlkIjoiN2JkZjBiNWUtZWIxNi00ZjQ4LTg0YmQtNzBlMTliMzcxOWI3IiwiYXBwRGVmSWQiOiI5ZjZkNTc2Ny00YWVhLTRkZTAtOTNiYy1hZTM4MWM1MTMzNjUiLCJzaWduRGF0ZSI6IjIwMjMtMTEtMjNUMTM6MzQ6MzAuNTE1WiIsInVpZCI6ImU3NmQ3MTQ0LTQyOTMtNGVhZi1hOGQ5LTAwYzI4OWY0N2I1YiIsInBlcm1pc3Npb25zIjoiT1dORVIiLCJkZW1vTW9kZSI6ZmFsc2UsInNpdGVPd25lcklkIjoiZTc2ZDcxNDQtNDI5My00ZWFmLWE4ZDktMDBjMjg5ZjQ3YjViIiwic2l0ZU1lbWJlcklkIjoiZTc2ZDcxNDQtNDI5My00ZWFmLWE4ZDktMDBjMjg5ZjQ3YjViIiwiZXhwaXJhdGlvbkRhdGUiOiIyMDIzLTExLTIzVDE3OjM0OjMwLjUxNVoiLCJsb2dpbkFjY291bnRJZCI6ImU3NmQ3MTQ0LTQyOTMtNGVhZi1hOGQ5LTAwYzI4OWY0N2I1YiIsInBhaSI6bnVsbCwibHBhaSI6bnVsbCwiYW9yIjp0cnVlfQ', '_blank');
+		});
+
+		it('should not show message when connection exists', async () => {
+			const driver = new PageDriver();
+			driver.given.anExternalDataList([externalData]);
+			driver.render();
+			await waitFor(async () => {
+				expect(await driver.get.missingConnectionSection().exists()).toBeFalsy();
+			});
+		});
+	});
+
 	it('should render all fields with test values', async () => {
 		const driver = new PageDriver();
 		const expectedData = {
