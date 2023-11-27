@@ -34,8 +34,10 @@ describe('Page', () => {
 			driver.render();
 			await waitFor(async () => {
 				expect(await driver.get.upgradeButton().exists()).toBeTruthy();
-				expect(await driver.get.upgradeButton().getButtonTextContent()).toBe('contentful.settings.card.upgrade');
-				expect(await driver.get.upgradeTooltip().getTooltipText()).toBe('Your trial will end on Thu Dec 07 2023');
+				expect(await driver.get.upgradeButton().getButtonTextContent()).toBe('contentful.settings.card.upgrade.action');
+				expect(await driver.get.upgradeSection().titleText()).toBe('contentful.settings.card.upgrade.title');
+				expect(await driver.get.upgradeSection().actionText()).toBe('contentful.settings.card.upgrade.action');
+				expect(await driver.get.upgradeSection().textContent()).toContain('Your trial will end on Thu Dec 07 2023');
 			});
 		});
 
@@ -46,6 +48,7 @@ describe('Page', () => {
 			await waitFor(async () => {
 				expect(await driver.get.title().exists());
 				expect(await driver.get.upgradeButton().exists()).toBeFalsy();
+				expect(await driver.get.upgradeSection().exists()).toBeFalsy();
 			});
 		});
 

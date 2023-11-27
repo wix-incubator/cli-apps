@@ -2,7 +2,6 @@ import {
 	InputTestkit,
 	ButtonTestkit,
 	PageHeaderTestkit,
-	TooltipTestkit,
 	SectionHelperTestkit,
 } from '@wix/design-system/dist/testkit/testing-library';
 import {
@@ -68,10 +67,10 @@ export class PageDriver {
 				dataHook: 'missing-connection',
 			});
 		},
-		upgradeTooltip: () => {
-			return TooltipTestkit({
+		upgradeSection: () => {
+			return SectionHelperTestkit({
 				wrapper: this.baseElement!,
-				dataHook: 'upgrade-tooltip',
+				dataHook: 'upgrade-section',
 			});
 		},
 		submit: () => {

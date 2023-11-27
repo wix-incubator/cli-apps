@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, Layout, Page, Tooltip } from '@wix/design-system';
+import { Box, Button, Layout, Page } from '@wix/design-system';
 import { getInstanceId } from '../../utils';
 import { useTranslation } from 'react-i18next';
 import { DOCS_URL, UPGRADE_URL } from '../../constants/constants';
@@ -8,7 +8,6 @@ interface Props {
   children: React.ReactNode;
   dataHook: string;
   showUpgradeButton: boolean;
-  endOfTrialDate: string;
   title: string;
 }
 
@@ -17,7 +16,6 @@ export default function PageLayout({
 	dataHook,
 	title,
 	showUpgradeButton,
-	endOfTrialDate
 }: Props) {
 	const {t} = useTranslation();
 	const openPremiumPage = () => {
@@ -30,7 +28,7 @@ export default function PageLayout({
 		<Box gap={2}>
 			<Button dataHook="docs" skin="light" onClick={openDocs}>{t('contentful.settings.card.documentation')}</Button>
 			{showUpgradeButton &&
-			(<Tooltip dataHook="upgrade-tooltip" content={t('contentful.settings.card.trialEnd', {endOfTrialDate})}><Button dataHook="upgrade" skin="premium" onClick={openPremiumPage}>{t('contentful.settings.card.upgrade')}</Button></Tooltip>)}
+			<Button dataHook="upgrade" skin="premium" onClick={openPremiumPage}>{t('contentful.settings.card.upgrade.action')}</Button>}
 		</Box>
 	);
 
