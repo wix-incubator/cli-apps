@@ -10,7 +10,7 @@ import {
 } from '../components/SettingsFormLayout/SettingsForm/SettingsForm';
 import { cleanup, render } from '@testing-library/react';
 import React from 'react';
-import Page from './page';
+import Page, {queryClient} from './page';
 import { wixApisMockServer, givenConnection, givenUpdatedConnection } from '../../../test/wix-apis-mock-server';
 import { afterAll, afterEach, beforeAll } from 'vitest';
 import { dashboardPageProps } from '../../../test/wix-dashboard-testkit';
@@ -19,6 +19,10 @@ import { externalDatabaseConnections } from '@wix/data';
 beforeAll(() => wixApisMockServer.listen({onUnhandledRequest: 'error'}));
 afterEach(() => wixApisMockServer.resetHandlers());
 afterAll(() => wixApisMockServer.close());
+
+afterEach(() => {
+	queryClient.clear();
+});
 
 afterEach(cleanup);
 
