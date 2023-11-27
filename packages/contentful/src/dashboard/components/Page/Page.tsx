@@ -11,7 +11,7 @@ import { LoadingLayout } from '../LoadingLayout/LoadingLayout';
 
 export const Page = () => {
 	const {t} = useTranslation();
-	const [upgradeButton, setUpgradeButton] = useState({show: false, endOfTrialDate: ''});
+	const [upgradeButton, setUpgradeButton] = useState({show: false, isTrialEnded: false, endOfTrialDate: ''});
 	const { data, isLoading } = useListingExternalDataServices();
 
 	useEffect(() => {
@@ -19,7 +19,7 @@ export const Page = () => {
 		fetch(`${CHECK_PREMIUM_URL}${instanceId}`)
 			.then((res) => res.json())
 			.then((data) => {
-				setUpgradeButton({show: !data.hasPremiumPlan, endOfTrialDate: new Date(data.trialEndDate).toDateString()});
+				setUpgradeButton({show: !data.hasPremiumPlan, isTrialEnded: new Date() > new Date(data.trialEndDate) , endOfTrialDate: new Date(data.trialEndDate).toDateString()});
 			});
 	}, []);
 
@@ -35,8 +35,8 @@ export const Page = () => {
 		<PageLayout title={t('app.title')!} dataHook="app-title" showUpgradeButton={upgradeButton.show}>
 			{upgradeButton.show &&
 				<Cell>
-					<SectionHelper dataHook="upgrade-section" appearance="warning" title={t('contentful.settings.card.upgrade.title')} actionText={t('contentful.settings.card.upgrade.action')!} onAction={openPremiumPage}>
-						{t('contentful.settings.card.trialEnd', {endOfTrialDate: upgradeButton.endOfTrialDate})}
+					<SectionHelper dataHook="upgrade-section" appearance={upgradeButton.isTrialEnded ? 'danger' : 'premium'} title={t('contentful.settings.card.upgrade.title')} actionText={t('contentful.settings.card.upgrade.action')!} onAction={openPremiumPage}>
+						{upgradeButton.isTrialEnded ? t('contentful.settings.card.trialEnded'): t('contentful.settings.card.trialEnd', {endOfTrialDate: upgradeButton.endOfTrialDate})}
 					</SectionHelper>
 				</Cell>
 			}

@@ -5,6 +5,7 @@
   "contentful.settings.card.upgrade.title": "Upgrade Your App",
   "contentful.settings.card.upgrade.action": "Upgrade",
   "contentful.settings.card.trialEnd": "Your trial will end on {{endOfTrialDate}}",
+  "contentful.settings.card.trialEnded": "Your trial period ended. Please upgrade to continue using this app.",
   "contentful.settings.form.spaceIdLabel": "Contentful Space",
   "contentful.settings.form.spaceIdPlaceholder": "Select a space",
   "contentful.settings.form.spaceIdErrorStatusMessage": "Please select a valid space",

@@ -2,7 +2,13 @@ import { describe, it, expect, vi } from 'vitest';
 import { PageDriver } from './Page.driver';
 import { anExternalDatabaseConnection } from '../services/external-data-builder';
 import { waitFor } from '@testing-library/react';
-import { envsMock, givenAppPremium, localesMock, spacesMock } from '../../../test/wix-apis-mock-server';
+import {
+	envsMock,
+	givenAppPremium,
+	givenTrialEnded,
+	localesMock,
+	spacesMock,
+} from '../../../test/wix-apis-mock-server';
 
 Object.defineProperty(window, 'location', {
 	writable: true,
@@ -37,7 +43,18 @@ describe('Page', () => {
 				expect(await driver.get.upgradeButton().getButtonTextContent()).toBe('contentful.settings.card.upgrade.action');
 				expect(await driver.get.upgradeSection().titleText()).toBe('contentful.settings.card.upgrade.title');
 				expect(await driver.get.upgradeSection().actionText()).toBe('contentful.settings.card.upgrade.action');
-				expect(await driver.get.upgradeSection().textContent()).toContain('Your trial will end on Thu Dec 07 2023');
+				expect(await driver.get.upgradeSection().textContent()).toContain('Your trial will end on Sat Feb 06 2027');
+				expect(await driver.get.upgradeSection().isPremium()).toBeTruthy();
+			});
+		});
+
+		it('should show danger message when trial ended', async () => {
+			givenTrialEnded();
+			const driver = new PageDriver();
+			driver.render();
+			await waitFor(async () => {
+				expect(await driver.get.upgradeSection().textContent()).toContain('contentful.settings.card.trialEnded');
+				expect(await driver.get.upgradeSection().isDanger()).toBeTruthy();
 			});
 		});
 

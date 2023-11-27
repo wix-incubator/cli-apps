@@ -14,7 +14,7 @@ export const wixApisMockServer = setupServer(http.get('https://api.contentful.co
 }), http.get('https://api.contentful.com/spaces', () => {
 	return HttpResponse.json(spacesMock);
 }), http.get('https://ronnyr34.wixsite.com/oauth-contentful/_functions/connectionPermissions', () => {
-	return HttpResponse.json({hasPremiumPlan: false, trialEndDate: 1701942343229});
+	return HttpResponse.json({hasPremiumPlan: false, trialEndDate: 1801942343229});
 }));
 
 export function givenConnection(externalDatabaseConnections: externalDatabaseConnections.ExternalDatabaseConnection[]) {
@@ -29,6 +29,14 @@ export function givenAppPremium() {
 	wixApisMockServer.use(
 		http.get('https://ronnyr34.wixsite.com/oauth-contentful/_functions/connectionPermissions', () => {
 			return HttpResponse.json({hasPremiumPlan: true});
+		})
+	);
+}
+
+export function givenTrialEnded() {
+	wixApisMockServer.use(
+		http.get('https://ronnyr34.wixsite.com/oauth-contentful/_functions/connectionPermissions', () => {
+			return HttpResponse.json({hasPremiumPlan: false, trialEndDate: 1669551585});
 		})
 	);
 }
