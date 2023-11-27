@@ -15,7 +15,6 @@ export const useListingExternalDataServices = () => {
 			});
 			return externalDatabaseConnections;
 		},
-		refetchOnWindowFocus: false,
 	});
 };
 
