@@ -52,6 +52,12 @@ export class PageDriver {
 				dataHook: 'upgrade',
 			});
 		},
+		docsButton: () => {
+			return ButtonTestkit({
+				wrapper: this.baseElement!,
+				dataHook: 'docs',
+			});
+		},
 		missingConnectionSection: () => {
 			return SectionHelperTestkit({
 				wrapper: this.baseElement!,

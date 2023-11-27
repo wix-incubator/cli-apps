@@ -30,7 +30,7 @@ export default function PageLayout({
 		<Box gap={2}>
 			<Button dataHook="docs" skin="light" onClick={openDocs}>{t('contentful.settings.card.documentation')}</Button>
 			{showUpgradeButton &&
-			(<Tooltip dataHook="upgrade-tooltip" content={t('contentful.settings.card.trialEnd', {endOfTrialDate})}><Button dataHook="upgrade" skin="premium" onClick={openPremiumPage}>Upgrade</Button></Tooltip>)}
+			(<Tooltip dataHook="upgrade-tooltip" content={t('contentful.settings.card.trialEnd', {endOfTrialDate})}><Button dataHook="upgrade" skin="premium" onClick={openPremiumPage}>{t('contentful.settings.card.upgrade')}</Button></Tooltip>)}
 		</Box>
 	);
 

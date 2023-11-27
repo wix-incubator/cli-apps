@@ -19,12 +19,22 @@ describe('Page', () => {
 		});
 	});
 
+	it('should have a docs button', async () => {
+		const driver = new PageDriver();
+		driver.render();
+		await waitFor(async () => {
+			expect(await driver.get.docsButton().exists()).toBeTruthy();
+			expect(await driver.get.docsButton().getButtonTextContent()).toBe('contentful.settings.card.documentation');
+		});
+	});
+
 	describe('upgrade button', () => {
 		it('should show premium button when app not premium', async () => {
 			const driver = new PageDriver();
 			driver.render();
 			await waitFor(async () => {
 				expect(await driver.get.upgradeButton().exists()).toBeTruthy();
+				expect(await driver.get.upgradeButton().getButtonTextContent()).toBe('contentful.settings.card.upgrade');
 				expect(await driver.get.upgradeTooltip().getTooltipText()).toBe('Your trial will end on Thu Dec 07 2023');
 			});
 		});
