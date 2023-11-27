@@ -1,11 +1,9 @@
 import React, { memo, useEffect, useState } from 'react';
 import {
-	useListingExternalDataServices,
 	useUpdateExternalDataServices,
 } from '../use-external-data-services';
 import useFormState, { FormState } from '../../../hooks/useFormState';
 import { optionType } from '../../../types';
-import { LoadingLayout } from '../../LoadingLayout/LoadingLayout';
 import { Box, Button, Cell, FormField, Layout, Loader } from '@wix/design-system';
 import SettingsFormField from '../SettingsFormField/SettingsFormField';
 import {
@@ -32,7 +30,7 @@ export enum FormFieldsDataHook {
 }
 
 interface Props {
-	  setShowMissingConnection: (value: boolean) => void;
+	externalListData: externalDatabaseConnections.ExternalDatabaseConnection[];
 }
 
 export const isFormInvalid = ({
@@ -68,8 +66,6 @@ export const SettingsForm = memo((props: Props) => {
 	const [spacesOptions, setSpacesOptions] = useState<optionType[]>([]);
 	const [envsOptions, setEnvsOptions] = useState<optionType[]>([]);
 	const [externalDatabaseConnection, setExternalDatabaseConnection] = useState<externalDatabaseConnections.ExternalDatabaseConnection>({});
-	const { data: listExternalData, isLoading: isListExternalDataLoading } =
-    useListingExternalDataServices();
 	const updateExternalData = useUpdateExternalDataServices();
 	const [contentfulClient, setContentfulClient] = useState<
     ContentfulClientApi<undefined> | undefined
@@ -77,33 +73,31 @@ export const SettingsForm = memo((props: Props) => {
 	const dashboard = useDashboard();
 
 	useEffect(() => {
-		if (listExternalData && listExternalData[0]) {
-			setExternalDatabaseConnection(listExternalData[0]);
+		if (props.externalListData && props.externalListData[0]) {
+			setExternalDatabaseConnection(props.externalListData[0]);
 			spaceIdState.setValue(
-				listExternalData ? listExternalData[0].configuration?.spaceId : ''
+				props.externalListData ? props.externalListData[0].configuration?.spaceId : ''
 			);
 			environmentIdState.setValue(
-				listExternalData[0].configuration?.environmentId ?? ''
+				props.externalListData[0].configuration?.environmentId ?? ''
 			);
 			oauthTokenState.setValue(
-				listExternalData[0].configuration?.secretKey ?? ''
+				props.externalListData[0].configuration?.secretKey ?? ''
 			);
-			apiKeyState.setValue(listExternalData[0].configuration?.apiKey ?? '');
+			apiKeyState.setValue(props.externalListData[0].configuration?.apiKey ?? '');
 			selectedLanguageState.setValue(
-				listExternalData[0].configuration?.locale ?? ''
+				props.externalListData[0].configuration?.locale ?? ''
 			);
 			setContentfulClient(
 				createClient({
-					space: listExternalData[0].configuration?.spaceId ?? '',
-					environment: listExternalData[0].configuration?.environmentId ?? '',
+					space: props.externalListData[0].configuration?.spaceId ?? '',
+					environment: props.externalListData[0].configuration?.environmentId ?? '',
 					host: HOST,
-					accessToken: listExternalData[0].configuration?.secretKey ?? '',
+					accessToken: props.externalListData[0].configuration?.secretKey ?? '',
 				})
 			);
-		} else if (!isListExternalDataLoading) {
-			props.setShowMissingConnection(true);
 		}
-	}, [isListExternalDataLoading]);
+	}, [props.externalListData]);
 
 	useEffect(() => {
 		contentfulClient?.getLocales().then((res) => {
@@ -207,9 +201,6 @@ export const SettingsForm = memo((props: Props) => {
 			state.setError(err);
 		});
 	};
-	if (isListExternalDataLoading) {
-		return <LoadingLayout />;
-	}
 	return (
 		<form onSubmit={submitHandler}>
 			<Layout>
