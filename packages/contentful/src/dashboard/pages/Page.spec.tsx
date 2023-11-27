@@ -19,12 +19,22 @@ describe('Page', () => {
 		});
 	});
 
+	it('should have a docs button', async () => {
+		const driver = new PageDriver();
+		driver.render();
+		await waitFor(async () => {
+			expect(await driver.get.docsButton().exists()).toBeTruthy();
+			expect(await driver.get.docsButton().getButtonTextContent()).toBe('contentful.settings.card.documentation');
+		});
+	});
+
 	describe('upgrade button', () => {
 		it('should show premium button when app not premium', async () => {
 			const driver = new PageDriver();
 			driver.render();
 			await waitFor(async () => {
 				expect(await driver.get.upgradeButton().exists()).toBeTruthy();
+				expect(await driver.get.upgradeButton().getButtonTextContent()).toBe('contentful.settings.card.upgrade');
 				expect(await driver.get.upgradeTooltip().getTooltipText()).toBe('Your trial will end on Thu Dec 07 2023');
 			});
 		});
@@ -47,6 +57,31 @@ describe('Page', () => {
 				await driver.get.upgradeButton().click();
 			});
 			expect(openSpy).toHaveBeenCalledWith('https://www.wix.com/apps/upgrade/9f6d5767-4aea-4de0-93bc-ae381c513365?appInstanceId=7bdf0b5e-eb16-4f48-84bd-70e19b3719b7', '_blank');
+		});
+	});
+
+	describe('missing connection', () => {
+		it('should show message when missing connection', async () => {
+			const openSpy = vi.spyOn(window, 'open');
+			const driver = new PageDriver();
+			driver.given.anExternalDataList([]);
+			driver.render();
+			await waitFor(async () => {
+				expect(await driver.get.missingConnectionSection().exists()).toBeTruthy();
+				expect(await driver.get.missingConnectionSection().titleText()).toBe('contentful.settings.form.missingConfiguration.title');
+				expect(await driver.get.missingConnectionSection().actionText()).toBe('contentful.settings.form.missingConfiguration.action');
+			});
+			await driver.get.missingConnectionSection().clickAction();
+			expect(openSpy).toHaveBeenCalledWith('https://ronnyr34.wixsite.com/oauth-contentful/_functions/redirectToContentfulFromBM?authorization=PvKjWDfmEl3wTnbAZ5rKRCDU26YaCyEiQI1ZW0VDW6M.eyJpbnN0YW5jZUlkIjoiN2JkZjBiNWUtZWIxNi00ZjQ4LTg0YmQtNzBlMTliMzcxOWI3IiwiYXBwRGVmSWQiOiI5ZjZkNTc2Ny00YWVhLTRkZTAtOTNiYy1hZTM4MWM1MTMzNjUiLCJzaWduRGF0ZSI6IjIwMjMtMTEtMjNUMTM6MzQ6MzAuNTE1WiIsInVpZCI6ImU3NmQ3MTQ0LTQyOTMtNGVhZi1hOGQ5LTAwYzI4OWY0N2I1YiIsInBlcm1pc3Npb25zIjoiT1dORVIiLCJkZW1vTW9kZSI6ZmFsc2UsInNpdGVPd25lcklkIjoiZTc2ZDcxNDQtNDI5My00ZWFmLWE4ZDktMDBjMjg5ZjQ3YjViIiwic2l0ZU1lbWJlcklkIjoiZTc2ZDcxNDQtNDI5My00ZWFmLWE4ZDktMDBjMjg5ZjQ3YjViIiwiZXhwaXJhdGlvbkRhdGUiOiIyMDIzLTExLTIzVDE3OjM0OjMwLjUxNVoiLCJsb2dpbkFjY291bnRJZCI6ImU3NmQ3MTQ0LTQyOTMtNGVhZi1hOGQ5LTAwYzI4OWY0N2I1YiIsInBhaSI6bnVsbCwibHBhaSI6bnVsbCwiYW9yIjp0cnVlfQ', '_blank');
+		});
+
+		it('should not show message when connection exists', async () => {
+			const driver = new PageDriver();
+			driver.given.anExternalDataList([externalData]);
+			driver.render();
+			await waitFor(async () => {
+				expect(await driver.get.missingConnectionSection().exists()).toBeFalsy();
+			});
 		});
 	});
 

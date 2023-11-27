@@ -31,6 +31,10 @@ export enum FormFieldsDataHook {
   SAVE_BUTTON = 'saveButton',
 }
 
+interface Props {
+	  setShowMissingConnection: (value: boolean) => void;
+}
+
 export const isFormInvalid = ({
 	singleArgs,
 	multipleArgs = [],
@@ -53,7 +57,7 @@ export const isFormInvalid = ({
 	return singleArgsInvalid || allMultipleArgsInValid;
 };
 
-export const SettingsForm = memo(() => {
+export const SettingsForm = memo((props: Props) => {
 	const {t} = useTranslation();
 	const spaceIdState = useFormState('');
 	const environmentIdState = useFormState('');
@@ -96,6 +100,8 @@ export const SettingsForm = memo(() => {
 					accessToken: listExternalData[0].configuration?.secretKey ?? '',
 				})
 			);
+		} else if (!isListExternalDataLoading) {
+			props.setShowMissingConnection(true);
 		}
 	}, [isListExternalDataLoading]);
 
