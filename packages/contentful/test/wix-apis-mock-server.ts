@@ -2,6 +2,7 @@ import { HttpResponse, http } from 'msw';
 import { setupServer } from 'msw/node';
 import { externalDatabaseConnections } from '@wix/data';
 import _ from 'lodash';
+import { CHECK_PREMIUM_URL } from '../src/dashboard/constants/constants';
 
 export const localesMock = {items: [{code: 'he', name: 'Hebrew'}, {code: 'en-US', name: 'English'}]};
 export const envsMock = {items: [{sys: {id: 'env-id1'}, name: 'master1'}, {sys: {id: 'env-id'}, name: 'master'}]};
@@ -13,7 +14,7 @@ export const wixApisMockServer = setupServer(http.get('https://api.contentful.co
 	return HttpResponse.json(envsMock);
 }), http.get('https://api.contentful.com/spaces', () => {
 	return HttpResponse.json(spacesMock);
-}), http.get('https://ronnyr34.wixsite.com/oauth-contentful/_functions/connectionPermissions', () => {
+}), http.get(CHECK_PREMIUM_URL, () => {
 	return HttpResponse.json({hasPremiumPlan: false, trialEndDate: 1801942343229});
 }));
 
@@ -27,7 +28,7 @@ export function givenConnection(externalDatabaseConnections: externalDatabaseCon
 
 export function givenAppPremium() {
 	wixApisMockServer.use(
-		http.get('https://ronnyr34.wixsite.com/oauth-contentful/_functions/connectionPermissions', () => {
+		http.get(CHECK_PREMIUM_URL, () => {
 			return HttpResponse.json({hasPremiumPlan: true});
 		})
 	);
@@ -35,7 +36,7 @@ export function givenAppPremium() {
 
 export function givenTrialEnded() {
 	wixApisMockServer.use(
-		http.get('https://ronnyr34.wixsite.com/oauth-contentful/_functions/connectionPermissions', () => {
+		http.get(CHECK_PREMIUM_URL, () => {
 			return HttpResponse.json({hasPremiumPlan: false, trialEndDate: 1669551585});
 		})
 	);
