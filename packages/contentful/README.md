@@ -4,10 +4,11 @@ This application facilitates the seamless connection between your Wix site and C
 
 ## How to use
 1. Enable dev mode in your Wix site.
-2. Install the application and establish the connection between your Contentful account and Wix site.
-3. Navigate to the CMS tab in your business manager. Under "External Collections," you will find a new namespace named "contentful-on-wix," housing all your content models and data.
-4. Add dataset to your page and choose one of the models you have in Contentful.
-5. Bind fields from your dataset to elements on your page.
+1. Install the application and establish the connection between your Contentful account and Wix site.   
+    1. Using API key is not mandatory but it's recommended for better performance and stability. Check https://www.contentful.com/developers/docs/technical-limits/ for more details.
+1. Navigate to the CMS tab in your business manager. Under "External Collections," you will find a new namespace named "contentful-on-wix," housing all your content models and data.
+1. Add dataset to your page and choose one of the models you have in Contentful.
+1. Bind fields from your dataset to elements on your page.
 
 ## Dynamic Pages
 Dynamic pages are a type of web page designed to showcase content from a CMS collection. They enable the creation of websites capable of efficiently managing extensive content while maintaining a consistent design and user experience.
