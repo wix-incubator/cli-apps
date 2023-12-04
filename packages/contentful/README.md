@@ -5,7 +5,7 @@ This application facilitates the seamless connection between your Wix site and C
 ## How to use
 1. Enable dev mode in your Wix site.
 1. Install the application and establish the connection between your Contentful account and Wix site.   
-    1. Using API key is not mandatory but it's recommended for better performance and stability. Check https://www.contentful.com/developers/docs/technical-limits/ for more details.
+    1. Using [API Key](https://www.contentful.com/blog/api-key/) is not mandatory, but it's recommended for better performance and stability. Check https://www.contentful.com/developers/docs/technical-limits/ for more details.
 1. Navigate to the CMS tab in your business manager. Under "External Collections," you will find a new namespace named "contentful-on-wix," housing all your content models and data.
 1. Add dataset to your page and choose one of the models you have in Contentful.
 1. Bind fields from your dataset to elements on your page.
