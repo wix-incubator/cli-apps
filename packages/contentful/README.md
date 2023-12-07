@@ -34,7 +34,7 @@ You can add dynamic pages to your Wix site by following Wix documentation [here]
 In order to create dynamic pages in Wix, with the ability to present list of items and a dedicated page for each item, you will need to follow the steps below.<br>
 1. Within your content model, include a field for the slug of type "Symbol" and set it to "Slug" in the Appearance section.
 2. Introduce a field called "route" of type "Symbol" in your content model. The value of this field should be the concatenation of the slug and the page prefix. For instance, if the slug is "shirt" and the page prefix is "products," the route will be "/products/shirt."
-3. In the editor, you can now add a dynamic page to the collection (both list and item page), the list page can linked to the item page by using the slug.
+3. In the editor, you can now add a dynamic page to the collection (both list and item page), the list page can linked to the item page by using the slug.<br>
 <img alt="add-dynamic-page.png" src="docs/images/add-dynamic-page.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
 
 ## Known Limitations
