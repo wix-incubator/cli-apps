@@ -1,0 +1,58 @@
+import { getAppOauth, getAppConfig, parseInstance } from '@spartans/app-lifecycle-backend';
+import { upsertContentfulConnection } from './services/external-connection-api'
+import {createTrialEndNotification} from './services/user-notifications';
+
+export async function addIntegration({ contentfulToken, wixCode, spaceId, envId, apiKey, authorization, locale }) {
+    console.log(contentfulToken, wixCode, apiKey, spaceId, authorization)
+    let oauthData, appData;
+    const AppOauth = getAppOauth();
+
+    try {
+        if (authorization) {
+            const AppConfig = getAppConfig();
+            const appSecret = await AppConfig.getSecret();
+            const instance = await parseInstance(authorization, appSecret);
+            oauthData = await AppOauth.getTokensByInstanceId(instance.instanceId);
+            appData = instance;
+        } else {
+            oauthData = await AppOauth.onLogin(wixCode);
+            appData = oauthData.responseInstance;
+
+            // we can optimize this by keeping the promise and awaiting it only at the very end after upsertContentfulConnection but this is an overkill
+            await createTrialEndNotification({
+                instanceId: appData.instanceId,
+                firstInstallationDate: oauthData.firstInstallationDate
+            }).catch(notificationError => {
+                console.error('Failed to add trial end notification', notificationError);
+            });
+        }
+    } catch (e) {
+        console.error(e);
+        throw new Error(e);
+    }
+
+    console.log('oauth', oauthData);
+
+    const wixAccessToken = oauthData.accessToken;
+
+    let connectionsJson;
+    try {
+        connectionsJson = await upsertContentfulConnection(appData.instanceId, {
+            secretKey: contentfulToken,
+            spaceId,
+            locale,
+            environmentId: envId,
+            apiKey,
+        });
+    } catch (e) {
+        // we won't throw in case wixcode is not installed for now
+        // throw new Error(e);
+    }
+
+    // we won't throw in case wixcode is not installed for now
+    // if (connectionsJson.message) {
+    //     throw new Error(connectionsJson.message);
+    // }
+
+    return { status: 200, accessToken: wixAccessToken, appData, connectionsJson }
+}
