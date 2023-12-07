@@ -104,6 +104,17 @@ describe('Page', () => {
 				expect(await driver.get.missingConnectionSection().exists()).toBeFalsy();
 			});
 		});
+
+		it('should not present show missing connection message when trial ended', async () => {
+			givenTrialEnded();
+			const driver = new PageDriver();
+			driver.given.anExternalDataList([]);
+			driver.render();
+			await waitFor(async () => {
+				expect(await driver.get.upgradeSection().isDanger()).toBeTruthy();
+				expect(await driver.get.missingConnectionSection().exists()).toBeFalsy();
+			});
+		});
 	});
 
 	it('should render all fields with test values', async () => {

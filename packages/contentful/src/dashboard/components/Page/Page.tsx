@@ -41,7 +41,7 @@ export const Page = () => {
 				</Cell>
 			}
 			<Cell>
-				{data && !data!.length ?
+				{data && !data!.length && !upgradeButton.isTrialEnded ?
 					<SectionHelper dataHook="missing-connection" appearance="danger" title={t('contentful.settings.form.missingConfiguration.title')} actionText={t('contentful.settings.form.missingConfiguration.action')!} onAction={() => {
 						window.open(`${CONNECT_URL}${getAppInstance()}`, '_blank');
 					}}>
