@@ -11,18 +11,18 @@ This application facilitates the seamless connection between your Wix site and C
    3. Select the space, language and environment you want to connect to your Wix site.
    4. Optionally - add a Contentful [API key](https://training.contentful.com/student/page/1050378-creating-and-managing-api-keys) to improve performance and stability.
       - Copy `Content Delivery API - access token` from Contentful<br>
-   <img alt="contentful-api-key.png" src="docs/images/contentful-api-key.png" style="box-shadow: 3px 3px 3px gray;"/>
+   <img alt="contentful-api-key.png" src="docs/images/contentful-api-key.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
    5. Click "Connect" to complete the connection.<br>
-   <img alt="contentful-on-wix-config.png" src="docs/images/contentful-on-wix-config.png" style="box-shadow: 3px 3px 3px gray;"/>
+   <img alt="contentful-on-wix-config.png" src="docs/images/contentful-on-wix-config.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
    <br>*Note:* Using [API Key](https://www.contentful.com/blog/api-key/) is not mandatory, but it's recommended for better performance and stability. Check https://www.contentful.com/developers/docs/technical-limits/ for more details.
 3. Navigate to the CMS tab in your business manager. Under "External Collections," you will find a new namespace named "contentful-on-wix," housing all your content models and data.<br>
-   <img alt="cms-external-connections.png" src="docs/images/cms-external-connections.png" style="box-shadow: 3px 3px 3px gray;"/>
+   <img alt="cms-external-connections.png" src="docs/images/cms-external-connections.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
 
 ## Using the models in your site (Datasets)
 1. Open Wix Editor
 2. Add dataset to your page
    1. Open Wix Editor "Add Panel" and click "CMS" followed by the + sign next to "Datasets"<br>
-   <img alt="add-data-set.png" src="docs/images/add-data-set.png" style="box-shadow: 3px 3px 3px gray;"/>
+   <img alt="add-data-set.png" src="docs/images/add-data-set.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
    2. Choose one of the models you have in Contentful
 3. Bind fields from your dataset to elements on your page.
 
@@ -33,7 +33,7 @@ In order to create dynamic pages in Wix, with the ability to present list of ite
 1. Within your content model, include a field for the slug of type "Symbol" and set it to "Slug" in the Appearance section.
 2. Introduce a field called "route" of type "Symbol" in your content model. The value of this field should be the concatenation of the slug and the page prefix. For instance, if the slug is "shirt" and the page prefix is "products," the route will be "/products/shirt."
 3. In the editor, you can now add a dynamic page to the collection (both list and item page), the list page can linked to the item page by using the slug.
-<img alt="add-dynamic-page.png" src="docs/images/add-dynamic-page.png" style="box-shadow: 3px 3px 3px gray;"/>
+<img alt="add-dynamic-page.png" src="docs/images/add-dynamic-page.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
 
 ## Known Limitations
 
