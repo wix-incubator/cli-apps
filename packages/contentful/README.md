@@ -1,5 +1,3 @@
- <link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico">
-
 <img style="margin-bottom: -50px" src="docs/images/spartans-logo.png" alt="contentful-wix.png" width="100"/><br>
 ## Contentful Integration with Wix
 
