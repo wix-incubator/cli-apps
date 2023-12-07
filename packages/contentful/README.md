@@ -1,4 +1,5 @@
-## <div style=" display: flex; align-items: center;"><img src="docs/images/contentful-wix.png" alt="contentful-wix.png" width="100"/><span>Contentful Integration with Wix</span></div>
+<img style="margin-bottom: -50px" src="docs/images/spartans-logo.png" alt="contentful-wix.png" width="100"/><br>
+## Contentful Integration with Wix
 
 This application facilitates the seamless connection between your Wix site and Contentful account, allowing you to utilize the content created in Contentful to populate your Wix site effortlessly.
 
