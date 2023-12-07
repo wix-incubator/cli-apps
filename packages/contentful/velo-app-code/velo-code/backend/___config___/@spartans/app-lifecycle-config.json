@@ -1,0 +1,11 @@
+{
+    "appBaseURL": "Your site URL (hosting the Velo code)",
+    "appId": "Your app ID",
+    "webhookPublicKey": [
+        "-----BEGIN PUBLIC KEY-----",
+        "Your APP Public Key",
+        "-----END PUBLIC KEY-----"
+    ],
+    "specs": {},
+    "supportedLanguages": ["en"]
+}
