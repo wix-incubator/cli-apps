@@ -4,7 +4,7 @@ import {
 } from '../use-external-data-services';
 import useFormState, { FormState } from '../../../hooks/useFormState';
 import { optionType } from '../../../types';
-import { Box, Button, Cell, FormField, Layout, Loader, TextButton } from '@wix/design-system';
+import { Box, Button, Cell, FormField, Layout, Loader } from '@wix/design-system';
 import SettingsFormField from '../SettingsFormField/SettingsFormField';
 import {
 	apiKeyField,
@@ -19,6 +19,7 @@ import { HOST } from '../../../constants/constants';
 import { Trans, useTranslation } from 'react-i18next';
 import { useDashboard} from '@wix/dashboard-react';
 import { externalDatabaseConnections } from '@wix/data';
+import { Link } from '../../LinkWrapper/Link';
 
 export enum FormFieldsDataHook {
   SPACE_ID = 'spaceId',
@@ -190,10 +191,6 @@ export const SettingsForm = memo((props: Props) => {
 			endpoint: externalDatabaseConnection.endpoint!,
 			configuration: mergedConfiguration,
 		});
-	};
-
-	const Link = ({children, url}: {children?: React.ReactNode, url: string}) => {
-		return <TextButton onClick={() => window.open(url, '_blank')}>{children}</TextButton>;
 	};
 
 	const handleErrors = (err: boolean, ...args: FormState<string>[]) => {

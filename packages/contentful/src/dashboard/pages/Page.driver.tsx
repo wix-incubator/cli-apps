@@ -10,7 +10,12 @@ import {
 import { cleanup, render } from '@testing-library/react';
 import React from 'react';
 import Page, {queryClient} from './page';
-import { wixApisMockServer, givenConnection, givenUpdatedConnection } from '../../../test/wix-apis-mock-server';
+import {
+	wixApisMockServer,
+	givenConnection,
+	givenUpdatedConnection,
+	givenConnectionError
+} from '../../../test/wix-apis-mock-server';
 import { afterAll, afterEach, beforeAll } from 'vitest';
 import { dashboardPageProps } from '../../../test/wix-dashboard-testkit';
 import { externalDatabaseConnections } from '@wix/data';
@@ -73,6 +78,12 @@ export class PageDriver {
 				dataHook: 'upgrade-section',
 			});
 		},
+		connectionErrorSection: () => {
+			return SectionHelperTestkit({
+				wrapper: this.baseElement!,
+				dataHook: 'connection-error-helper',
+			});
+		},
 		submit: () => {
 			return ButtonTestkit({
 				wrapper: this.baseElement!,
@@ -89,6 +100,7 @@ export class PageDriver {
 		anExternalDataList: (externalDatabaseConnections: externalDatabaseConnections.ExternalDatabaseConnection[]) => {
 			givenConnection(externalDatabaseConnections);
 		},
+		anExternalConnectionError: givenConnectionError,
 	} as const;
 
 	public when = {

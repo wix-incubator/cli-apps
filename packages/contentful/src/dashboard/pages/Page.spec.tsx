@@ -9,7 +9,7 @@ import {
 	localesMock,
 	spacesMock,
 } from '../../../test/wix-apis-mock-server';
-import { CONNECT_URL } from '../constants/constants';
+import {CONNECT_URL, DEV_MODE_NOT_SET_ERROR_CODE} from '../constants/constants';
 
 Object.defineProperty(window, 'location', {
 	writable: true,
@@ -78,6 +78,30 @@ describe('Page', () => {
 				await driver.get.upgradeButton().click();
 			});
 			expect(openSpy).toHaveBeenCalledWith('https://www.wix.com/apps/upgrade/9f6d5767-4aea-4de0-93bc-ae381c513365?appInstanceId=7bdf0b5e-eb16-4f48-84bd-70e19b3719b7', '_blank');
+		});
+	});
+
+	describe('Connection Error', () => {
+		it('should show error message when connection error', async () => {
+			const driver = new PageDriver();
+			driver.given.anExternalConnectionError();
+			driver.render();
+			await waitFor(async () => {
+				expect(await driver.get.connectionErrorSection().isDanger()).toBeTruthy();
+				expect(await driver.get.connectionErrorSection().titleText()).toBe('contentful.settings.form.errorConfiguration.title');
+				expect(await driver.get.connectionErrorSection().textContent()).toContain('contentful.settings.form.errorConfiguration.general.message');
+			});
+		});
+
+		it('should show error message when connection due to dev mode not set', async () => {
+			const driver = new PageDriver();
+			driver.given.anExternalConnectionError(DEV_MODE_NOT_SET_ERROR_CODE);
+			driver.render();
+			await waitFor(async () => {
+				expect(await driver.get.connectionErrorSection().isDanger()).toBeTruthy();
+				expect(await driver.get.connectionErrorSection().titleText()).toBe('contentful.settings.form.errorConfiguration.title');
+				expect(await driver.get.connectionErrorSection().textContent()).toContain('contentful.settings.form.errorConfiguration.noDevMode.message');
+			});
 		});
 	});
 

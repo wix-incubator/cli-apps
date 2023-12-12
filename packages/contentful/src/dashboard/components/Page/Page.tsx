@@ -5,14 +5,21 @@ import PageLayout from '../PageLayout/PageLayout';
 import React, { useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { getAppInstance, getInstanceId } from '../../utils';
-import { CHECK_PREMIUM_URL, CONNECT_URL, SUPPORT_CMS_URL, UPGRADE_URL } from '../../constants/constants';
+import {
+	CHECK_PREMIUM_URL,
+	CONNECT_URL,
+	DEV_MODE_NOT_SET_ERROR_CODE,
+	SUPPORT_CMS_URL, SUPPORT_DEV_MODE_URL,
+	UPGRADE_URL
+} from '../../constants/constants';
 import { useListingExternalDataServices } from '../SettingsFormLayout/use-external-data-services';
 import { LoadingLayout } from '../LoadingLayout/LoadingLayout';
+import { Link } from '../LinkWrapper/Link';
 
 export const Page = () => {
 	const {t} = useTranslation();
 	const [upgradeButton, setUpgradeButton] = useState({show: false, isTrialEnded: false, endOfTrialDate: ''});
-	const { data, isLoading } = useListingExternalDataServices();
+	const { data, isLoading, isError, error } = useListingExternalDataServices();
 
 	useEffect(() => {
 		const instanceId = getInstanceId();
@@ -23,7 +30,7 @@ export const Page = () => {
 			});
 	}, []);
 
-	const Link = ({children}: {children?: React.ReactNode}) => {
+	const SupportCmsLink = ({children}: {children?: React.ReactNode}) => {
 		return <a href={SUPPORT_CMS_URL} target="_blank" rel="noreferrer">{children}</a>;
 	};
 
@@ -45,12 +52,24 @@ export const Page = () => {
 					<SectionHelper dataHook="missing-connection" appearance="danger" title={t('contentful.settings.form.missingConfiguration.title')} actionText={t('contentful.settings.form.missingConfiguration.action')!} onAction={() => {
 						window.open(`${CONNECT_URL}${getAppInstance()}`, '_blank');
 					}}>
-						<Trans i18nKey="contentful.settings.form.missingConfiguration.message" components={{1: (<Link/>)}}/>
-					</SectionHelper> : <CardLayout
-						title={t('contentful.settings.card.title')!}
-					>
-						<SettingsForm externalListData={data!}/>
-					</CardLayout>}
+						<Trans i18nKey="contentful.settings.form.missingConfiguration.message" components={{1: (<SupportCmsLink/>)}}/>
+					</SectionHelper> :
+					isError ?
+						<SectionHelper dataHook="connection-error-helper" appearance="danger" title={t('contentful.settings.form.errorConfiguration.title')}>
+							<Trans
+								i18nKey={(error as any)?.details?.applicationError?.code === DEV_MODE_NOT_SET_ERROR_CODE ?
+									'contentful.settings.form.errorConfiguration.noDevMode.message' :
+									'contentful.settings.form.errorConfiguration.general.message'
+								}
+								components={{1: (<Link as="a" size="small" url={SUPPORT_DEV_MODE_URL}/>)}
+								}/>
+						</SectionHelper> :
+						<CardLayout
+							title={t('contentful.settings.card.title')!}
+						>
+							<SettingsForm externalListData={data!}/>
+						</CardLayout>
+				}
 			</Cell>
 		</PageLayout>
 	);

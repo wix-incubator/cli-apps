@@ -28,6 +28,9 @@
   "contentful.settings.form.errorUpdateSettings": "Error updating settings - please check your credentials",
   "contentful.settings.form.successUpdateSettings": "Settings updated successfully",
   "contentful.settings.form.missingConfiguration.title": "Missing Connection",
+  "contentful.settings.form.errorConfiguration.title": "Connection Error",
+  "contentful.settings.form.errorConfiguration.noDevMode.message": "Dev Mode is required to use this app. <1>Enable Dev Mode</1> in order to use this app",
+  "contentful.settings.form.errorConfiguration.general.message": "Cannot connect to Contentful. Please try again later",
   "contentful.settings.form.missingConfiguration.action": "Connect",
   "contentful.settings.form.missingConfiguration.message": "<1>Install CMS app</1> and connect your Contentful account to start using this app"
 }
