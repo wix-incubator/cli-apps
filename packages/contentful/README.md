@@ -1,6 +1,5 @@
 <img style="margin-bottom: -50px" src="docs/images/spartans-logo.png" alt="contentful-wix.png" width="100"/><br>
 ## Contentful Integration with Wix
-
 This application facilitates the seamless connection between your Wix site and Contentful account, allowing you to utilize the content created in Contentful to populate your Wix site effortlessly.
 
 ## Installation
@@ -30,10 +29,24 @@ This application facilitates the seamless connection between your Wix site and C
 Dynamic pages are a type of web page designed to showcase content from a CMS collection. They enable the creation of websites capable of efficiently managing extensive content while maintaining a consistent design and user experience.<br>
 You can add dynamic pages to your Wix site by following Wix documentation [here](https://support.wix.com/en/article/cms-about-dynamic-pages).<br>
 In order to create dynamic pages in Wix, with the ability to present list of items and a dedicated page for each item, you will need to follow the steps below.<br>
-1. Within your content model, include a field for the slug of type "Symbol" and set it to "Slug" in the Appearance section.
-2. Introduce a field called "route" of type "Symbol" in your content model. The value of this field should be the concatenation of the slug and the page prefix. For instance, if the slug is "shirt" and the page prefix is "products," the route will be "/products/shirt."
-3. In the editor, you can now add a dynamic page to the collection (both list and item page), the list page can linked to the item page by using the slug.<br>
-<img alt="add-dynamic-page.png" src="docs/images/add-dynamic-page.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
+1. Within your content model, a Slug field:
+   1. create a "Text" field (Symbol), name it `Slug` with the id `slug`.<br>
+      <img alt="Slug field details" src="docs/images/slug-field-details.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
+   2.  Set its appearance to "Slug" in the Appearance section.<br>
+      <img alt="Slug field appearance" src="docs/images/slug-field-appearance.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
+   3. Populate the field with a url friendly unique value for each entry (i.e. `"winter-2023-blue-dress"`).<br>
+2. In the Wix editor, you can now add a dynamic page to the collection - list page and item page
+   1. Select `Databases` from the left menu in the editor
+      -. If you don't see it, make sure [Dev Mode](https://dev.wix.com/docs/develop-websites/articles/getting-started/resources/about-velo-by-wix#to-enable-velo-on-your-site) is enabled in your site.
+   2. Select the collection and select the `Add Dynamic page` option from the actions menu.<br>
+   <img alt="add-dynamic-page.png" src="docs/images/add-dynamic-page.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
+   3. Add an item page, by selecting the relevant option and clicking `Add to Site`<br>
+   <img alt="add-dynamic-page.png" src="docs/images/dynamic-page-select-type.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
+   4. Repeat steps 2 and 3 for the list page.<br>
+   5. In the list page, click the link/button you would like to link to the item page in any of the items and select Connect with CMS<br>
+   <img alt="add-dynamic-page.png" src="docs/images/dynamic-page-connect-with-cms.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
+   6. Select the item page you created in step 3.<br>
+    <img alt="add-dynamic-page.png" src="docs/images/dynamic-page-select-item-page.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
 
 ## Known Limitations
 

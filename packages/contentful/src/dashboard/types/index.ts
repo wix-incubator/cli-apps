@@ -5,4 +5,5 @@ export interface settingsFieldType {
   placeholder: string;
   errorStatusMessage: string;
   infoContent?: string;
+  statusMessage?: string;
 }

@@ -249,20 +249,6 @@ export const SettingsForm = memo((props: Props) => {
 				</Cell>
 				<Cell>
 					<SettingsFormField
-						label={t(apiKeyField.label)}
-						placeholder={t(apiKeyField.placeholder)!}
-						errorStatusMessage={t(apiKeyField.errorStatusMessage)!}
-						infoContent={<Trans i18nKey={apiKeyField.infoContent} components={{1: (<Link url="https://www.contentful.com/blog/api-key/"/>)}}/>}
-						errorType="warning"
-						formState={apiKeyState}
-						errorHandler={(err) =>
-                    handleErrors!(err, oauthTokenState, apiKeyState)
-						}
-						dataHook={FormFieldsDataHook.API_KEY}
-					/>
-				</Cell>
-				<Cell>
-					<SettingsFormField
 						required
 						label={t(oauthTokenField.label)}
 						placeholder={t(oauthTokenField.placeholder)!}
@@ -270,6 +256,21 @@ export const SettingsForm = memo((props: Props) => {
 						infoContent={<Trans i18nKey={oauthTokenField.infoContent} components={{1: (<Link url="https://app.contentful.com/account/profile/cma_tokens"/>)}}/>}
 						formState={oauthTokenState}
 						dataHook={FormFieldsDataHook.OAUTH_TOKEN}
+					/>
+				</Cell>
+				<Cell>
+					<SettingsFormField
+						label={t(apiKeyField.label)}
+						placeholder={t(apiKeyField.placeholder)!}
+						errorStatusMessage={t(apiKeyField.errorStatusMessage)!}
+						infoContent={<Trans i18nKey={apiKeyField.infoContent} components={{1: (<Link url="https://www.contentful.com/blog/api-key/"/>)}}/>}
+						errorType="warning"
+						formState={apiKeyState}
+						statusMessage={<Trans i18nKey={apiKeyField.statusMessage} components={{1: (<span style={{fontWeight: 'bold'}}/>)}}/>}
+						errorHandler={(err) =>
+							handleErrors!(err, oauthTokenState, apiKeyState)
+						}
+						dataHook={FormFieldsDataHook.API_KEY}
 					/>
 				</Cell>
 				<Cell>
