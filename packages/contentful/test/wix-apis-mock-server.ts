@@ -26,6 +26,22 @@ export function givenConnection(externalDatabaseConnections: externalDatabaseCon
 	);
 }
 
+export function givenConnectionError(errorCode: string = 'INTERNAL_SERVER_ERROR') {
+	wixApisMockServer.use(
+		http.get('https://readonly.wixapis.com/wix-data/v1/external-database-connections', () => {
+			return HttpResponse.json({
+				message: `${errorCode}: error`,
+				details: {
+					applicationError: {
+						code: errorCode,
+						description: `${errorCode}: got errors.`
+					}
+				}
+			}, { status: 400 });
+		})
+	);
+}
+
 export function givenAppPremium() {
 	wixApisMockServer.use(
 		http.get(CHECK_PREMIUM_URL, () => {

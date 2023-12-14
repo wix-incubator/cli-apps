@@ -4,7 +4,7 @@ import {
 } from '../use-external-data-services';
 import useFormState, { FormState } from '../../../hooks/useFormState';
 import { optionType } from '../../../types';
-import { Box, Button, Cell, FormField, Layout, Loader, TextButton } from '@wix/design-system';
+import { Box, Button, Cell, FormField, Layout, Loader } from '@wix/design-system';
 import SettingsFormField from '../SettingsFormField/SettingsFormField';
 import {
 	apiKeyField,
@@ -19,6 +19,7 @@ import { HOST } from '../../../constants/constants';
 import { Trans, useTranslation } from 'react-i18next';
 import { useDashboard} from '@wix/dashboard-react';
 import { externalDatabaseConnections } from '@wix/data';
+import { Link } from '../../LinkWrapper/Link';
 
 export enum FormFieldsDataHook {
   SPACE_ID = 'spaceId',
@@ -192,10 +193,6 @@ export const SettingsForm = memo((props: Props) => {
 		});
 	};
 
-	const Link = ({children, url}: {children?: React.ReactNode, url: string}) => {
-		return <TextButton onClick={() => window.open(url, '_blank')}>{children}</TextButton>;
-	};
-
 	const handleErrors = (err: boolean, ...args: FormState<string>[]) => {
 		if (args.some((state) => state.value)) {
 			return;
@@ -252,20 +249,6 @@ export const SettingsForm = memo((props: Props) => {
 				</Cell>
 				<Cell>
 					<SettingsFormField
-						label={t(apiKeyField.label)}
-						placeholder={t(apiKeyField.placeholder)!}
-						errorStatusMessage={t(apiKeyField.errorStatusMessage)!}
-						infoContent={<Trans i18nKey={apiKeyField.infoContent} components={{1: (<Link url="https://www.contentful.com/blog/api-key/"/>)}}/>}
-						errorType="warning"
-						formState={apiKeyState}
-						errorHandler={(err) =>
-                    handleErrors!(err, oauthTokenState, apiKeyState)
-						}
-						dataHook={FormFieldsDataHook.API_KEY}
-					/>
-				</Cell>
-				<Cell>
-					<SettingsFormField
 						required
 						label={t(oauthTokenField.label)}
 						placeholder={t(oauthTokenField.placeholder)!}
@@ -273,6 +256,21 @@ export const SettingsForm = memo((props: Props) => {
 						infoContent={<Trans i18nKey={oauthTokenField.infoContent} components={{1: (<Link url="https://app.contentful.com/account/profile/cma_tokens"/>)}}/>}
 						formState={oauthTokenState}
 						dataHook={FormFieldsDataHook.OAUTH_TOKEN}
+					/>
+				</Cell>
+				<Cell>
+					<SettingsFormField
+						label={t(apiKeyField.label)}
+						placeholder={t(apiKeyField.placeholder)!}
+						errorStatusMessage={t(apiKeyField.errorStatusMessage)!}
+						infoContent={<Trans i18nKey={apiKeyField.infoContent} components={{1: (<Link url="https://www.contentful.com/blog/api-key/"/>)}}/>}
+						errorType="warning"
+						formState={apiKeyState}
+						statusMessage={<Trans i18nKey={apiKeyField.statusMessage} components={{1: (<span style={{fontWeight: 'bold'}}/>)}}/>}
+						errorHandler={(err) =>
+							handleErrors!(err, oauthTokenState, apiKeyState)
+						}
+						dataHook={FormFieldsDataHook.API_KEY}
 					/>
 				</Cell>
 				<Cell>

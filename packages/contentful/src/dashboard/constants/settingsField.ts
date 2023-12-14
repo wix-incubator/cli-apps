@@ -24,6 +24,7 @@ export const apiKeyField: settingsFieldType = {
 	placeholder: 'contentful.settings.form.apiKeyPlaceholder',
 	errorStatusMessage: 'contentful.settings.form.apiKeyErrorStatusMessage',
 	infoContent: 'contentful.settings.form.apiKeyInfoContent',
+	statusMessage: 'contentful.settings.form.apiKeyInfoStatusMessage',
 };
 
 export const oauthTokenField: settingsFieldType = {

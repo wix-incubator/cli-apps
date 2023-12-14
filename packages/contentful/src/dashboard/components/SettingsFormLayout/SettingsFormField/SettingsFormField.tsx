@@ -12,6 +12,7 @@ interface Props {
   label: string;
   infoContent?: string | React.ReactNode;
   inputValue?: string;
+  statusMessage?: string | React.ReactNode;
   dataHook?: string;
 }
 
@@ -24,12 +25,14 @@ export default function SettingsFormField({
 	errorStatusMessage = '',
 	label = '',
 	infoContent = undefined,
+	statusMessage,
 	...restProps
 }: Props) {
 	return (
 		<FormField
 			label={label || ''}
 			infoContent={infoContent}
+			statusMessage={statusMessage}
 		>
 			<Input
 				placeholder={placeholder ?? ''}
