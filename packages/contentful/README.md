@@ -29,7 +29,7 @@ This application facilitates the seamless connection between your Wix site and C
 Dynamic pages are a type of web page designed to showcase content from a CMS collection. They enable the creation of websites capable of efficiently managing extensive content while maintaining a consistent design and user experience.<br>
 You can add dynamic pages to your Wix site by following Wix documentation [here](https://support.wix.com/en/article/cms-about-dynamic-pages).<br>
 In order to create dynamic pages in Wix, with the ability to present list of items and a dedicated page for each item, you will need to follow the steps below.<br>
-1. Within your content model, a Slug field:
+1. Within your content model, define a Slug field:
    1. create a "Text" field (Symbol), name it `Slug` with the id `slug`.<br>
       <img alt="Slug field details" src="docs/images/slug-field-details.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
    2.  Set its appearance to "Slug" in the Appearance section.<br>
