@@ -4,7 +4,7 @@ import {
 } from '../use-external-data-services';
 import useFormState, { FormState } from '../../../hooks/useFormState';
 import { optionType } from '../../../types';
-import { Box, Button, Cell, FormField, Layout, Loader } from '@wix/design-system';
+import { Box, Button, Cell, FormField, Layout, Loader, SectionHelper } from '@wix/design-system';
 import SettingsFormField from '../SettingsFormField/SettingsFormField';
 import {
 	apiKeyField,
@@ -17,9 +17,11 @@ import Dropdown from '../Dropdown/Dropdown';
 import { ContentfulClientApi, createClient } from 'contentful';
 import { HOST } from '../../../constants/constants';
 import { Trans, useTranslation } from 'react-i18next';
-import { useDashboard} from '@wix/dashboard-react';
+import { useDashboard } from '@wix/dashboard-react';
 import { externalDatabaseConnections } from '@wix/data';
 import { Link } from '../../LinkWrapper/Link';
+import accessTokenForConnection from '../../../services/access-token-for-connection';
+import {getAppInstance, getContentfulAuthorizeUrl} from '../../../utils';
 
 export enum FormFieldsDataHook {
   SPACE_ID = 'spaceId',
@@ -72,6 +74,7 @@ export const SettingsForm = memo((props: Props) => {
     ContentfulClientApi<undefined> | undefined
   >(undefined);
 	const dashboard = useDashboard();
+	const isSingleEnvMode = props.externalListData[0]?.configuration?.mode === 'contentful-market-app';
 
 	useEffect(() => {
 		if (props.externalListData && props.externalListData[0]) {
@@ -89,14 +92,20 @@ export const SettingsForm = memo((props: Props) => {
 			selectedLanguageState.setValue(
 				props.externalListData[0].configuration?.locale ?? ''
 			);
-			setContentfulClient(
-				createClient({
-					space: props.externalListData[0].configuration?.spaceId ?? '',
-					environment: props.externalListData[0].configuration?.environmentId ?? '',
-					host: HOST,
-					accessToken: props.externalListData[0].configuration?.secretKey ?? '',
-				})
-			);
+			(isSingleEnvMode ?
+				accessTokenForConnection(props.externalListData[0].configuration, getAppInstance())
+					.then(({accessToken}) => accessToken)
+				: Promise.resolve(props.externalListData[0].configuration?.secretKey)
+			).then((accessToken) => {
+				setContentfulClient(
+					createClient({
+						space: props.externalListData[0].configuration?.spaceId ?? '',
+						environment: props.externalListData[0].configuration?.environmentId ?? '',
+						host: HOST,
+						accessToken,
+					})
+				);
+			});
 		}
 	}, [props.externalListData]);
 
@@ -127,7 +136,7 @@ export const SettingsForm = memo((props: Props) => {
 	}, [oauthTokenState.value]);
 
 	useEffect(() => {
-		spaceIdState.value && fetch(`https://api.contentful.com/spaces/${spaceIdState.value}/environments`,{headers: { Authorization: `Bearer ${oauthTokenState.value}` }})
+		oauthTokenState.value && spaceIdState.value && fetch(`https://api.contentful.com/spaces/${spaceIdState.value}/environments`,{headers: { Authorization: `Bearer ${oauthTokenState.value}` }})
 			.then((res) => res.json())
 			.then((data : any) => {
 				setEnvsOptions(
@@ -137,7 +146,7 @@ export const SettingsForm = memo((props: Props) => {
 					}))
 				);
 			});
-	}, [spaceIdState.value]);
+	}, [spaceIdState.value, oauthTokenState.value]);
 
 	useEffect(() => {
 		if (
@@ -205,34 +214,48 @@ export const SettingsForm = memo((props: Props) => {
 	return (
 		<form onSubmit={submitHandler}>
 			<Layout>
-				<Cell>
-					<FormField label={t(spaceIdField.label)}>
-						<Dropdown
-							required
-							keys={spaceIdField}
-							options={spacesOptions}
-							selected={spaceIdState.value}
-							setSelected={spaceIdState.setValue}
-							setSelectedError={spaceIdState.setError}
-							selectedError={spaceIdState.error}
-							dataHook={FormFieldsDataHook.SPACE_ID}
-						/>
-					</FormField>
-				</Cell>
-				<Cell>
-					<FormField label={t(environmentIdField.label)}>
-						<Dropdown
-							required
-							keys={environmentIdField}
-							options={envsOptions}
-							selected={environmentIdState.value}
-							setSelected={environmentIdState.setValue}
-							setSelectedError={environmentIdState.setError}
-							selectedError={environmentIdState.error}
-							dataHook={FormFieldsDataHook.ENVIRONMENT_ID}
-						/>
-					</FormField>
-				</Cell>
+				{isSingleEnvMode ? (
+					<Cell>
+						<SectionHelper
+							fullWidth
+							dataHook="contentful-marketplace" appearance="standard"
+							title={t('contentful.settings.form.contentful-app-mode.title')}
+							actionText={t('contentful.settings.form.contentful-app-mode.action')!} onAction={() => {
+								window.open(getContentfulAuthorizeUrl(), '_blank');
+							}}>{t('contentful.settings.form.contentful-app-mode.message')}</SectionHelper>
+					</Cell>
+				) : (
+					<>
+						<Cell>
+							<FormField label={t(spaceIdField.label)}>
+								<Dropdown
+									required
+									keys={spaceIdField}
+									options={spacesOptions}
+									selected={spaceIdState.value}
+									setSelected={spaceIdState.setValue}
+									setSelectedError={spaceIdState.setError}
+									selectedError={spaceIdState.error}
+									dataHook={FormFieldsDataHook.SPACE_ID}
+								/>
+							</FormField>
+						</Cell>
+						<Cell>
+							<FormField label={t(environmentIdField.label)}>
+								<Dropdown
+									required
+									keys={environmentIdField}
+									options={envsOptions}
+									selected={environmentIdState.value}
+									setSelected={environmentIdState.setValue}
+									setSelectedError={environmentIdState.setError}
+									selectedError={environmentIdState.error}
+									dataHook={FormFieldsDataHook.ENVIRONMENT_ID}
+								/>
+							</FormField>
+						</Cell>
+					</>
+				)}
 				<Cell>
 					<FormField label={t(languageField.label)}>
 						<Dropdown
@@ -247,17 +270,19 @@ export const SettingsForm = memo((props: Props) => {
 						/>
 					</FormField>
 				</Cell>
-				<Cell>
-					<SettingsFormField
-						required
-						label={t(oauthTokenField.label)}
-						placeholder={t(oauthTokenField.placeholder)!}
-						errorStatusMessage={t(oauthTokenField.errorStatusMessage)!}
-						infoContent={<Trans i18nKey={oauthTokenField.infoContent} components={{1: (<Link url="https://app.contentful.com/account/profile/cma_tokens"/>)}}/>}
-						formState={oauthTokenState}
-						dataHook={FormFieldsDataHook.OAUTH_TOKEN}
-					/>
-				</Cell>
+				{isSingleEnvMode ? null : (
+					<Cell>
+						<SettingsFormField
+							required
+							label={t(oauthTokenField.label)}
+							placeholder={t(oauthTokenField.placeholder)!}
+							errorStatusMessage={t(oauthTokenField.errorStatusMessage)!}
+							infoContent={<Trans i18nKey={oauthTokenField.infoContent} components={{1: (<Link url="https://app.contentful.com/account/profile/cma_tokens"/>)}}/>}
+							formState={oauthTokenState}
+							dataHook={FormFieldsDataHook.OAUTH_TOKEN}
+						/>
+					</Cell>
+				)}
 				<Cell>
 					<SettingsFormField
 						label={t(apiKeyField.label)}

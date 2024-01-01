@@ -32,6 +32,9 @@
   "contentful.settings.form.errorConfiguration.title": "Connection Error",
   "contentful.settings.form.errorConfiguration.noDevMode.message": "Dev Mode is required to use this app. <1>Enable Dev Mode</1> in order to use this app",
   "contentful.settings.form.errorConfiguration.general.message": "Cannot connect to Contentful. Please try again later",
+  "contentful.settings.form.contentful-app-mode.title": "Contentful Marketplace Integration",
+  "contentful.settings.form.contentful-app-mode.action": "Authorize",
+  "contentful.settings.form.contentful-app-mode.message": "Contentful Integration is installed from the Contentful Marketplace in the context of a specific space and environment. If you wish to change the environment and space, click the 'Authorize' button to authorize access to all spaces and environments.",
   "contentful.settings.form.missingConfiguration.action": "Connect",
   "contentful.settings.form.missingConfiguration.message": "<1>Install CMS app</1> and connect your Contentful account to start using this app"
 }
