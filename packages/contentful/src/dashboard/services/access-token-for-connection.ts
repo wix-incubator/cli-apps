@@ -1,7 +1,7 @@
-import {ExternalDatabaseConnection} from '@wix/data/build/cjs/src/data-v1-external-database-connection.universal';
+import type { externalDatabaseConnections } from '@wix/data';
 
 
-export default async (configuration: ExternalDatabaseConnection['configuration'], instance: string) => {
+export default async (configuration: externalDatabaseConnections.ExternalDatabaseConnection['configuration'], instance: string) => {
 	return fetch('https://www.wixapis.com/contentful-funnel-nextjs/connection/contentful/access', {
 		method: 'POST',
 		headers: {
