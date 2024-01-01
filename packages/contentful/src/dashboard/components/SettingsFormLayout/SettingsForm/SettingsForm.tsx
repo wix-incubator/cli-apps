@@ -93,8 +93,9 @@ export const SettingsForm = memo((props: Props) => {
 				props.externalListData[0].configuration?.locale ?? ''
 			);
 			(isSingleEnvMode ?
-				accessTokenForConnection(props.externalListData[0].configuration, getAppInstance())
-					.then(({accessToken}) => accessToken)
+					dashboard.getAccessToken()
+						.then((wixAccessToken) => accessTokenForConnection(props.externalListData[0].configuration, wixAccessToken)
+							.then(({ accessToken }) => accessToken))
 				: Promise.resolve(props.externalListData[0].configuration?.secretKey)
 			).then((accessToken) => {
 				setContentfulClient(
