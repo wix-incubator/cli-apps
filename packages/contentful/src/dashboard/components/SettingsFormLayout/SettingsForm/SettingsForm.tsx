@@ -21,7 +21,7 @@ import { useDashboard } from '@wix/dashboard-react';
 import { externalDatabaseConnections } from '@wix/data';
 import { Link } from '../../LinkWrapper/Link';
 import accessTokenForConnection from '../../../services/access-token-for-connection';
-import {getAppInstance, getContentfulAuthorizeUrl} from '../../../utils';
+import {getContentfulAuthorizeUrl} from '../../../utils';
 
 export enum FormFieldsDataHook {
   SPACE_ID = 'spaceId',
@@ -93,9 +93,9 @@ export const SettingsForm = memo((props: Props) => {
 				props.externalListData[0].configuration?.locale ?? ''
 			);
 			(isSingleEnvMode ?
-					dashboard.getAccessToken()
-						.then((wixAccessToken) => accessTokenForConnection(props.externalListData[0].configuration, wixAccessToken)
-							.then(({ accessToken }) => accessToken))
+				dashboard.getAccessToken()
+					.then((wixAccessToken) => accessTokenForConnection(props.externalListData[0].configuration, wixAccessToken)
+						.then(({ accessToken }) => accessToken))
 				: Promise.resolve(props.externalListData[0].configuration?.secretKey)
 			).then((accessToken) => {
 				setContentfulClient(
