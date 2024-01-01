@@ -1,4 +1,4 @@
-import {CONNECT_URL} from "./constants/constants";
+import {CONNECT_URL} from './constants/constants';
 
 export function getAppInstance() {
 	return new URLSearchParams(window.location.search).get('instance')!;

@@ -20,8 +20,8 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useDashboard } from '@wix/dashboard-react';
 import { externalDatabaseConnections } from '@wix/data';
 import { Link } from '../../LinkWrapper/Link';
-import accessTokenForConnection from "../../../services/access-token-for-connection";
-import {getAppInstance, getContentfulAuthorizeUrl} from "../../../utils";
+import accessTokenForConnection from '../../../services/access-token-for-connection';
+import {getAppInstance, getContentfulAuthorizeUrl} from '../../../utils';
 
 export enum FormFieldsDataHook {
   SPACE_ID = 'spaceId',
@@ -94,17 +94,17 @@ export const SettingsForm = memo((props: Props) => {
 			);
 			(isSingleEnvMode ?
 				accessTokenForConnection(props.externalListData[0].configuration, getAppInstance())
-						.then(({accessToken}) => accessToken)
+					.then(({accessToken}) => accessToken)
 				: Promise.resolve(props.externalListData[0].configuration?.secretKey)
 			).then((accessToken) => {
-					setContentfulClient(
-						createClient({
-							space: props.externalListData[0].configuration?.spaceId ?? '',
-							environment: props.externalListData[0].configuration?.environmentId ?? '',
-							host: HOST,
-							accessToken,
-						})
-					);
+				setContentfulClient(
+					createClient({
+						space: props.externalListData[0].configuration?.spaceId ?? '',
+						environment: props.externalListData[0].configuration?.environmentId ?? '',
+						host: HOST,
+						accessToken,
+					})
+				);
 			});
 		}
 	}, [props.externalListData]);
@@ -215,16 +215,16 @@ export const SettingsForm = memo((props: Props) => {
 		<form onSubmit={submitHandler}>
 			<Layout>
 				{isSingleEnvMode ? (
-          <Cell>
-            <SectionHelper
-              fullWidth
-              dataHook="contentful-marketplace" appearance="standard"
-              title={t('contentful.settings.form.contentful-app-mode.title')}
-              actionText={t('contentful.settings.form.contentful-app-mode.action')!} onAction={() => {
-              window.open(getContentfulAuthorizeUrl(), '_blank');
-            }}>{t('contentful.settings.form.contentful-app-mode.message')}</SectionHelper>
-          </Cell>
-        ) : (
+					<Cell>
+						<SectionHelper
+							fullWidth
+							dataHook="contentful-marketplace" appearance="standard"
+							title={t('contentful.settings.form.contentful-app-mode.title')}
+							actionText={t('contentful.settings.form.contentful-app-mode.action')!} onAction={() => {
+								window.open(getContentfulAuthorizeUrl(), '_blank');
+							}}>{t('contentful.settings.form.contentful-app-mode.message')}</SectionHelper>
+					</Cell>
+				) : (
 					<>
 						<Cell>
 							<FormField label={t(spaceIdField.label)}>
