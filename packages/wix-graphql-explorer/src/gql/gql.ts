@@ -15,12 +15,22 @@ import * as types from './graphql';
  */
 const documents = {
     "\n        query GetOAuthApps {\n          authManagementOAuthAppsV1OAuthApps {\n            items {\n              id\n              name\n            }\n          }\n        }\n      ": types.GetOAuthAppsDocument,
+    "\n\t\tquery GetMembers {\n\t\t\tmembersMembersV1Members {\n\t\t\t\titems {\n\t\t\t\t\tid\n\t\t\t\t\tprofile {\n\t\t\t\t\t\tnickname\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t  ": types.GetMembersDocument,
+    "\n\t\tquery GetOAuthApps {\n\t\t  authManagementOAuthAppsV1OAuthApps {\n\t\t\titems {\n\t\t\t  id\n\t\t\t  name\n\t\t\t}\n\t\t  }\n\t\t}\n\t  ": types.GetOAuthAppsDocument,
 };
 
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n        query GetOAuthApps {\n          authManagementOAuthAppsV1OAuthApps {\n            items {\n              id\n              name\n            }\n          }\n        }\n      "): typeof import('./graphql').GetOAuthAppsDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n\t\tquery GetMembers {\n\t\t\tmembersMembersV1Members {\n\t\t\t\titems {\n\t\t\t\t\tid\n\t\t\t\t\tprofile {\n\t\t\t\t\t\tnickname\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t  "): typeof import('./graphql').GetMembersDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n\t\tquery GetOAuthApps {\n\t\t  authManagementOAuthAppsV1OAuthApps {\n\t\t\titems {\n\t\t\t  id\n\t\t\t  name\n\t\t\t}\n\t\t  }\n\t\t}\n\t  "): typeof import('./graphql').GetOAuthAppsDocument;
 
 
 export function graphql(source: string) {

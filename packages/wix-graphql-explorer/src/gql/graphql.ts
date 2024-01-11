@@ -166,10 +166,46 @@ export type ApiValidationErrorInput = {
   fieldViolations?: InputMaybe<Array<InputMaybe<ValidationErrorFieldViolationInput>>>;
 };
 
+export type AuthManagementOAuthAppsV1OAuthAppRequestInput = {
+  id: Scalars['ID']['input'];
+};
+
+export type BlogCategoriesV3CategoryRequestInput = {
+  /**
+   * List of additional category fields to include in the response. For example, use the `URL` fieldset to retrieve the url field in
+   * the response in addition to the category’s base fields. Base fields don’t include any of the supported fieldset values. By default
+   * only the category’s base fields are returned.
+   */
+  fieldsets?: InputMaybe<Array<InputMaybe<NpmCommunitiesPlatformizedBlogV3CategoryFieldField>>>;
+  id: Scalars['ID']['input'];
+};
+
+export type BlogPostsV3PostRequestInput = {
+  /**
+   * List of additional post fields to include in the response. For example, use the `URL` fieldset to retrieve the url field in
+   * the response in addition to the post’s base fields. Base fields don’t include any of the supported fieldset values. By default
+   * only the post’s base fields are returned.
+   */
+  fieldsets?: InputMaybe<Array<InputMaybe<NpmCommunitiesPlatformizedBlogV3PostFieldField>>>;
+  id: Scalars['ID']['input'];
+};
+
+export type BlogTagsV3TagRequestInput = {
+  /**
+   * List of additional tag fields to include in the response. For example, use the `URL` fieldset to retrieve the url field in
+   * the response in addition to the tag's base fields. Base fields don’t include any of the supported fieldset values. By default
+   * only the tag's base fields are returned.
+   */
+  fieldsets?: InputMaybe<Array<InputMaybe<NpmCommunitiesPlatformizedBlogTagFieldField>>>;
+  id: Scalars['ID']['input'];
+};
+
 export type BookingsAttendanceV2Attendance = {
   __typename?: 'BookingsAttendanceV2Attendance';
   /** Corresponding booking ID. */
   bookingId?: Maybe<Scalars['String']['output']>;
+  /** Corresponding event ID. */
+  eventId?: Maybe<Scalars['String']['output']>;
   /** ID of the `Attendance` object. */
   id?: Maybe<Scalars['String']['output']>;
   /**
@@ -185,7 +221,7 @@ export type BookingsAttendanceV2Attendance = {
   /** Corresponding session ID. */
   sessionId?: Maybe<Scalars['String']['output']>;
   /**
-   * Status indicating if any particpants attended the session:
+   * Status indicating if any participants attended the session:
    *
    * + `NOT_SET`: There is no available attendance information.
    * + `ATTENDED`: At least a single participant attended the session.
@@ -203,6 +239,8 @@ export enum BookingsAttendanceV2AttendanceAttendanceStatus {
 export type BookingsAttendanceV2AttendanceInput = {
   /** Corresponding booking ID. */
   bookingId?: InputMaybe<Scalars['String']['input']>;
+  /** Corresponding event ID. */
+  eventId?: InputMaybe<Scalars['String']['input']>;
   /** ID of the `Attendance` object. */
   id?: InputMaybe<Scalars['String']['input']>;
   /**
@@ -218,13 +256,37 @@ export type BookingsAttendanceV2AttendanceInput = {
   /** Corresponding session ID. */
   sessionId?: InputMaybe<Scalars['String']['input']>;
   /**
-   * Status indicating if any particpants attended the session:
+   * Status indicating if any participants attended the session:
    *
    * + `NOT_SET`: There is no available attendance information.
    * + `ATTENDED`: At least a single participant attended the session.
    * + `NOT_ATTENDED`: No participants attended the session.
    */
   status?: InputMaybe<BookingsAttendanceV2AttendanceAttendanceStatus>;
+};
+
+export type BookingsAttendanceV2AttendanceRequestInput = {
+  id: Scalars['ID']['input'];
+};
+
+export type BookingsAttendanceV2BulkAttendanceResult = {
+  __typename?: 'BookingsAttendanceV2BulkAttendanceResult';
+  item?: Maybe<BookingsAttendanceV2Attendance>;
+  itemMetadata?: Maybe<CommonItemMetadata>;
+};
+
+export type BookingsAttendanceV2BulkSetAttendanceRequestInput = {
+  /** The attendance information for a booked sessions that you want to create or update. */
+  attendanceList?: InputMaybe<Array<InputMaybe<BookingsAttendanceV2AttendanceInput>>>;
+  returnFullEntity?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type BookingsAttendanceV2BulkSetAttendanceResponse = {
+  __typename?: 'BookingsAttendanceV2BulkSetAttendanceResponse';
+  /** Total successes and failures of the bulk set attendance action. */
+  bulkActionMetadata?: Maybe<CommonBulkActionMetadata>;
+  /** The created or updated attendance information for the booked sessions. */
+  results?: Maybe<Array<Maybe<BookingsAttendanceV2BulkAttendanceResult>>>;
 };
 
 export type BookingsAttendanceV2QueryAttendanceRequestInput = {
@@ -835,21 +897,6 @@ export type BookingsCommonV1Location = {
   locationType?: Maybe<BookingsCommonV1LocationLocationType>;
 };
 
-export type BookingsCommonV1LocationInput = {
-  /** Free text address used when locationType is `OWNER_CUSTOM`. */
-  address?: InputMaybe<Scalars['String']['input']>;
-  /** Custom address, used when locationType is `"OWNER_CUSTOM"`. Might be used when locationType is `"CUSTOM"` in case the owner sets a custom address for the session which is different from the default. */
-  customAddress?: InputMaybe<BookingsUpstreamCommonAddressInput>;
-  /**
-   * Location type.
-   * One of:
-   * - `"OWNER_BUSINESS"` The business address as set in the site’s general settings.
-   * - `"OWNER_CUSTOM"` The address as set when creating the service.
-   * - `"CUSTOM"` The address set for the individual session.
-   */
-  locationType?: InputMaybe<BookingsCommonV1LocationLocationType>;
-};
-
 export enum BookingsCommonV1LocationLocationType {
   Custom = 'CUSTOM',
   OwnerBusiness = 'OWNER_BUSINESS',
@@ -867,15 +914,6 @@ export type BookingsCommonV1Price = {
   downPayAmount?: Maybe<Scalars['String']['output']>;
 };
 
-export type BookingsCommonV1PriceInput = {
-  /** Required payment amount. */
-  amount?: InputMaybe<Scalars['String']['input']>;
-  /** Currency in which the amount is quoted. */
-  currency?: InputMaybe<Scalars['String']['input']>;
-  /** Amount of a down payment or deposit as part of the transaction. */
-  downPayAmount?: InputMaybe<Scalars['String']['input']>;
-};
-
 export type BookingsCommonV1Rate = {
   __typename?: 'BookingsCommonV1Rate';
   /**
@@ -888,19 +926,6 @@ export type BookingsCommonV1Rate = {
    * When present in an update request, the `default_varied_price` is ignored to support backward compatibility.
    */
   priceText?: Maybe<Scalars['String']['output']>;
-};
-
-export type BookingsCommonV1RateInput = {
-  /**
-   * Mapping between a named price option, for example, adult or child prices, and the price, currency, and down payment amount.
-   * When present in an update request, the `default_varied_price` is ignored to support backward compatibility.
-   */
-  labeledPriceOptions?: InputMaybe<BookingsCommonV1PriceInput>;
-  /**
-   * Textual price information used when **Price Per Session** is set to **Custom Price** in the app's service details page.
-   * When present in an update request, the `default_varied_price` is ignored to support backward compatibility.
-   */
-  priceText?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type BookingsSchedulesV1CalendarConference = {
@@ -940,34 +965,6 @@ export enum BookingsSchedulesV1CalendarConferenceConferenceType {
   Undefined = 'UNDEFINED'
 }
 
-export type BookingsSchedulesV1CalendarConferenceInput = {
-  /** ID of the account owner in the video conferencing service. */
-  accountOwnerId?: InputMaybe<Scalars['String']['input']>;
-  /**
-   * Conference type.
-   * <!--ONLY:VELO
-   * One of:
-   * - `"ONLINE_MEETING_PROVIDER"` API-generated online meeting.
-   * - `"CUSTOM"` User-defined meeting.
-   * <!--END:ONLY:VELO-->
-   */
-  conferenceType?: InputMaybe<BookingsSchedulesV1CalendarConferenceConferenceType>;
-  /** Conference description. */
-  description?: InputMaybe<Scalars['String']['input']>;
-  /** Conference meeting ID in the provider's conferencing system. */
-  externalId?: InputMaybe<Scalars['String']['input']>;
-  /** URL used by a guest to join the conference. */
-  guestUrl?: InputMaybe<Scalars['String']['input']>;
-  /** URL used by the host to start the conference. */
-  hostUrl?: InputMaybe<Scalars['String']['input']>;
-  /** Wix Calendar conference ID. */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /** Password to join the conference. */
-  password?: InputMaybe<Scalars['String']['input']>;
-  /** Conference provider ID. */
-  providerId?: InputMaybe<Scalars['String']['input']>;
-};
-
 export type BookingsSchedulesV1CalendarDateTime = {
   __typename?: 'BookingsSchedulesV1CalendarDateTime';
   /** An object containing the local date and time for the business's time zone. */
@@ -985,35 +982,12 @@ export type BookingsSchedulesV1CalendarDateTime = {
   timestamp?: Maybe<Scalars['String']['output']>;
 };
 
-export type BookingsSchedulesV1CalendarDateTimeInput = {
-  /** An object containing the local date and time for the business's time zone. */
-  localDateTime?: InputMaybe<BookingsSchedulesV1LocalDateTimeInput>;
-  /**
-   * The time zone. Optional. Derived from the schedule's time zone.
-   * In case this field is associated with recurring session, this field is empty.
-   */
-  timeZone?: InputMaybe<Scalars['String']['input']>;
-  /**
-   * UTC date-time in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Coordinated_Universal_Time_(UTC)) format. If a time zone offset is specified, the time is converted to UTC. For example, if you specify  `new Date('2021-01-06T16:00:00.000-07:00')`, the stored value will be `"2021-01-06T23:00:00.000Z"`.
-   * Required if `localDateTime` is not specified.
-   * If `localDateTime` is specified, `timestamp` is calculated as `localDateTime`, using the business's time zone.
-   */
-  timestamp?: InputMaybe<Scalars['String']['input']>;
-};
-
 export type BookingsSchedulesV1ExternalCalendarOverrides = {
   __typename?: 'BookingsSchedulesV1ExternalCalendarOverrides';
   /** Synced description of the external calendar event. */
   description?: Maybe<Scalars['String']['output']>;
   /** Synced title of the external calendar event. */
   title?: Maybe<Scalars['String']['output']>;
-};
-
-export type BookingsSchedulesV1ExternalCalendarOverridesInput = {
-  /** Synced description of the external calendar event. */
-  description?: InputMaybe<Scalars['String']['input']>;
-  /** Synced title of the external calendar event. */
-  title?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type BookingsSchedulesV1LinkedSchedule = {
@@ -1038,27 +1012,6 @@ export type BookingsSchedulesV1LinkedSchedule = {
   transparency?: Maybe<BookingsSchedulesV1LinkedScheduleTransparency>;
 };
 
-export type BookingsSchedulesV1LinkedScheduleInput = {
-  /** Schedule ID. */
-  scheduleId?: InputMaybe<Scalars['String']['input']>;
-  /** Owner ID, of the linked schedule. */
-  scheduleOwnerId?: InputMaybe<Scalars['String']['input']>;
-  /**
-   * Sets this schedule's availability for the duration of the linked schedule's sessions.  Default is `"BUSY"`.
-   * <!--ONLY:REST-->
-   * If set to `"BUSY"`, this schedule cannot have any available slots during the linked schedule's sessions.
-   * If set to `"FREE"`, this schedule can have available slots during the linked schedule's sessions.
-   * <!--END:ONLY:REST-->
-   *
-   * <!--ONLY:VELO
-   * One of:
-   * - `"FREE"` This schedule can have available slots during the linked schedule's sessions.
-   * - `"BUSY"` This schedule cannot have any available slots during the linked schedule's sessions.
-   * <!--END:ONLY:VELO-->
-   */
-  transparency?: InputMaybe<BookingsSchedulesV1LinkedScheduleTransparency>;
-};
-
 export enum BookingsSchedulesV1LinkedScheduleTransparency {
   /** The schedule cannot have available slots during the session. Default value. */
   Busy = 'BUSY',
@@ -1079,19 +1032,6 @@ export type BookingsSchedulesV1LocalDateTime = {
   monthOfYear?: Maybe<Scalars['Int']['output']>;
   /** Year. 4-digit format. */
   year?: Maybe<Scalars['Int']['output']>;
-};
-
-export type BookingsSchedulesV1LocalDateTimeInput = {
-  /** Day of the month, from 1-31. */
-  dayOfMonth?: InputMaybe<Scalars['Int']['input']>;
-  /** Hour of the day in 24-hour format, from 0-23. */
-  hourOfDay?: InputMaybe<Scalars['Int']['input']>;
-  /** Minute, from 0-59. */
-  minutesOfHour?: InputMaybe<Scalars['Int']['input']>;
-  /** Month number, from 1-12. */
-  monthOfYear?: InputMaybe<Scalars['Int']['input']>;
-  /** Year. 4-digit format. */
-  year?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type BookingsSchedulesV1Participant = {
@@ -1133,45 +1073,6 @@ export enum BookingsSchedulesV1ParticipantApprovalStatus {
   /** Default. */
   Undefined = 'UNDEFINED'
 }
-
-export type BookingsSchedulesV1ParticipantInput = {
-  /**
-   * Approval status for the participant.
-   * <!-- Commented out untill updateParticipant is exposed Generally the same status as the booking, unless updated using the `updateParticipant()` API. Defaults to `"UNDEFINED"`.-->
-   * <!--ONLY:VELO
-   * One of:
-   * - `"PENDING"` Pending business approval.
-   * - `"APPROVED"` Approved by the business.
-   * - `"DECLINED"` Declined by the business.
-   * <!--END:ONLY:VELO-->
-   */
-  approvalStatus?: InputMaybe<BookingsSchedulesV1ParticipantApprovalStatus>;
-  /** Contact ID. */
-  contactId?: InputMaybe<Scalars['String']['input']>;
-  /** Participant's email address. */
-  email?: InputMaybe<Scalars['String']['input']>;
-  /** Participant ID. Currently represents the booking.id. */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /** Whether the participant was inherited from the schedule, as opposed to being booked directly to the session. */
-  inherited?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Participant's name. */
-  name?: InputMaybe<Scalars['String']['input']>;
-  /** Group or party size. The number of people attending. Defaults to 0. Maximum is 250. */
-  partySize?: InputMaybe<Scalars['Int']['input']>;
-  /** Participant's phone number. */
-  phone?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type BookingsSchedulesV1ParticipantNotificationInput = {
-  /** Custom message to send to the participants about the changes to the booking. */
-  message?: InputMaybe<Scalars['String']['input']>;
-  /**
-   * Whether to send the message about the changes to the customer.
-   *
-   * Default: `false`
-   */
-  notifyParticipants?: InputMaybe<Scalars['Boolean']['input']>;
-};
 
 export type BookingsSchedulesV1Session = {
   __typename?: 'BookingsSchedulesV1Session';
@@ -1325,157 +1226,6 @@ export type BookingsSchedulesV1Session = {
   version?: Maybe<BookingsSchedulesV1SessionVersion>;
 };
 
-export type BookingsSchedulesV1SessionInput = {
-  /**
-   * An object specifying a list of schedules and the way each schedule's availability is affected by the session. For example, the schedule of an instructor is affected by sessions of the class that they instruct.
-   * The array is inherited from the schedule and can be overridden even if the session is a recurring session.
-   */
-  affectedSchedules?: InputMaybe<Array<InputMaybe<BookingsSchedulesV1LinkedScheduleInput>>>;
-  /**
-   * A conference created for the session according to the details set in the schedule's conference provider information.
-   * If the session is a recurring session, this field is inherited from the schedule.
-   * **Partially deprecated.** Only `hostUrl` and `guestUrl` are to be supported.
-   */
-  calendarConference?: InputMaybe<BookingsSchedulesV1CalendarConferenceInput>;
-  /**
-   * Maximum number of participants that can be added to the session. Defaults to the schedule capacity.
-   * The value is inherited from the schedule and can be overridden unless the session is a recurring session.
-   */
-  capacity?: InputMaybe<Scalars['Int']['input']>;
-  /**
-   * An object specifying the end date and time of the session. The `end` time must be after the `start` time and be same type as `start`.
-   * If the session is a recurring session, `end` must contain a `localDateTime`.
-   */
-  end?: InputMaybe<BookingsSchedulesV1CalendarDateTimeInput>;
-  /** __Deprecated.__ */
-  externalCalendarOverrides?: InputMaybe<BookingsSchedulesV1ExternalCalendarOverridesInput>;
-  /** Session ID. */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /**
-   * A list of properties for which values were inherited from the schedule.
-   * This does not include participants that were inherited from the schedule.
-   */
-  inheritedFields?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  /**
-   * A string representing a recurrence rule (RRULE) if the session is an instance of a recurrence pattern.
-   * Empty when the session is not an instance of a recurrence rule, or if the session defines a recurrence pattern, and `recurrence` is not empty.
-   */
-  instanceOfRecurrence?: InputMaybe<Scalars['String']['input']>;
-  /**
-   * An object describing the location where the session takes place.
-   * Defaults to the schedule location.
-   * For single sessions, `session.location.businessLocation` can only be provided for locations that are defined in the schedule using `schedule.location` or `schedule.availability.locations`.
-   */
-  location?: InputMaybe<BookingsCommonV1LocationInput>;
-  /**
-   * Additional information about the session.
-   * Notes are not supported for recurring sessions.
-   */
-  notes?: InputMaybe<Scalars['String']['input']>;
-  /** Original start date and time of the session in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Coordinated_Universal_Time_(UTC)) format. */
-  originalStart?: InputMaybe<Scalars['String']['input']>;
-  /**
-   * *Partial list** list of participants booked for the session.
-   * The list includes participants who have registered for this specific session, and participants who have registered for a schedule that includes this session.
-   * If the session is a recurring session, this field must be empty.
-   * To retrieve the full list of session participants please use the [Query Extended Bookings API](https://dev.wix.com/api/rest/wix-bookings/bookings-reader-v2/query-extended-bookings).
-   */
-  participants?: InputMaybe<Array<InputMaybe<BookingsSchedulesV1ParticipantInput>>>;
-  /** Deprecated. Please use the [Booking Services V2](https://dev.wix.com/api/rest/wix-bookings/services-v2) payment instead. */
-  rate?: InputMaybe<BookingsCommonV1RateInput>;
-  /**
-   * A string representing a recurrence rule (RRULE) for a recurring session, as defined in [iCalendar RFC 5545](https://icalendar.org/iCalendar-RFC-5545/3-3-10-recurrence-rule.html).
-   * If the session is an instance of a recurrence pattern, the `instanceOfRecurrence` property will be contain the recurrence rule and this property will be empty.
-   * The RRULE defines a rule for repeating a session.
-   * Supported parameters are:
-   *
-   * |Keyword|Description|Supported values|
-   * |--|--|---|
-   * |`FREQ`|The frequency at which the session is recurs. Required.|`WEEKLY`|
-   * |`INTERVAL`|How often, in terms of `FREQ`, the session recurs. Default is 1. Optional.|
-   * |`UNTIL`|The UTC end date and time of the recurrence. Optional.|
-   * |`BYDAY`|Day of the week when the event should recur. Required.|One of: `MO`, `TU`, `WE`, `TH`, `FR`, `SA`, `SU`|
-   *
-   *
-   * For example, a session that repeats every second week on a Monday until January 7, 2022 at 8 AM:
-   * `"FREQ=WEEKLY;INTERVAL=2;BYDAY=MO;UNTIL=20220107T080000Z"`
-   *
-   * <!--ORIGINAL COMMENTS:
-   * `FREQ` — The frequency with which the session should be repeated (such as DAILY or WEEKLY).
-   * Supported `WEEKLY` value is supported.
-   * INTERVAL — Works together with FREQ to specify how often the session should be repeated. For example, FREQ=WEEKLY;INTERVAL=2 means once every two weeks. Optional. Default value is 1.
-   * COUNT — The number of times this event should be repeated. Not yet supported.
-   * UNTIL — The UTC date & time until which the session should be repeated. This parameter is optional. When it is not specified, the event repeats forever.
-   * The format is a short ISO date, followed by 'T' and a short time with seconds and without milliseconds, terminated by the UTC designator 'Z'. For example, until Jan. 19th 2018 at 7:00 AM: 'UNTIL=20180119T070000Z'.
-   * BYDAY - The days of the week when the event should be repeated. Currently, only a single day is supported. This parameter is mandatory.
-   * Possible values are: MO, TU, WE, TH, FR, SA, SU
-   * Note that DTSTART and DTEND lines are not allowed in this field; session start and end times are specified in the start and end fields.
-   * **Example**: FREQ=WEEKLY;INTERVAL=2;BYDAY=MO;UNTIL=20200427T070000Z
-   * ORIGINAL COMMENTS-->
-   */
-  recurrence?: InputMaybe<Scalars['String']['input']>;
-  /**
-   * Recurring interval ID. Defined when a session will be a recurring session. read-only. Optional.
-   * For exmaple, when creating a class service  with recurring sessions, you add a recurrence rule to create recurring sessions.
-   * This field is omitted for single sessions or instances of recurring sessions.
-   * Specified when the session was originally generated from a schedule recurring interval.
-   * Deprecated. Use `recurringSessionId`.
-   */
-  recurringIntervalId?: InputMaybe<Scalars['String']['input']>;
-  /** The ID of the recurring session if this session is an instance of a recurrence. Use this ID to update the recurrence and all of the instances. */
-  recurringSessionId?: InputMaybe<Scalars['String']['input']>;
-  /** ID of the schedule that the session belongs to. */
-  scheduleId?: InputMaybe<Scalars['String']['input']>;
-  /** ID of the resource or service that the session's schedule belongs to. */
-  scheduleOwnerId?: InputMaybe<Scalars['String']['input']>;
-  /** An object specifying the start date and time of the session. If the session is a recurring session, `start` must contain a `localDateTime`. */
-  start?: InputMaybe<BookingsSchedulesV1CalendarDateTimeInput>;
-  /**
-   * Session status.
-   * <!--ONLY:VELO
-   * One of:
-   * - `"CONFIRMED"` Default value.
-   * - `"CANCELLED"` The session was deleted.
-   * <!--END:ONLY:VELO-->
-   */
-  status?: InputMaybe<BookingsSchedulesV1SessionStatus>;
-  /**
-   * __Deprecated.__
-   * Tags for the session.
-   * The value is inherited from the schedule and can be overridden unless the session is a recurring session.
-   */
-  tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  /**
-   * Time reserved after the session end time, derived from the schedule availability constraints and the time between slots. Read-only.
-   * If the session is a recurring session, this field must be empty.
-   */
-  timeReservedAfter?: InputMaybe<Scalars['Int']['input']>;
-  /**
-   * Session title.
-   * The value is inherited from the schedule and can be overridden unless the session is a recurring session.
-   */
-  title?: InputMaybe<Scalars['String']['input']>;
-  /**
-   * The number of participants booked for the session. Read-only.
-   * Calculated as the sum of the party sizes.
-   */
-  totalNumberOfParticipants?: InputMaybe<Scalars['Int']['input']>;
-  /**
-   * Session type.
-   * <!--ONLY:VELO
-   * One of:
-   * - `"EVENT"` Reserved period of time on the schedule. For example, an appointment, class, course, or blocked time. Events are visible in the Dashboard in the Bookings app's [Booking Calendar](https://support.wix.com/en/article/wix-bookings-about-the-wix-bookings-calendar) page.
-   * - `"WORKING_HOURS"` Placeholder for available time on a resource’s schedule.
-   * <!--END:ONLY:VELO-->
-   */
-  type?: InputMaybe<BookingsSchedulesV1SessionType>;
-  /**
-   * The session version.
-   * Composed by the schedule, session and participants versions.
-   */
-  version?: InputMaybe<BookingsSchedulesV1SessionVersionInput>;
-};
-
 export enum BookingsSchedulesV1SessionStatus {
   /**
    * The session is cancelled.
@@ -1509,42 +1259,8 @@ export type BookingsSchedulesV1SessionVersion = {
   number?: Maybe<Scalars['Int']['output']>;
 };
 
-export type BookingsSchedulesV1SessionVersionInput = {
-  /** Incremental version number, which is updated on each change to the session or on changes affecting the session. */
-  number?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type BookingsSchedulesVeloV2CreateSessionRequestInput = {
-  /** The session to create. */
-  session?: InputMaybe<BookingsSchedulesV1SessionInput>;
-};
-
-export type BookingsSchedulesVeloV2CreateSessionResponse = {
-  __typename?: 'BookingsSchedulesVeloV2CreateSessionResponse';
-  /** The created session. */
-  session?: Maybe<BookingsSchedulesV1Session>;
-};
-
-export type BookingsSchedulesVeloV2DeleteSessionRequestInput = {
-  /** Whether to notify participants about the change, and an optional custom message. */
-  participantNotification?: InputMaybe<BookingsSchedulesV1ParticipantNotificationInput>;
-  /** The ID of the session to delete. */
-  sessionId?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type BookingsSchedulesVeloV2UpdateSessionRequestInput = {
-  /** Field mask of fields to update. */
-  fieldmask?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  /** Whether to notify participants about the change, and an optional custom message. */
-  participantNotification?: InputMaybe<BookingsSchedulesV1ParticipantNotificationInput>;
-  /** The session to update. */
-  session?: InputMaybe<BookingsSchedulesV1SessionInput>;
-};
-
-export type BookingsSchedulesVeloV2UpdateSessionResponse = {
-  __typename?: 'BookingsSchedulesVeloV2UpdateSessionResponse';
-  /** The updated session. */
-  session?: Maybe<BookingsSchedulesV1Session>;
+export type BookingsServiceOptionsAndVariantsV1ServiceOptionsAndVariantsRequestInput = {
+  id: Scalars['ID']['input'];
 };
 
 export type BookingsServicesV2AvailabilityConstraints = {
@@ -2157,6 +1873,10 @@ export type BookingsServicesV2ServiceInput = {
   urls?: InputMaybe<BookingsServicesV2UrLsInput>;
 };
 
+export type BookingsServicesV2ServiceRequestInput = {
+  id: Scalars['ID']['input'];
+};
+
 export enum BookingsServicesV2ServiceTypeEnumServiceType {
   /** The service is an appointment. */
   Appointment = 'APPOINTMENT',
@@ -2698,7 +2418,7 @@ export type BookingsServicesV2UpstreamCommonQueryV2Input = {
    * "fieldName2":{"$operator":"value2"}
    * }`
    *
-   * Example of operators: `$eq`, `$ne`, `$lt`, `$lte`, `$gt`, `$gte`, `$in`, `$hasSome`, `$hasAll`, `$startsWith`, `$contains`
+   * Example of operators: `$eq`, `$ne`, `$lt`, `$lte`, `$gt`, `$gte`, `$in`, `$hasSome`, `$hasAll`, `$startsWith`
    *
    * Read more about [supported fields and operators](https://dev.wix.com/api/rest/wix-bookings/services-v2/filtering-and-sorting).
    */
@@ -2777,6 +2497,18 @@ export type BookingsServicesV2VariedPaymentInput = {
   minPrice?: InputMaybe<CommonMoneyInput>;
 };
 
+export type BookingsSessionsV1SessionRequestInput = {
+  /**
+   * Predefined sets of fields to return.
+   * - `NO_PI`: Returns session objects without personal information.
+   * - `ALL_PI`: Returns complete session objects, including personal information. Requires the CALENDAR.SESSION_READ_PI permission scope.
+   *
+   * Default: `NO_PI`
+   */
+  fieldsets?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  id: Scalars['ID']['input'];
+};
+
 export type BookingsUpstreamCommonAddress = {
   __typename?: 'BookingsUpstreamCommonAddress';
   /** Main address line, usually street and number, as free text. */
@@ -2805,46 +2537,12 @@ export type BookingsUpstreamCommonAddress = {
   subdivisions?: Maybe<Array<Maybe<BookingsUpstreamCommonSubdivision>>>;
 };
 
-export type BookingsUpstreamCommonAddressInput = {
-  /** Main address line, usually street and number, as free text. */
-  addressLine?: InputMaybe<Scalars['String']['input']>;
-  /** Free text providing more detailed address info. Usually contains Apt, Suite, and Floor. */
-  addressLine2?: InputMaybe<Scalars['String']['input']>;
-  /** City name. */
-  city?: InputMaybe<Scalars['String']['input']>;
-  /** Country code. */
-  country?: InputMaybe<Scalars['String']['input']>;
-  /** Country full name. */
-  countryFullname?: InputMaybe<Scalars['String']['input']>;
-  /** A string containing the full address of this location. */
-  formattedAddress?: InputMaybe<Scalars['String']['input']>;
-  /** Coordinates of the physical address. */
-  geocode?: InputMaybe<BookingsUpstreamCommonAddressLocationInput>;
-  /** Free text to help find the address. */
-  hint?: InputMaybe<Scalars['String']['input']>;
-  /** Zip/postal code. */
-  postalCode?: InputMaybe<Scalars['String']['input']>;
-  /** Street name, number and apartment number. */
-  streetAddress?: InputMaybe<BookingsUpstreamCommonStreetAddressInput>;
-  /** Subdivision. Usually state, region, prefecture or province code, according to [ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2). */
-  subdivision?: InputMaybe<Scalars['String']['input']>;
-  /** Multi-level subdivisions from top to bottom. */
-  subdivisions?: InputMaybe<Array<InputMaybe<BookingsUpstreamCommonSubdivisionInput>>>;
-};
-
 export type BookingsUpstreamCommonAddressLocation = {
   __typename?: 'BookingsUpstreamCommonAddressLocation';
   /** Address latitude. */
   latitude?: Maybe<Scalars['Float']['output']>;
   /** Address longitude. */
   longitude?: Maybe<Scalars['Float']['output']>;
-};
-
-export type BookingsUpstreamCommonAddressLocationInput = {
-  /** Address latitude. */
-  latitude?: InputMaybe<Scalars['Float']['input']>;
-  /** Address longitude. */
-  longitude?: InputMaybe<Scalars['Float']['input']>;
 };
 
 export type BookingsUpstreamCommonStreetAddress = {
@@ -2857,15 +2555,6 @@ export type BookingsUpstreamCommonStreetAddress = {
   number?: Maybe<Scalars['String']['output']>;
 };
 
-export type BookingsUpstreamCommonStreetAddressInput = {
-  /** Apartment number. */
-  apt?: InputMaybe<Scalars['String']['input']>;
-  /** Street name. */
-  name?: InputMaybe<Scalars['String']['input']>;
-  /** Street number. */
-  number?: InputMaybe<Scalars['String']['input']>;
-};
-
 export type BookingsUpstreamCommonSubdivision = {
   __typename?: 'BookingsUpstreamCommonSubdivision';
   /** Subdivision code. Usually state, region, prefecture or province code, according to [ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2). */
@@ -2874,11 +2563,8 @@ export type BookingsUpstreamCommonSubdivision = {
   name?: Maybe<Scalars['String']['output']>;
 };
 
-export type BookingsUpstreamCommonSubdivisionInput = {
-  /** Subdivision code. Usually state, region, prefecture or province code, according to [ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2). */
-  code?: InputMaybe<Scalars['String']['input']>;
-  /** Subdivision full name. */
-  name?: InputMaybe<Scalars['String']['input']>;
+export type BusinessToolsLocationsV1LocationRequestInput = {
+  id: Scalars['ID']['input'];
 };
 
 export type CatalogV1AddProductMediaRequestInput = {
@@ -3023,7 +2709,7 @@ export type CatalogV1Collection = {
 
 
 export type CatalogV1CollectionProductsVirtualReferenceArgs = {
-  query?: InputMaybe<CatalogV1QueryProductsPlatformizedRequestInput>;
+  queryInput?: InputMaybe<CatalogV1QueryProductsPlatformizedRequestInput>;
 };
 
 export type CatalogV1CollectionInput = {
@@ -3544,7 +3230,7 @@ export type CatalogV1Product = {
 
 
 export type CatalogV1ProductCollectionsArgs = {
-  query?: InputMaybe<CatalogV2QueryCollectionsRequestInput>;
+  queryInput?: InputMaybe<CatalogV2QueryCollectionsRequestInput>;
 };
 
 export type CatalogV1ProductInput = {
@@ -3877,7 +3563,7 @@ export type CatalogV1StoreVariant = {
 
 
 export type CatalogV1StoreVariantCollectionsArgs = {
-  query?: InputMaybe<CatalogV2QueryCollectionsRequestInput>;
+  queryInput?: InputMaybe<CatalogV2QueryCollectionsRequestInput>;
 };
 
 export type CatalogV1UpdateCollectionRequestInput = {
@@ -4139,6 +3825,14 @@ export type CloudDataDataAggregateDataItemsRequestInput = {
   finalFilter?: InputMaybe<Scalars['JSON']['input']>;
   /** Filter applied to the collection's data prior to running the aggregation. See [API Query Language](https://dev.wix.com/api/rest/getting-started/api-query-language#getting-started_api-query-language_the-filter-section) for information on how to structure a filter object. */
   initialFilter?: InputMaybe<Scalars['JSON']['input']>;
+  /**
+   * Language to translate result text into, in [IETF BCP 47 language tag](https://en.wikipedia.org/wiki/IETF_language_tag) format.
+   * If provided, the result text is returned in the specified language.
+   * **Note:** Translation for the specified language must be enabled for the collection in [Wix Multilingual](https://www.wix.com/app-market/wix-multilingual).
+   *
+   * If not provided, result text is not translated.
+   */
+  language?: InputMaybe<Scalars['String']['input']>;
   /** Paging options to limit and skip the number of items. */
   paging?: InputMaybe<CloudDataDataUpstreamCommonPagingInput>;
   /**
@@ -4323,6 +4017,14 @@ export type CloudDataDataCountDataItemsRequestInput = {
    * Examples of operators: `$eq`, `$ne`, `$lt`, `$lte`, `$gt`, `$gte`, `$in`, `$hasSome`, `$hasAll`, `$startsWith`, `$contains`.
    */
   filter?: InputMaybe<Scalars['JSON']['input']>;
+  /**
+   * Language to translate result text into, in [IETF BCP 47 language tag](https://en.wikipedia.org/wiki/IETF_language_tag) format.
+   * If provided, the result text is returned in the specified language.
+   * **Note:** Translation for the specified language must be enabled for the collection in [Wix Multilingual](https://www.wix.com/app-market/wix-multilingual).
+   *
+   * If not provided, result text is not translated.
+   */
+  language?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type CloudDataDataCountDataItemsResponse = {
@@ -4450,6 +4152,14 @@ export type CloudDataDataQueryDataItemsRequestInput = {
    * Up to 50 referenced items can be included for each item that matches the query.
    */
   includeReferencedItems?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  /**
+   * Language to translate result text into, in [IETF BCP 47 language tag](https://en.wikipedia.org/wiki/IETF_language_tag) format.
+   * If provided, the result text is returned in the specified language.
+   * **Note:** Translation for the specified language must be enabled for the collection in [Wix Multilingual](https://www.wix.com/app-market/wix-multilingual).
+   *
+   * If not provided, result text is not translated.
+   */
+  language?: InputMaybe<Scalars['String']['input']>;
   /** Query preferences. For more details on using queries, see [API Query Language](https://dev.wix.com/api/rest/getting-started/api-query-language). */
   query?: InputMaybe<CloudDataDataUpstreamCommonQueryV2Input>;
   /**
@@ -4495,6 +4205,14 @@ export type CloudDataDataQueryDistinctValuesRequestInput = {
    * Examples of operators: `$eq`, `$ne`, `$lt`, `$lte`, `$gt`, `$gte`, `$in`, `$hasSome`, `$hasAll`, `$startsWith`, `$contains`.
    */
   filter?: InputMaybe<Scalars['JSON']['input']>;
+  /**
+   * Language to translate result text into, in [IETF BCP 47 language tag](https://en.wikipedia.org/wiki/IETF_language_tag) format.
+   * If provided, the result text is returned in the specified language.
+   * **Note:** Translation for the specified language must be enabled for the collection in [Wix Multilingual](https://www.wix.com/app-market/wix-multilingual).
+   *
+   * If not provided, result text is not translated.
+   */
+  language?: InputMaybe<Scalars['String']['input']>;
   /** Sort order. */
   order?: InputMaybe<CloudDataDataUpstreamCommonSortOrder>;
   /** Paging options to limit and skip the number of items. */
@@ -4529,6 +4247,14 @@ export type CloudDataDataQueryReferencedDataItemsRequestInput = {
   cursorPaging?: InputMaybe<CloudDataDataUpstreamCommonCursorPagingInput>;
   /** ID of the collection containing the referring item. */
   dataCollectionId?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * Language to translate result text into, in [IETF BCP 47 language tag](https://en.wikipedia.org/wiki/IETF_language_tag) format.
+   * If provided, the result text is returned in the specified language.
+   * **Note:** Translation for the specified language must be enabled for the collection in [Wix Multilingual](https://www.wix.com/app-market/wix-multilingual).
+   *
+   * If not provided, result text is not translated.
+   */
+  language?: InputMaybe<Scalars['String']['input']>;
   /** Order of the returned referenced items. Sorted by the date each item was referenced. */
   order?: InputMaybe<CloudDataDataUpstreamCommonSortOrder>;
   /** Paging options to limit and skip the number of items. */
@@ -4777,12 +4503,11 @@ export type CommonCursorPagingInput = {
   /**
    * Pointer to the next or previous page in the list of results.
    *
-   * You can get the relevant cursor token
-   * from the `pagingMetadata` object in the previous call's response.
+   * Pass the relevant cursor token from the `pagingMetadata` object in the previous call's response.
    * Not relevant for the first request.
    */
   cursor?: InputMaybe<Scalars['String']['input']>;
-  /** Number of items to load. */
+  /** Maximum number of items to return in the results. */
   limit?: InputMaybe<Scalars['Int']['input']>;
 };
 
@@ -4813,97 +4538,6 @@ export type CommonDataDataextensionsExtendedFieldsInput = {
    * You can only access fields for which you have the appropriate permissions.
    */
   namespaces?: InputMaybe<Scalars['JSON']['input']>;
-};
-
-export type CommonDataDataextensionsUpdateExtendedFieldsRequestInput = {
-  /** ID of the entity to update. */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /** Identifier for the app whose extended fields are being updated. */
-  namespace?: InputMaybe<Scalars['String']['input']>;
-  /** Data to update. Structured according to the [schema](https://dev.wix.com/docs/rest/articles/getting-started/extended-fields#json-schema-for-extended-fields) defined when the extended fields were configured. */
-  namespaceData?: InputMaybe<Scalars['JSON']['input']>;
-};
-
-export type CommonDomaineventsActionEventInput = {
-  bodyAsJson?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type CommonDomaineventsDomainEventInput = {
-  actionEvent?: InputMaybe<CommonDomaineventsActionEventInput>;
-  createdEvent?: InputMaybe<CommonDomaineventsEntityCreatedEventInput>;
-  deletedEvent?: InputMaybe<CommonDomaineventsEntityDeletedEventInput>;
-  /**
-   * A sequence number defining the order of updates to the underlying entity.
-   * For example, given that some entity was updated at 16:00 and than again at 16:01,
-   * it is guaranteed that the sequence number of the second update is strictly higher than the first.
-   * As the consumer, you can use this value to ensure that you handle messages in the correct order.
-   * To do so, you will need to persist this number on your end, and compare the sequence number from the
-   * message against the one you have stored. Given that the stored number is higher, you should ignore the message.
-   */
-  entityEventSequence?: InputMaybe<Scalars['Int']['input']>;
-  /**
-   * Assumes actions are also always typed to an entity_type
-   * Example: wix.stores.catalog.product, wix.bookings.session, wix.payments.transaction
-   */
-  entityFqdn?: InputMaybe<Scalars['String']['input']>;
-  /**
-   * Assuming that all messages including Actions have id
-   * Example: The id of the specific order, the id of a specific campaign
-   */
-  entityId?: InputMaybe<Scalars['String']['input']>;
-  /** The time of the event. Useful if there was a delay in dispatching */
-  eventTime?: InputMaybe<Scalars['String']['input']>;
-  /** random GUID so clients can tell if event was already handled */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /** If present, indicates the action that triggered the event. */
-  originatedFrom?: InputMaybe<Scalars['String']['input']>;
-  /**
-   * This is top level to ease client code dispatching of messages (switch on entity_fqdn+slug)
-   * This is although the created/updated/deleted notion is duplication of the oneof types
-   * Example: created/updated/deleted/started/completed/email_opened
-   */
-  slug?: InputMaybe<Scalars['String']['input']>;
-  /**
-   * A field that should be set if this event was triggered by an anonymize request.
-   * For example you must set it to true when sending an event as a result of a GDPR right to be forgotten request.
-   * NOTE: This field is not relevant for `EntityCreatedEvent` but is located here for better ergonomics of consumers.
-   */
-  triggeredByAnonymizeRequest?: InputMaybe<Scalars['Boolean']['input']>;
-  updatedEvent?: InputMaybe<CommonDomaineventsEntityUpdatedEventInput>;
-};
-
-export type CommonDomaineventsEntityCreatedEventInput = {
-  entityAsJson?: InputMaybe<Scalars['String']['input']>;
-  /** Indicates the event was triggered by a restore-from-trashbin operation for a previously deleted entity */
-  triggeredByUndelete?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type CommonDomaineventsEntityDeletedEventInput = {
-  /** Indicates if the entity is sent to trash-bin. only available when trash-bin is enabled */
-  movedToTrash?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type CommonDomaineventsEntityUpdatedEventInput = {
-  /**
-   * Since platformized APIs only expose PATCH and not PUT we can't assume that the fields sent from the client are the actual diff.
-   * This means that to generate a list of changed fields (as opposed to sent fields) one needs to traverse both objects.
-   * We don't want to impose this on all developers and so we leave this traversal to the notification recipients which need it.
-   */
-  currentEntityAsJson?: InputMaybe<Scalars['String']['input']>;
-  /**
-   * WIP - This property will hold both names and values of the updated fields of the entity.
-   * For more details please see [adr](https://docs.google.com/document/d/1PdqsOM20Ph2HAkmx8zvUnzzk3Sekp3BR9h34wSvsRnI/edit#heading=h.phlw87mh2imx) or [issue](https://github.com/wix-private/nile-tracker/issues/363)
-   */
-  entityUpdates?: InputMaybe<Scalars['JSON']['input']>;
-  /**
-   * This field is currently part of the of the EntityUpdatedEvent msg, but scala/node libraries which implements the domain events standard
-   * wont populate it / have any reference to it in the API.
-   * The main reason for it is that fetching the old entity from the DB will have a performance hit on an update operation so unless truly needed,
-   * the developer should send only the new (current) entity.
-   * An additional reason is not wanting to send this additional entity over the wire (kafka) since in some cases it can be really big
-   * Developers that must reflect the old entity will have to implement their own domain event sender mechanism which will follow the DomainEvent proto message.
-   */
-  previousEntityAsJson?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type CommonImage = {
@@ -4974,13 +4608,6 @@ export type CommonPageUrl = {
   base?: Maybe<Scalars['String']['output']>;
   /** The path to that page - e.g /product-page/a-product */
   path?: Maybe<Scalars['String']['output']>;
-};
-
-export type CommonPageUrlInput = {
-  /** The base URL. For premium sites, this will be the domain. For free sites, this would be site URL (e.g mysite.wixsite.com/mysite) */
-  base?: InputMaybe<Scalars['String']['input']>;
-  /** The path to that page - e.g /product-page/a-product */
-  path?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type CommonPageUrlV2 = {
@@ -5155,19 +4782,6 @@ export type CommonVideo = {
   width?: Maybe<Scalars['Int']['output']>;
 };
 
-export type CommonVideoInput = {
-  /** Original image height */
-  height?: InputMaybe<Scalars['Int']['input']>;
-  /** WixMedia ID */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /** Video poster */
-  thumbnail?: InputMaybe<CommonImageInput>;
-  /** URL of video */
-  url?: InputMaybe<Scalars['String']['input']>;
-  /** Original image width */
-  width?: InputMaybe<Scalars['Int']['input']>;
-};
-
 export type CommonVideoResolution = {
   __typename?: 'CommonVideoResolution';
   /** Video format for example, mp4, hls. */
@@ -5188,6 +4802,915 @@ export type CommonVideoV2 = {
   id?: Maybe<Scalars['String']['output']>;
   /** Available resolutions for the video, starting with the optimal resolution. */
   resolutions?: Maybe<Array<Maybe<CommonVideoResolution>>>;
+};
+
+export type ContactsCoreV4Contact = {
+  __typename?: 'ContactsCoreV4Contact';
+  /** Date and time the contact was created. */
+  createdDate?: Maybe<Scalars['String']['output']>;
+  /** Contact ID. */
+  id?: Maybe<Scalars['String']['output']>;
+  /** Contact's details. */
+  info?: Maybe<ContactsCoreV4ContactInfo>;
+  /** Details about the contact's last action in the site. */
+  lastActivity?: Maybe<ContactsCoreV4ContactActivity>;
+  /**
+   * Contact's profile picture.
+   * This can contain an image URL and a Wix Media image ID.
+   *
+   * > **Deprecation Notice:**
+   * > This property has been replaced with
+   * > `info.picture`
+   * > and will be removed on March 31, 2022. If your app uses this property,
+   * > we recommend updating your code as soon as possible.
+   */
+  picture?: Maybe<ContactsCoreV4UpstreamCommonImage>;
+  /** Contact's primary email details. */
+  primaryEmail?: Maybe<ContactsCoreV4PrimaryEmail>;
+  /** Contact's primary phone and email. */
+  primaryInfo?: Maybe<ContactsCoreV4PrimaryContactInfo>;
+  /** Contact's primary phone details. */
+  primaryPhone?: Maybe<ContactsCoreV4PrimaryPhone>;
+  /**
+   * Revision number, which increments by 1 each time the contact is updated.
+   * To prevent conflicting changes,
+   * the existing `revision` must be used when updating a contact.
+   */
+  revision?: Maybe<Scalars['Int']['output']>;
+  /** Details about the contact's source. */
+  source?: Maybe<ContactsCoreV4ContactSource>;
+  /** Date and time the contact was last updated. */
+  updatedDate?: Maybe<Scalars['String']['output']>;
+};
+
+export type ContactsCoreV4ContactActivity = {
+  __typename?: 'ContactsCoreV4ContactActivity';
+  /** Date and time of the last action. */
+  activityDate?: Maybe<Scalars['String']['output']>;
+  /**
+   * Contact's last action in the site.
+   *
+   * For descriptions of each value, see
+   * [Last Activity Types](https://dev.wix.com/api/rest/contacts/contacts/last-activity-types).
+   */
+  activityType?: Maybe<ContactsCoreV4ContactActivityContactActivityType>;
+};
+
+export enum ContactsCoreV4ContactActivityContactActivityType {
+  /** "arena/new-lead" */
+  ArenaNewLead = 'ARENA_NEW_LEAD',
+  /** "scheduler/appointment" */
+  BookingsAppointment = 'BOOKINGS_APPOINTMENT',
+  /** "cashier/button_purchase" */
+  CashierButtonPurchase = 'CASHIER_BUTTON_PURCHASE',
+  /** This cannot be reported, used when contact created, will throw exception */
+  ContactCreated = 'CONTACT_CREATED',
+  ContactMerged = 'CONTACT_MERGED',
+  /** "e_commerce/cart-abandon" */
+  EcomCartAbandon = 'ECOM_CART_ABANDON',
+  /** "e_commerce/checkout-buyer" */
+  EcomCheckoutBuyer = 'ECOM_CHECKOUT_BUYER',
+  /** "e_commerce/purchase" */
+  EcomPurchase = 'ECOM_PURCHASE',
+  /** "events/rsvp" */
+  EventsRsvp = 'EVENTS_RSVP',
+  /** "contact/contact-form", (but also "form/contact-form", "form/form") */
+  FormSubmitted = 'FORM_SUBMITTED',
+  /** Last visit to your site (any unknown activity) */
+  General = 'GENERAL',
+  /** "hotels/cancel" */
+  HotelsCancel = 'HOTELS_CANCEL',
+  /** "hotels/confirmation" */
+  HotelsConfirmation = 'HOTELS_CONFIRMATION',
+  /** "hotels/purchase" */
+  HotelsPurchase = 'HOTELS_PURCHASE',
+  /** "hotels/reservation" */
+  HotelsReservation = 'HOTELS_RESERVATION',
+  /** "form/lead-capture-form" */
+  InboxFormSubmitted = 'INBOX_FORM_SUBMITTED',
+  /** "messaging/email" - Direction CUSTOMER_TO_BUSINESS */
+  InboxMessageFromCustomer = 'INBOX_MESSAGE_FROM_CUSTOMER',
+  /** "messaging/email" - Direction BUSINESS_TO_CUSTOMER */
+  InboxMessageToCustomer = 'INBOX_MESSAGE_TO_CUSTOMER',
+  /** "chat/payment-request-paid" */
+  InboxPaymentRequestPaid = 'INBOX_PAYMENT_REQUEST_PAID',
+  /** "invoice/overdue" */
+  InvoiceOverdue = 'INVOICE_OVERDUE',
+  /** "invoice/pay" */
+  InvoicePay = 'INVOICE_PAY',
+  /** "auth/login" */
+  MemberLogin = 'MEMBER_LOGIN',
+  /** "auth/register" */
+  MemberRegister = 'MEMBER_REGISTER',
+  /** "auth/status-change" */
+  MemberStatusChanged = 'MEMBER_STATUS_CHANGED',
+  /** "contact/subscription-form" (but also "form/subscription-form") */
+  NewsletterSubscriptionFormSubmitted = 'NEWSLETTER_SUBSCRIPTION_FORM_SUBMITTED',
+  /** "contact/subscription-not-set" */
+  NewsletterSubscriptionNotSet = 'NEWSLETTER_SUBSCRIPTION_NOT_SET',
+  /** "contact/subscription-pending" */
+  NewsletterSubscriptionPending = 'NEWSLETTER_SUBSCRIPTION_PENDING',
+  /** "contact/subscribe" */
+  NewsletterSubscriptionSubscribe = 'NEWSLETTER_SUBSCRIPTION_SUBSCRIBE',
+  /** "contact/unsubscribe" */
+  NewsletterSubscriptionUnsubscribe = 'NEWSLETTER_SUBSCRIPTION_UNSUBSCRIBE',
+  /** "contact/phone-subscription-not-set" */
+  PhoneSubscriptionNotSet = 'PHONE_SUBSCRIPTION_NOT_SET',
+  /** "contact/phone-subscription-pending" */
+  PhoneSubscriptionPending = 'PHONE_SUBSCRIPTION_PENDING',
+  /** "contact/phone-subscription-subscribe" */
+  PhoneSubscriptionSubscribe = 'PHONE_SUBSCRIPTION_SUBSCRIBE',
+  /** "contact/phone-subscription-unsubscribe" */
+  PhoneSubscriptionUnsubscribe = 'PHONE_SUBSCRIPTION_UNSUBSCRIBE',
+  /** "price-quote/accept" */
+  PriceQuoteAccept = 'PRICE_QUOTE_ACCEPT',
+  /** "price-quote/expire" */
+  PriceQuoteExpire = 'PRICE_QUOTE_EXPIRE',
+  /** "restaurants/order" */
+  RestaurantsOrder = 'RESTAURANTS_ORDER',
+  /** "restaurants/reservation" */
+  RestaurantsReservation = 'RESTAURANTS_RESERVATION',
+  /** "shoutout/click" */
+  ShoutoutClick = 'SHOUTOUT_CLICK',
+  /** "shoutout/open" */
+  ShoutoutOpen = 'SHOUTOUT_OPEN',
+  /** "video/purchase" */
+  VideoPurchase = 'VIDEO_PURCHASE',
+  /** "video/rent" */
+  VideoRent = 'VIDEO_RENT'
+}
+
+export type ContactsCoreV4ContactAddress = {
+  __typename?: 'ContactsCoreV4ContactAddress';
+  /** Street address. */
+  address?: Maybe<ContactsCoreV4UpstreamCommonAddress>;
+  /** Street address ID. */
+  id?: Maybe<Scalars['String']['output']>;
+  /**
+   * Address type.
+   * `UNTAGGED` is shown as "Other" in the Contact List.
+   */
+  tag?: Maybe<ContactsCoreV4ContactAddressAddressTag>;
+};
+
+export enum ContactsCoreV4ContactAddressAddressTag {
+  Billing = 'BILLING',
+  Home = 'HOME',
+  Shipping = 'SHIPPING',
+  Untagged = 'UNTAGGED',
+  Work = 'WORK'
+}
+
+export type ContactsCoreV4ContactAddressInput = {
+  /** Street address. */
+  address?: InputMaybe<ContactsCoreV4UpstreamCommonAddressInput>;
+  /** Street address ID. */
+  id?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * Address type.
+   * `UNTAGGED` is shown as "Other" in the Contact List.
+   */
+  tag?: InputMaybe<ContactsCoreV4ContactAddressAddressTag>;
+};
+
+export type ContactsCoreV4ContactAddressesWrapper = {
+  __typename?: 'ContactsCoreV4ContactAddressesWrapper';
+  /** List of up to 50 addresses. */
+  items?: Maybe<Array<Maybe<ContactsCoreV4ContactAddress>>>;
+};
+
+export type ContactsCoreV4ContactAddressesWrapperInput = {
+  /** List of up to 50 addresses. */
+  items?: InputMaybe<Array<InputMaybe<ContactsCoreV4ContactAddressInput>>>;
+};
+
+export type ContactsCoreV4ContactEmail = {
+  __typename?: 'ContactsCoreV4ContactEmail';
+  /** Email address. */
+  email?: Maybe<Scalars['String']['output']>;
+  /** Email ID. */
+  id?: Maybe<Scalars['String']['output']>;
+  /**
+   * Indicates whether this is the contact's primary email address.
+   * When changing `primary` to `true` for an email,
+   * the contact's other emails become `false`.
+   * It also affects the subscription status to marketing emails that are decided based on the primary email.
+   */
+  primary?: Maybe<Scalars['Boolean']['output']>;
+  /**
+   * Email type.
+   *
+   * `UNTAGGED` is shown as "Other" in the Contact List.
+   */
+  tag?: Maybe<ContactsCoreV4ContactEmailEmailTag>;
+};
+
+export enum ContactsCoreV4ContactEmailEmailTag {
+  Home = 'HOME',
+  Main = 'MAIN',
+  Untagged = 'UNTAGGED',
+  Work = 'WORK'
+}
+
+export type ContactsCoreV4ContactEmailInput = {
+  /** Email address. */
+  email?: InputMaybe<Scalars['String']['input']>;
+  /** Email ID. */
+  id?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * Indicates whether this is the contact's primary email address.
+   * When changing `primary` to `true` for an email,
+   * the contact's other emails become `false`.
+   * It also affects the subscription status to marketing emails that are decided based on the primary email.
+   */
+  primary?: InputMaybe<Scalars['Boolean']['input']>;
+  /**
+   * Email type.
+   *
+   * `UNTAGGED` is shown as "Other" in the Contact List.
+   */
+  tag?: InputMaybe<ContactsCoreV4ContactEmailEmailTag>;
+};
+
+export type ContactsCoreV4ContactEmailsWrapper = {
+  __typename?: 'ContactsCoreV4ContactEmailsWrapper';
+  /** List of up to 50 email addresses. */
+  items?: Maybe<Array<Maybe<ContactsCoreV4ContactEmail>>>;
+};
+
+export type ContactsCoreV4ContactEmailsWrapperInput = {
+  /** List of up to 50 email addresses. */
+  items?: InputMaybe<Array<InputMaybe<ContactsCoreV4ContactEmailInput>>>;
+};
+
+export enum ContactsCoreV4ContactFieldSet {
+  /** name, primaryEmail, primaryPhone */
+  Basic = 'BASIC',
+  /** name, phones, emails, addresses */
+  CommunicationDetails = 'COMMUNICATION_DETAILS',
+  /** name, primaryInfo(email, phone), extendedFields */
+  Extended = 'EXTENDED',
+  /** Full contact object */
+  Full = 'FULL'
+}
+
+export type ContactsCoreV4ContactInfo = {
+  __typename?: 'ContactsCoreV4ContactInfo';
+  /** Contact's street addresses. */
+  addresses?: Maybe<ContactsCoreV4ContactAddressesWrapper>;
+  /** Birth date in `YYYY-MM-DD` format. For example, `2020-03-15`. */
+  birthdate?: Maybe<Scalars['String']['output']>;
+  /** Contact's company name. */
+  company?: Maybe<Scalars['String']['output']>;
+  /**
+   * List of contact's labels.
+   * Labels are used to organize contacts.
+   * When setting the `labelKeys` property,
+   * only labels that already exist in the site's Contacts List can be used.
+   * Labels can be added and removed using
+   * [Label Contact](https://dev.wix.com/api/rest/contacts/contacts/contacts-v4/label-contact) and
+   * [Unlabel Contact](https://dev.wix.com/api/rest/contacts/contacts/contacts-v4/unlabel-contact),
+   * respectively.
+   *
+   * To view or manage site labels, use the
+   * [Labels API](https://dev.wix.com/api/rest/contacts/labels).
+   */
+  contactLabel?: Maybe<ContactsLabelsV4ContactLabel>;
+  /** Contact's email addresses. */
+  emails?: Maybe<ContactsCoreV4ContactEmailsWrapper>;
+  /**
+   * Additional custom fields.
+   * This includes fields managed by Wix, by 3rd-party apps, and by the site.
+   *
+   * Empty fields are not returned.
+   */
+  extendedFields?: Maybe<ContactsCoreV4ExtendedFieldsWrapper>;
+  /**
+   * Contact's job title.
+   * Corresponds to the **Position** field in the Dashboard.
+   */
+  jobTitle?: Maybe<Scalars['String']['output']>;
+  /**
+   * List of contact's labels.
+   * Labels are used to organize contacts.
+   * When setting the `labelKeys` property,
+   * only labels that already exist in the site's Contacts List can be used.
+   * Labels can be added and removed using
+   * [Label Contact](https://dev.wix.com/api/rest/contacts/contacts/contacts-v4/label-contact) and
+   * [Unlabel Contact](https://dev.wix.com/api/rest/contacts/contacts/contacts-v4/unlabel-contact),
+   * respectively.
+   *
+   * To view or manage site labels, use the
+   * [Labels API](https://dev.wix.com/api/rest/contacts/labels).
+   */
+  labelKeys?: Maybe<ContactsCoreV4LabelsWrapper>;
+  /**
+   * Locale in
+   * [IETF BCP 47 language tag](https://en.wikipedia.org/wiki/IETF_language_tag) format.
+   * Typically, this is a lowercase 2-letter language code,
+   * followed by a hyphen, followed by an uppercase 2-letter country code.
+   * For example, `en-US` for U.S. English, and `de-DE` for Germany German.
+   */
+  locale?: Maybe<Scalars['String']['output']>;
+  /** Contact's first and last name. */
+  name?: Maybe<ContactsCoreV4ContactName>;
+  /** Contact's phone numbers. */
+  phones?: Maybe<ContactsCoreV4ContactPhonesWrapper>;
+  /** Contact's profile picture. */
+  picture?: Maybe<ContactsCoreV4ContactPicture>;
+};
+
+export type ContactsCoreV4ContactInfoInput = {
+  /** Contact's street addresses. */
+  addresses?: InputMaybe<ContactsCoreV4ContactAddressesWrapperInput>;
+  /** Birth date in `YYYY-MM-DD` format. For example, `2020-03-15`. */
+  birthdate?: InputMaybe<Scalars['String']['input']>;
+  /** Contact's company name. */
+  company?: InputMaybe<Scalars['String']['input']>;
+  /** Contact's email addresses. */
+  emails?: InputMaybe<ContactsCoreV4ContactEmailsWrapperInput>;
+  /**
+   * Additional custom fields.
+   * This includes fields managed by Wix, by 3rd-party apps, and by the site.
+   *
+   * Empty fields are not returned.
+   */
+  extendedFields?: InputMaybe<ContactsCoreV4ExtendedFieldsWrapperInput>;
+  /**
+   * Contact's job title.
+   * Corresponds to the **Position** field in the Dashboard.
+   */
+  jobTitle?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * List of contact's labels.
+   * Labels are used to organize contacts.
+   * When setting the `labelKeys` property,
+   * only labels that already exist in the site's Contacts List can be used.
+   * Labels can be added and removed using
+   * [Label Contact](https://dev.wix.com/api/rest/contacts/contacts/contacts-v4/label-contact) and
+   * [Unlabel Contact](https://dev.wix.com/api/rest/contacts/contacts/contacts-v4/unlabel-contact),
+   * respectively.
+   *
+   * To view or manage site labels, use the
+   * [Labels API](https://dev.wix.com/api/rest/contacts/labels).
+   */
+  labelKeys?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * Locale in
+   * [IETF BCP 47 language tag](https://en.wikipedia.org/wiki/IETF_language_tag) format.
+   * Typically, this is a lowercase 2-letter language code,
+   * followed by a hyphen, followed by an uppercase 2-letter country code.
+   * For example, `en-US` for U.S. English, and `de-DE` for Germany German.
+   */
+  locale?: InputMaybe<Scalars['String']['input']>;
+  /** Contact's first and last name. */
+  name?: InputMaybe<ContactsCoreV4ContactNameInput>;
+  /** Contact's phone numbers. */
+  phones?: InputMaybe<ContactsCoreV4ContactPhonesWrapperInput>;
+  /** Contact's profile picture. */
+  picture?: InputMaybe<ContactsCoreV4ContactPictureInput>;
+};
+
+export type ContactsCoreV4ContactName = {
+  __typename?: 'ContactsCoreV4ContactName';
+  /** Contact's first name. */
+  first?: Maybe<Scalars['String']['output']>;
+  /** Contact's last name. */
+  last?: Maybe<Scalars['String']['output']>;
+};
+
+export type ContactsCoreV4ContactNameInput = {
+  /** Contact's first name. */
+  first?: InputMaybe<Scalars['String']['input']>;
+  /** Contact's last name. */
+  last?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type ContactsCoreV4ContactPhone = {
+  __typename?: 'ContactsCoreV4ContactPhone';
+  /** [ISO-3166 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code. */
+  countryCode?: Maybe<Scalars['String']['output']>;
+  /**
+   * [ITU E.164-formatted](https://www.itu.int/rec/T-REC-E.164/)
+   * phone number.
+   * Automatically generated using `phone` and `countryCode`,
+   * as long as both of those values are valid.
+   */
+  e164Phone?: Maybe<Scalars['String']['output']>;
+  /** Phone ID. */
+  id?: Maybe<Scalars['String']['output']>;
+  /** Phone number. */
+  phone?: Maybe<Scalars['String']['output']>;
+  /**
+   * Whether this is the contact's primary phone number.
+   * When changing `primary` to `true` for a phone,
+   * the contact's other phones become `false`.
+   * It also affects the subscription status to SMS messages that are decided based on the primary phone.
+   */
+  primary?: Maybe<Scalars['Boolean']['output']>;
+  /**
+   * Phone type.
+   *
+   * `UNTAGGED` is shown as "Other" in the Contact List.
+   */
+  tag?: Maybe<ContactsCoreV4ContactPhonePhoneTag>;
+};
+
+export type ContactsCoreV4ContactPhoneInput = {
+  /** [ISO-3166 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code. */
+  countryCode?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * [ITU E.164-formatted](https://www.itu.int/rec/T-REC-E.164/)
+   * phone number.
+   * Automatically generated using `phone` and `countryCode`,
+   * as long as both of those values are valid.
+   */
+  e164Phone?: InputMaybe<Scalars['String']['input']>;
+  /** Phone ID. */
+  id?: InputMaybe<Scalars['String']['input']>;
+  /** Phone number. */
+  phone?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * Whether this is the contact's primary phone number.
+   * When changing `primary` to `true` for a phone,
+   * the contact's other phones become `false`.
+   * It also affects the subscription status to SMS messages that are decided based on the primary phone.
+   */
+  primary?: InputMaybe<Scalars['Boolean']['input']>;
+  /**
+   * Phone type.
+   *
+   * `UNTAGGED` is shown as "Other" in the Contact List.
+   */
+  tag?: InputMaybe<ContactsCoreV4ContactPhonePhoneTag>;
+};
+
+export enum ContactsCoreV4ContactPhonePhoneTag {
+  Fax = 'FAX',
+  Home = 'HOME',
+  Main = 'MAIN',
+  Mobile = 'MOBILE',
+  Untagged = 'UNTAGGED',
+  Work = 'WORK'
+}
+
+export type ContactsCoreV4ContactPhonesWrapper = {
+  __typename?: 'ContactsCoreV4ContactPhonesWrapper';
+  /** List of up to 50 phone numbers. */
+  items?: Maybe<Array<Maybe<ContactsCoreV4ContactPhone>>>;
+};
+
+export type ContactsCoreV4ContactPhonesWrapperInput = {
+  /** List of up to 50 phone numbers. */
+  items?: InputMaybe<Array<InputMaybe<ContactsCoreV4ContactPhoneInput>>>;
+};
+
+export type ContactsCoreV4ContactPicture = {
+  __typename?: 'ContactsCoreV4ContactPicture';
+  /**
+   * Image.
+   * This can contain an image URL or a Wix Media image ID.
+   */
+  image?: Maybe<ContactsCoreV4UpstreamCommonImage>;
+};
+
+export type ContactsCoreV4ContactPictureInput = {
+  /**
+   * Image.
+   * This can contain an image URL or a Wix Media image ID.
+   */
+  image?: InputMaybe<ContactsCoreV4UpstreamCommonImageInput>;
+};
+
+export type ContactsCoreV4ContactSource = {
+  __typename?: 'ContactsCoreV4ContactSource';
+  /** App ID, if the contact was created by an app. */
+  appId?: Maybe<Scalars['String']['output']>;
+  /** Source type. */
+  sourceType?: Maybe<ContactsCoreV4ContactSourceContactSourceType>;
+  /**
+   * App ID, if the contact was created by a Wix app.
+   *
+   * > **Deprecation Notice:**
+   * > This property has been replaced with
+   * > `appId`
+   * > and will be removed on March 31, 2022. If your app uses this property,
+   * > we recommend updating your code as soon as possible.
+   */
+  wixAppId?: Maybe<Scalars['String']['output']>;
+};
+
+export enum ContactsCoreV4ContactSourceContactSourceType {
+  Admin = 'ADMIN',
+  Hopp = 'HOPP',
+  Import = 'IMPORT',
+  Other = 'OTHER',
+  ThirdParty = 'THIRD_PARTY',
+  WixApp = 'WIX_APP',
+  WixBookings = 'WIX_BOOKINGS',
+  WixChat = 'WIX_CHAT',
+  WixCode = 'WIX_CODE',
+  WixEmailMarketing = 'WIX_EMAIL_MARKETING',
+  WixEvents = 'WIX_EVENTS',
+  WixForms = 'WIX_FORMS',
+  WixGroups = 'WIX_GROUPS',
+  WixHotels = 'WIX_HOTELS',
+  WixMarketPlace = 'WIX_MARKET_PLACE',
+  WixMusic = 'WIX_MUSIC',
+  WixRestaurants = 'WIX_RESTAURANTS',
+  WixSiteMembers = 'WIX_SITE_MEMBERS',
+  WixStores = 'WIX_STORES'
+}
+
+export type ContactsCoreV4CreateContactRequestInput = {
+  /**
+   * Controls whether the call will succeed
+   * if the new contact information contains an email or a phone number already used by another contact.
+   *
+   * If set to `true`,
+   * the call will succeed even if an email address or phone number is used by another contact.
+   * If set to `false`,
+   * the call will fail if the given email address is used by another contact or,
+   * if the email address is not given and the given phone number is used by another contact.
+   *
+   * Defaults to `false`.
+   */
+  allowDuplicates?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Contact info. */
+  info?: InputMaybe<ContactsCoreV4ContactInfoInput>;
+};
+
+export type ContactsCoreV4CreateContactResponse = {
+  __typename?: 'ContactsCoreV4CreateContactResponse';
+  /** Contact. */
+  contact?: Maybe<ContactsCoreV4Contact>;
+};
+
+export type ContactsCoreV4DeleteContactRequestInput = {
+  /** ID of the contact to delete. */
+  contactId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type ContactsCoreV4ExtendedFieldsWrapper = {
+  __typename?: 'ContactsCoreV4ExtendedFieldsWrapper';
+  /**
+   * Contact's extended fields,
+   * where each key is the field key,
+   * and each value is the field's value for the contact.
+   *
+   * To view and manage extended fields, use the
+   * [Extended Fields API](https://dev.wix.com/api/rest/contacts/extended-fields).
+   */
+  items?: Maybe<Scalars['JSON']['output']>;
+};
+
+export type ContactsCoreV4ExtendedFieldsWrapperInput = {
+  /**
+   * Contact's extended fields,
+   * where each key is the field key,
+   * and each value is the field's value for the contact.
+   *
+   * To view and manage extended fields, use the
+   * [Extended Fields API](https://dev.wix.com/api/rest/contacts/extended-fields).
+   */
+  items?: InputMaybe<Scalars['JSON']['input']>;
+};
+
+export type ContactsCoreV4LabelContactRequestInput = {
+  /** ID of the contact to add labels to. */
+  contactId?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * List of label keys to add to the contact.
+   *
+   * Label keys must exist to be added to the contact.
+   * Contact labels can be created or retrieved with
+   * [Find or Create Label](https://dev.wix.com/api/rest/contacts/labels/find-or-create-label)
+   * or
+   * [List Labels](https://dev.wix.com/api/rest/contacts/labels/list-labels).
+   */
+  labelKeys?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+export type ContactsCoreV4LabelContactResponse = {
+  __typename?: 'ContactsCoreV4LabelContactResponse';
+  /** Updated contact. */
+  contact?: Maybe<ContactsCoreV4Contact>;
+};
+
+export type ContactsCoreV4LabelsWrapper = {
+  __typename?: 'ContactsCoreV4LabelsWrapper';
+  /**
+   * List of contact label keys.
+   * [Contact labels](https://support.wix.com/en/article/adding-labels-to-contacts-in-your-contact-list)
+   * help categorize contacts.
+   *
+   * Label keys must exist to be added to the contact.
+   * Contact labels can be created or retrieved with
+   * [Find or Create Label](https://dev.wix.com/api/rest/contacts/labels/find-or-create-label)
+   * or
+   * [List Labels](https://dev.wix.com/api/rest/contacts/labels/list-labels)
+   */
+  items?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  /**
+   * List of contact label keys.
+   * [Contact labels](https://support.wix.com/en/article/adding-labels-to-contacts-in-your-contact-list)
+   * help categorize contacts.
+   *
+   * Label keys must exist to be added to the contact.
+   * Contact labels can be created or retrieved with
+   * [Find or Create Label](https://dev.wix.com/api/rest/contacts/labels/find-or-create-label)
+   * or
+   * [List Labels](https://dev.wix.com/api/rest/contacts/labels/list-labels)
+   */
+  labels?: Maybe<ContactsLabelsV4QueryLabelsResponse>;
+};
+
+
+export type ContactsCoreV4LabelsWrapperLabelsArgs = {
+  queryInput?: InputMaybe<ContactsLabelsV4QueryLabelsRequestInput>;
+};
+
+export type ContactsCoreV4MergeContactsRequestInput = {
+  /**
+   * IDs of up to 5 contacts to merge into the target contact.
+   * If merging more than one source contact,
+   * the first source is given precedence, then the second, and so on.
+   */
+  sourceContactIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  /** Target contact ID. */
+  targetContactId?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * Target contact revision number, which increments by 1 each time the contact is updated.
+   * To prevent conflicting changes,
+   * the target contact's current revision must be passed.
+   */
+  targetContactRevision?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type ContactsCoreV4MergeContactsResponse = {
+  __typename?: 'ContactsCoreV4MergeContactsResponse';
+  /** Updated target contact. */
+  contact?: Maybe<ContactsCoreV4Contact>;
+};
+
+export type ContactsCoreV4PrimaryContactInfo = {
+  __typename?: 'ContactsCoreV4PrimaryContactInfo';
+  /**
+   * Primary email address.
+   *
+   * This property reflects the email address in `info.emails`
+   * where `primary` is `true`.
+   */
+  email?: Maybe<Scalars['String']['output']>;
+  /**
+   * Primary phone number.
+   *
+   * This property reflects the phone number in `info.phones`
+   * where `primary` is `true`.
+   */
+  phone?: Maybe<Scalars['String']['output']>;
+};
+
+export type ContactsCoreV4PrimaryEmail = {
+  __typename?: 'ContactsCoreV4PrimaryEmail';
+  /**
+   * Indicates last reported status of sent emails.
+   *
+   * - `NOT_SET`: No status reported. Default.
+   * - `VALID`: Emails are being successfully delivered.
+   * - `BOUNCED`: The last email to the recipient bounced or was rejected.
+   * - `SPAM_COMPLAINT`: Recipient registered a spam complaint
+   * with their email provider.
+   * - `INACTIVE`: Multiple emails have been delivered without any kind of engagement from the recipient.
+   */
+  deliverabilityStatus?: Maybe<ContactsCoreV4PrimaryEmailEmailDeliverabilityStatus>;
+  /**
+   * Primary email address.
+   *
+   * This property reflects the email address in `info.emails`
+   * where `primary` is `true`.
+   */
+  email?: Maybe<Scalars['String']['output']>;
+  /**
+   * Indicates the recipient's opt-in or opt-out status for marketing emails.
+   *
+   * - `NOT_SET`: No status specified. Default.
+   * - `PENDING`: Subscription confirmation was requested,
+   * but recipient hasn't confirmed yet.
+   * - `SUBSCRIBED`: Recipient has opted in to marketing emails.
+   * - `UNSUBSCRIBED`: Recipient has opted out of marketing emails.
+   */
+  subscriptionStatus?: Maybe<ContactsCoreV4SubscriptionStatus>;
+};
+
+export enum ContactsCoreV4PrimaryEmailEmailDeliverabilityStatus {
+  Bounced = 'BOUNCED',
+  Inactive = 'INACTIVE',
+  NotSet = 'NOT_SET',
+  SpamComplaint = 'SPAM_COMPLAINT',
+  UnknownEmailDeliverabilityStatus = 'UNKNOWN_EMAIL_DELIVERABILITY_STATUS',
+  Valid = 'VALID'
+}
+
+export type ContactsCoreV4PrimaryPhone = {
+  __typename?: 'ContactsCoreV4PrimaryPhone';
+  /** [ISO-3166 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) country code of the primary phone. */
+  countryCode?: Maybe<Scalars['String']['output']>;
+  /**
+   * - `NO_PHONE_DELIVERABILITY_STATUS`: No status exists. This is the status when the phone is not a valid E164 phone.
+   * - `NOT_SET`: No status reported. Default when the phone is a valid E164 phone.
+   */
+  deliverabilityStatus?: Maybe<ContactsCoreV4PrimaryPhonePhoneDeliverabilityStatus>;
+  /**
+   * [ITU E.164-formatted](https://www.itu.int/rec/T-REC-E.164/)
+   * phone number.
+   * Automatically generated using `phone` and `countryCode`,
+   * as long as both of those values are valid.
+   */
+  e164Phone?: Maybe<Scalars['String']['output']>;
+  /** Formatted phone. Automatically generated using phone and countryCode. */
+  formattedPhone?: Maybe<Scalars['String']['output']>;
+  /**
+   * Primary phone number.
+   *
+   * This property reflects the phone number in `info.phones`
+   * where `primary` is `true`.
+   */
+  phone?: Maybe<Scalars['String']['output']>;
+  /**
+   * Indicates the recipient's opt-in or opt-out status for SMS messages.
+   *
+   * - `NO_SUBSCRIPTION_STATUS`: No status exists. This is the status when the phone is not a valid E164 phone.
+   * - `NOT_SET`: No status specified. Default when the phone is a valid E164 phone.
+   * - `PENDING`: Subscription confirmation was requested,
+   * but recipient hasn't confirmed yet.
+   * - `SUBSCRIBED`: Recipient has opted in to SMS messages.
+   * - `UNSUBSCRIBED`: Recipient has opted out of SMS messages.
+   */
+  subscriptionStatus?: Maybe<ContactsCoreV4SubscriptionStatus>;
+};
+
+export enum ContactsCoreV4PrimaryPhonePhoneDeliverabilityStatus {
+  NotSet = 'NOT_SET',
+  NoPhoneDeliverabilityStatus = 'NO_PHONE_DELIVERABILITY_STATUS'
+}
+
+export enum ContactsCoreV4SubscriptionStatus {
+  NotSet = 'NOT_SET',
+  NoSubscriptionStatus = 'NO_SUBSCRIPTION_STATUS',
+  Pending = 'PENDING',
+  Subscribed = 'SUBSCRIBED',
+  Unsubscribed = 'UNSUBSCRIBED'
+}
+
+export type ContactsCoreV4UnlabelContactRequestInput = {
+  /** ID of the contact to remove labels from. */
+  contactId?: InputMaybe<Scalars['String']['input']>;
+  /** List of label keys to remove from the contact. */
+  labelKeys?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+export type ContactsCoreV4UnlabelContactResponse = {
+  __typename?: 'ContactsCoreV4UnlabelContactResponse';
+  /** Updated contact. */
+  contact?: Maybe<ContactsCoreV4Contact>;
+};
+
+export type ContactsCoreV4UpdateContactRequestInput = {
+  /**
+   * Controls whether the call will succeed
+   * if the new contact information contains an email or a phone number already used by another contact.
+   *
+   * If set to `true`,
+   * the call will succeed even if an email address or phone number is used by another contact.
+   * If set to `false`,
+   * the call will fail if the given email address is used by another contact or,
+   * if the email address is not given and the given phone number is used by another contact.
+   *
+   * Defaults to `false`.
+   */
+  allowDuplicates?: InputMaybe<Scalars['Boolean']['input']>;
+  /** ID of the contact to update. */
+  contactId?: InputMaybe<Scalars['String']['input']>;
+  /** Contact info. */
+  info?: InputMaybe<ContactsCoreV4ContactInfoInput>;
+  /**
+   * Revision number.
+   * When updating, include the existing `revision`
+   * to prevent conflicting updates.
+   */
+  revision?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type ContactsCoreV4UpdateContactResponse = {
+  __typename?: 'ContactsCoreV4UpdateContactResponse';
+  /** Updated contact. */
+  contact?: Maybe<ContactsCoreV4Contact>;
+};
+
+export type ContactsCoreV4UpstreamCommonAddress = {
+  __typename?: 'ContactsCoreV4UpstreamCommonAddress';
+  /** Main address line, usually street and number, as free text. */
+  addressLine?: Maybe<Scalars['String']['output']>;
+  /**
+   * Free text providing more detailed address information,
+   * such as apartment, suite, or floor.
+   */
+  addressLine2?: Maybe<Scalars['String']['output']>;
+  /** City name. */
+  city?: Maybe<Scalars['String']['output']>;
+  /**
+   * 2-letter country code in an
+   * [ISO-3166 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) format.
+   */
+  country?: Maybe<Scalars['String']['output']>;
+  /** Postal or zip code. */
+  postalCode?: Maybe<Scalars['String']['output']>;
+  /** Street address object, with number and name in separate fields. */
+  streetAddress?: Maybe<ContactsCoreV4UpstreamCommonStreetAddress>;
+  /**
+   * Code for a subdivision (such as state, prefecture, or province) in an
+   * [ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2) format.
+   */
+  subdivision?: Maybe<Scalars['String']['output']>;
+};
+
+export type ContactsCoreV4UpstreamCommonAddressInput = {
+  /** Main address line, usually street and number, as free text. */
+  addressLine?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * Free text providing more detailed address information,
+   * such as apartment, suite, or floor.
+   */
+  addressLine2?: InputMaybe<Scalars['String']['input']>;
+  /** City name. */
+  city?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * 2-letter country code in an
+   * [ISO-3166 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) format.
+   */
+  country?: InputMaybe<Scalars['String']['input']>;
+  /** Postal or zip code. */
+  postalCode?: InputMaybe<Scalars['String']['input']>;
+  /** Street address object, with number and name in separate fields. */
+  streetAddress?: InputMaybe<ContactsCoreV4UpstreamCommonStreetAddressInput>;
+  /**
+   * Code for a subdivision (such as state, prefecture, or province) in an
+   * [ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2) format.
+   */
+  subdivision?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type ContactsCoreV4UpstreamCommonImage = {
+  __typename?: 'ContactsCoreV4UpstreamCommonImage';
+  /** Image alt text. Optional. */
+  altText?: Maybe<Scalars['String']['output']>;
+  /** Height of the original image. */
+  height?: Maybe<Scalars['Int']['output']>;
+  /**
+   * WixMedia image ID.
+   * This property is written by Wix when an image is uploaded to the Wix Media Manager.
+   */
+  id?: Maybe<Scalars['String']['output']>;
+  /** Image source: Either a Media Manager URL or external URL. */
+  url?: Maybe<Scalars['String']['output']>;
+  /** Image URL expiration date (when relevant). Optional */
+  urlExpirationDate?: Maybe<Scalars['String']['output']>;
+  /** Width of the original image. */
+  width?: Maybe<Scalars['Int']['output']>;
+};
+
+export type ContactsCoreV4UpstreamCommonImageInput = {
+  /** Image alt text. Optional. */
+  altText?: InputMaybe<Scalars['String']['input']>;
+  /** Height of the original image. */
+  height?: InputMaybe<Scalars['Int']['input']>;
+  /**
+   * WixMedia image ID.
+   * This property is written by Wix when an image is uploaded to the Wix Media Manager.
+   */
+  id?: InputMaybe<Scalars['String']['input']>;
+  /** Image source: Either a Media Manager URL or external URL. */
+  url?: InputMaybe<Scalars['String']['input']>;
+  /** Image URL expiration date (when relevant). Optional */
+  urlExpirationDate?: InputMaybe<Scalars['String']['input']>;
+  /** Width of the original image. */
+  width?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type ContactsCoreV4UpstreamCommonStreetAddress = {
+  __typename?: 'ContactsCoreV4UpstreamCommonStreetAddress';
+  /** Street name. */
+  name?: Maybe<Scalars['String']['output']>;
+  /** Street number. */
+  number?: Maybe<Scalars['String']['output']>;
+};
+
+export type ContactsCoreV4UpstreamCommonStreetAddressInput = {
+  /** Street name. */
+  name?: InputMaybe<Scalars['String']['input']>;
+  /** Street number. */
+  number?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type ContactsFieldsV4DeleteExtendedFieldRequestInput = {
@@ -5338,31 +5861,6 @@ export type ContactsFieldsV4FindOrCreateExtendedFieldResponse = {
   newField?: Maybe<Scalars['Boolean']['output']>;
 };
 
-export type ContactsFieldsV4ListExtendedFieldsRequestInput = {
-  /** Filter for fields of the specified type. */
-  fieldType?: InputMaybe<ContactsFieldsV4ExtendedFieldFieldType>;
-  /**
-   * Filter for fields in the specified namespace.
-   * Fields created by site contributors or 3rd-party apps
-   * are automatically assigned to the `custom` namespace.
-   */
-  namespace?: InputMaybe<Scalars['String']['input']>;
-  /** Paging options. */
-  paging?: InputMaybe<ContactsFieldsV4UpstreamCommonPagingInput>;
-  /** Sorting options. */
-  sort?: InputMaybe<ContactsFieldsV4UpstreamCommonSortingInput>;
-  /** Filter for fields where `displayName` starts with the specified case-sensitive string. */
-  startsWith?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type ContactsFieldsV4ListExtendedFieldsResponse = {
-  __typename?: 'ContactsFieldsV4ListExtendedFieldsResponse';
-  /** List of extended fields. */
-  fields?: Maybe<Array<Maybe<ContactsFieldsV4ExtendedField>>>;
-  /** Metadata for the page of results. */
-  metadata?: Maybe<ContactsFieldsV4UpstreamCommonPagingMetadata>;
-};
-
 export type ContactsFieldsV4QueryExtendedFieldsRequestInput = {
   /** Query options. */
   query?: InputMaybe<ContactsFieldsV4UpstreamQueryQueryInput>;
@@ -5400,21 +5898,6 @@ export type ContactsFieldsV4UpstreamCommonPagingInput = {
    * Defaults to `0`.
    */
   offset?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type ContactsFieldsV4UpstreamCommonPagingMetadata = {
-  __typename?: 'ContactsFieldsV4UpstreamCommonPagingMetadata';
-  /** Number of items returned. */
-  count?: Maybe<Scalars['Int']['output']>;
-  /** Requested offset. */
-  offset?: Maybe<Scalars['Int']['output']>;
-  /**
-   * Indicates if `total` calculation timed out before the response was sent.
-   * Typically this happens if there is a large set of results.
-   */
-  tooManyToCount?: Maybe<Scalars['Boolean']['output']>;
-  /** Number of items that matched the query. */
-  total?: Maybe<Scalars['Int']['output']>;
 };
 
 export enum ContactsFieldsV4UpstreamCommonSortOrder {
@@ -5572,29 +6055,6 @@ export type ContactsLabelsV4FindOrCreateLabelResponse = {
   newLabel?: Maybe<Scalars['Boolean']['output']>;
 };
 
-export type ContactsLabelsV4ListLabelsRequestInput = {
-  /** Filter for labels of the specified type. */
-  labelType?: InputMaybe<ContactsLabelsV4ContactLabelLabelType>;
-  /** Language for localization. */
-  language?: InputMaybe<Scalars['String']['input']>;
-  /** Filter for labels in the specified namespace. */
-  namespace?: InputMaybe<Scalars['String']['input']>;
-  /** Paging options. */
-  paging?: InputMaybe<ContactsLabelsV4UpstreamCommonPagingInput>;
-  /** Sorting options. */
-  sort?: InputMaybe<ContactsLabelsV4UpstreamCommonSortingInput>;
-  /** Filter for labels where `displayName` starts with the specified case-sensitive string. */
-  startsWith?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type ContactsLabelsV4ListLabelsResponse = {
-  __typename?: 'ContactsLabelsV4ListLabelsResponse';
-  /** List of labels. */
-  labels?: Maybe<Array<Maybe<ContactsLabelsV4ContactLabel>>>;
-  /** Metadata for the page of results. */
-  metadata?: Maybe<ContactsLabelsV4UpstreamCommonPagingMetadata>;
-};
-
 export type ContactsLabelsV4QueryLabelsRequestInput = {
   /** Language for localization. */
   language?: InputMaybe<Scalars['String']['input']>;
@@ -5633,21 +6093,6 @@ export type ContactsLabelsV4UpstreamCommonPagingInput = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   /** Number of items to skip in the current sort order. */
   offset?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type ContactsLabelsV4UpstreamCommonPagingMetadata = {
-  __typename?: 'ContactsLabelsV4UpstreamCommonPagingMetadata';
-  /** Number of items returned. */
-  count?: Maybe<Scalars['Int']['output']>;
-  /** Requested offset. */
-  offset?: Maybe<Scalars['Int']['output']>;
-  /**
-   * Indicates if `total` calculation timed out before the response was sent.
-   * Typically this happens if there is a large set of results.
-   */
-  tooManyToCount?: Maybe<Scalars['Boolean']['output']>;
-  /** Number of items that matched the query. */
-  total?: Maybe<Scalars['Int']['output']>;
 };
 
 export enum ContactsLabelsV4UpstreamCommonSortOrder {
@@ -5692,6 +6137,68 @@ export type ContactsLabelsV4UpstreamQueryQueryInput = {
   sort?: InputMaybe<Array<InputMaybe<ContactsLabelsV4UpstreamCommonSortingInput>>>;
 };
 
+export type CrmContactsV4ContactRequestInput = {
+  /**
+   * List of projected fields to return.
+   * If both `fields` and `fieldsets` are sent in the request,
+   * the union of both lists is returned.
+   * `id` and `revision` are always returned.
+   *
+   * Supported properties:
+   * `source`, `createdDate`, `updatedDate`, `lastActivity`, `primaryInfo`, `primaryEmail`, `primaryPhone`,
+   * `info.name`, `info.emails`, `info.phones`, `info.addresses`, `info.company`,
+   * `info.jobTitle`, `info.picture`, `info.birthdate`, `info.locale`,
+   * `info.labelKeys`, `info.locations`, `info.extendedFields`
+   */
+  fields?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  /**
+   * Predefined sets of fields to return.
+   * If both `fields` and `fieldsets` are sent in the request,
+   * the union of both lists is returned.
+   *
+   * - `BASIC`: Returns `id`, `revision`, `primaryInfo`, `info.name`, `primaryEmail`, `primaryPhone`.
+   * - `COMMUNICATION_DETAILS`: Returns `id`, `revision`, `primaryInfo`, `primaryEmail`, `primaryPhone`, `info.name`, `info.emails`, `info.phones`, `info.addresses`.
+   * - `EXTENDED`: Returns `id`, `revision`, `primaryInfo`, `primaryEmail`, `primaryPhone`, `info.name`, `info.extendedFields`.
+   * - `FULL`: Returns all fields.
+   *
+   * Default: If `fields` is omitted from the request, `FULL`.
+   */
+  fieldsets?: InputMaybe<Array<InputMaybe<ContactsCoreV4ContactFieldSet>>>;
+  id: Scalars['ID']['input'];
+};
+
+export type CrmExtendedFieldsV4ExtendedFieldRequestInput = {
+  id: Scalars['ID']['input'];
+};
+
+export type CrmLabelsV4ContactLabelRequestInput = {
+  id: Scalars['ID']['input'];
+  /** Language for localization. */
+  language?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type DataItemsV2DataItemRequestInput = {
+  /**
+   * Whether to retrieve data from the primary database instance.
+   * This decreases performance but ensures data retrieved is up to date even immediately after an update.
+   * Learn more about [Wix Data and eventual consistency](https://dev.wix.com/api/rest/wix-data/wix-data/eventual-consistency).
+   *
+   * Default: `false`
+   */
+  consistentRead?: InputMaybe<Scalars['Boolean']['input']>;
+  /** ID of the collection from which to retrieve the data item. */
+  dataCollectionId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['ID']['input'];
+  /**
+   * Language to translate result text into, in [IETF BCP 47 language tag](https://en.wikipedia.org/wiki/IETF_language_tag) format.
+   * If provided, the result text is returned in the specified language.
+   * **Note:** Translation for the specified language must be enabled for the collection in [Wix Multilingual](https://www.wix.com/app-market/wix-multilingual).
+   *
+   * If not provided, result text is not translated.
+   */
+  language?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type EcomCartV1AddToCartRequestInput = {
   /** Cart ID. */
   id?: InputMaybe<Scalars['String']['input']>;
@@ -5712,6 +6219,8 @@ export type EcomCartV1AddToCurrentCartRequestInput = {
 
 export type EcomCartV1BuyerInfo = {
   __typename?: 'EcomCartV1BuyerInfo';
+  /** Contact ID. For more information, see [Contacts API](https://dev.wix.com/api/rest/contacts/contacts/introduction). */
+  contact?: Maybe<ContactsCoreV4Contact>;
   /** Contact ID. For more information, see [Contacts API](https://dev.wix.com/api/rest/contacts/contacts/introduction). */
   contactId?: Maybe<Scalars['String']['output']>;
   /** Buyer email address. */
@@ -5855,6 +6364,10 @@ export type EcomCartV1CartInput = {
   updatedDate?: InputMaybe<Scalars['String']['input']>;
   /** Weight measurement unit - defaults to site's weight unit. */
   weightUnit?: InputMaybe<EcommercePlatformCommonWeightUnit>;
+};
+
+export type EcomCartV1CartRequestInput = {
+  id: Scalars['ID']['input'];
 };
 
 export type EcomCartV1Coupon = {
@@ -6241,6 +6754,8 @@ export type EcomCheckoutV1AddressWithContactInput = {
 export type EcomCheckoutV1BuyerInfo = {
   __typename?: 'EcomCheckoutV1BuyerInfo';
   /** Contact ID. Auto-created if one does not yet exist. For more information, see [Contacts API](https://dev.wix.com/api/rest/contacts/contacts/introduction). */
+  contact?: Maybe<ContactsCoreV4Contact>;
+  /** Contact ID. Auto-created if one does not yet exist. For more information, see [Contacts API](https://dev.wix.com/api/rest/contacts/contacts/introduction). */
   contactId?: Maybe<Scalars['String']['output']>;
   /** Buyer email address. */
   email?: Maybe<Scalars['String']['output']>;
@@ -6316,7 +6831,7 @@ export type EcomCheckoutV1Checkout = {
   /**
    * Additional settings for customization of the checkout process.
    *
-   * Custom settings can only be defined when [creating a checkout](https://dev.wix.com/docs/rest/api-reference/wix-e-commerce/checkout/create-checkout).
+   * Custom settings can only be set when [creating a checkout](https://dev.wix.com/docs/rest/api-reference/wix-e-commerce/checkout/create-checkout).
    */
   customSettings?: Maybe<EcomCheckoutV1CustomSettings>;
   externalEnrichedLineItems?: Maybe<EcomLineItemsEnricherSpiHostV1EnrichLineItemsForCheckoutResponse>;
@@ -6412,7 +6927,7 @@ export type EcomCheckoutV1CheckoutInput = {
   /**
    * Additional settings for customization of the checkout process.
    *
-   * Custom settings can only be defined when [creating a checkout](https://dev.wix.com/docs/rest/api-reference/wix-e-commerce/checkout/create-checkout).
+   * Custom settings can only be set when [creating a checkout](https://dev.wix.com/docs/rest/api-reference/wix-e-commerce/checkout/create-checkout).
    */
   customSettings?: InputMaybe<EcomCheckoutV1CustomSettingsInput>;
   /**
@@ -6457,8 +6972,6 @@ export type EcomCheckoutV1CheckoutInput = {
 
 export type EcomCheckoutV1CheckoutRequestInput = {
   id: Scalars['ID']['input'];
-  /** Whether to refresh the checkout from external sources. Defaults to true. */
-  refresh?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type EcomCheckoutV1CreateCheckoutRequestInput = {
@@ -6506,6 +7019,30 @@ export type EcomCheckoutV1CreateCheckoutResponse = {
   checkout?: Maybe<EcomCheckoutV1Checkout>;
 };
 
+export type EcomCheckoutV1CreateOrderRequestInput = {
+  /** Checkout ID. */
+  id?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EcomCheckoutV1CreateOrderResponse = {
+  __typename?: 'EcomCheckoutV1CreateOrderResponse';
+  /** ID of newly created order. */
+  orderId?: Maybe<Scalars['String']['output']>;
+  /**
+   * Payment gateway order ID.
+   *
+   * For online orders, pass this value as the `paymentId` parameter to the Wix Pay [`startPayment()`](https://www.wix.com/velo/reference/wix-pay-frontend/startpayment) function so your customer can pay for the order.
+   * `paymentGatewayOrderId` will be returned if money needs to be charged.
+   *
+   * In some cases, money cannot be charged:
+   * + When the total price (the `priceSummary.total.amount` field in the checkout/order objects) is 0. For example, in the case of a free item or an item with a 100% discount.
+   * + If the total price is not 0, but the payment is covered by alternative payment methods, such as a gift card.
+   */
+  paymentGatewayOrderId?: Maybe<Scalars['String']['output']>;
+  /** ID of newly created subscription. Learn more about your site's [Subscriptions](https://support.wix.com/en/article/wix-stores-managing-product-subscriptions). */
+  subscriptionId?: Maybe<Scalars['String']['output']>;
+};
+
 export type EcomCheckoutV1CreatedBy = {
   __typename?: 'EcomCheckoutV1CreatedBy';
   /** App ID - when the order was created by an external application or Wix service. */
@@ -6540,12 +7077,14 @@ export type EcomCheckoutV1CreatedByInput = {
 export type EcomCheckoutV1CustomSettings = {
   __typename?: 'EcomCheckoutV1CustomSettings';
   /**
-   * Whether to restrict the option to add or remove a coupon code on the checkout page. This field can only be set when [creating a checkout](https://dev.wix.com/docs/rest/api-reference/wix-e-commerce/checkout/create-checkout).
+   * Whether to restrict the option to add or remove a coupon code on the checkout page.
+   *
    * Default: `false`
    */
   lockCouponCode?: Maybe<Scalars['Boolean']['output']>;
   /**
-   * Whether to restrict the option to add or remove a gift card on the checkout page. This field can only be set when [creating a checkout](https://dev.wix.com/docs/rest/api-reference/wix-e-commerce/checkout/create-checkout).
+   * Whether to restrict the option to add or remove a gift card on the checkout page.
+   *
    * Default: `false`
    */
   lockGiftCard?: Maybe<Scalars['Boolean']['output']>;
@@ -6553,12 +7092,14 @@ export type EcomCheckoutV1CustomSettings = {
 
 export type EcomCheckoutV1CustomSettingsInput = {
   /**
-   * Whether to restrict the option to add or remove a coupon code on the checkout page. This field can only be set when [creating a checkout](https://dev.wix.com/docs/rest/api-reference/wix-e-commerce/checkout/create-checkout).
+   * Whether to restrict the option to add or remove a coupon code on the checkout page.
+   *
    * Default: `false`
    */
   lockCouponCode?: InputMaybe<Scalars['Boolean']['input']>;
   /**
-   * Whether to restrict the option to add or remove a gift card on the checkout page. This field can only be set when [creating a checkout](https://dev.wix.com/docs/rest/api-reference/wix-e-commerce/checkout/create-checkout).
+   * Whether to restrict the option to add or remove a gift card on the checkout page.
+   *
    * Default: `false`
    */
   lockGiftCard?: InputMaybe<Scalars['Boolean']['input']>;
@@ -6675,7 +7216,7 @@ export type EcomCheckoutV1LineItem = {
   taxDetails?: Maybe<EcomTotalsCalculatorV1ItemTaxFullDetails>;
   /** Total price after all discounts and tax. */
   totalPriceAfterTax?: Maybe<EcommercePlatformCommonMultiCurrencyPrice>;
-  /** __Deprecated.__ Use `totalPriceAfterTax` minus `taxDetails.totalTax` instead. */
+  /** Total price after discounts, and before tax. */
   totalPriceBeforeTax?: Maybe<EcommercePlatformCommonMultiCurrencyPrice>;
   /** URL to the item's page on the site. */
   url?: Maybe<CommonPageUrlV2>;
@@ -6746,7 +7287,7 @@ export type EcomCheckoutV1LineItemInput = {
   taxDetails?: InputMaybe<EcomTotalsCalculatorV1ItemTaxFullDetailsInput>;
   /** Total price after all discounts and tax. */
   totalPriceAfterTax?: InputMaybe<EcommercePlatformCommonMultiCurrencyPriceInput>;
-  /** __Deprecated.__ Use `totalPriceAfterTax` minus `taxDetails.totalTax` instead. */
+  /** Total price after discounts, and before tax. */
   totalPriceBeforeTax?: InputMaybe<EcommercePlatformCommonMultiCurrencyPriceInput>;
   /** URL to the item's page on the site. */
   url?: InputMaybe<CommonPageUrlV2Input>;
@@ -6899,6 +7440,10 @@ export type EcomCheckoutV1UpdateLineItemsQuantityResponse = {
   checkout?: Maybe<EcomCheckoutV1Checkout>;
 };
 
+export type EcomCurrentCartV1CartRequestInput = {
+  id: Scalars['ID']['input'];
+};
+
 export type EcomDiscountRulesV1DiscountRuleRequestInput = {
   id: Scalars['ID']['input'];
 };
@@ -6916,35 +7461,6 @@ export type EcomDiscountsActiveTimeInfoInput = {
   end?: InputMaybe<Scalars['String']['input']>;
   /** Date and time the discount rule is active **from**, in [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601#Combined_date_and_time_representations) format. */
   start?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type EcomDiscountsBuyXGetYInfo = {
-  __typename?: 'EcomDiscountsBuyXGetYInfo';
-  /** Information about which items must be in the cart (buy X) for the discount to apply (get Y). */
-  customerBuys?: Maybe<EcomDiscountsCustomerBuy>;
-  /** Information about which items will be discounted (get Y). */
-  customerGets?: Maybe<EcomDiscountsCustomerGet>;
-  /**
-   * The maximum number of times the 'buy X get Y' discount can be applied.
-   * For example, when the value of `limit` is `2`, with a "2+1" sale on all items, the following logic applies:
-   * + Buy 2 get 1, buy 3 get 1.
-   * + Buy 4 get 2, buy 6 get 2, buy 9 get 2, and so on.
-   */
-  limit?: Maybe<Scalars['Int']['output']>;
-};
-
-export type EcomDiscountsBuyXGetYInfoInput = {
-  /** Information about which items must be in the cart (buy X) for the discount to apply (get Y). */
-  customerBuys?: InputMaybe<EcomDiscountsCustomerBuyInput>;
-  /** Information about which items will be discounted (get Y). */
-  customerGets?: InputMaybe<EcomDiscountsCustomerGetInput>;
-  /**
-   * The maximum number of times the 'buy X get Y' discount can be applied.
-   * For example, when the value of `limit` is `2`, with a "2+1" sale on all items, the following logic applies:
-   * + Buy 2 get 1, buy 3 get 1.
-   * + Buy 4 get 2, buy 6 get 2, buy 9 get 2, and so on.
-   */
-  limit?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type EcomDiscountsCatalogItemFilter = {
@@ -6996,46 +7512,6 @@ export type EcomDiscountsCustomFilterInput = {
   params?: InputMaybe<Scalars['JSON']['input']>;
 };
 
-export type EcomDiscountsCustomerBuy = {
-  __typename?: 'EcomDiscountsCustomerBuy';
-  /** Minimum number of items the customer must add to the cart to be eligible for a discount. */
-  minimumQuantity?: Maybe<Scalars['Int']['output']>;
-  /** Minimum price the customer must add to the cart to be eligible for a discount. */
-  minimumSpend?: Maybe<Scalars['String']['output']>;
-  /** Scopes of the items that must be added to the cart to enable the discount. */
-  scopes?: Maybe<Array<Maybe<EcomDiscountsScope>>>;
-};
-
-export type EcomDiscountsCustomerBuyInput = {
-  /** Minimum number of items the customer must add to the cart to be eligible for a discount. */
-  minimumQuantity?: InputMaybe<Scalars['Int']['input']>;
-  /** Minimum price the customer must add to the cart to be eligible for a discount. */
-  minimumSpend?: InputMaybe<Scalars['String']['input']>;
-  /** Scopes of the items that must be added to the cart to enable the discount. */
-  scopes?: InputMaybe<Array<InputMaybe<EcomDiscountsScopeInput>>>;
-};
-
-export type EcomDiscountsCustomerGet = {
-  __typename?: 'EcomDiscountsCustomerGet';
-  /**
-   * Exact number of items in the cart that will be discounted.
-   * If the cart contains fewer items than the value of quantity, the discount will not apply.
-   */
-  quantity?: Maybe<Scalars['Int']['output']>;
-  /** Scopes of the items that will be discounted. */
-  scopes?: Maybe<Array<Maybe<EcomDiscountsScope>>>;
-};
-
-export type EcomDiscountsCustomerGetInput = {
-  /**
-   * Exact number of items in the cart that will be discounted.
-   * If the cart contains fewer items than the value of quantity, the discount will not apply.
-   */
-  quantity?: InputMaybe<Scalars['Int']['input']>;
-  /** Scopes of the items that will be discounted. */
-  scopes?: InputMaybe<Array<InputMaybe<EcomDiscountsScopeInput>>>;
-};
-
 export type EcomDiscountsDeleteDiscountRuleRequestInput = {
   /** ID of the discount rule to delete. */
   discountRuleId?: InputMaybe<Scalars['String']['input']>;
@@ -7043,8 +7519,6 @@ export type EcomDiscountsDeleteDiscountRuleRequestInput = {
 
 export type EcomDiscountsDiscount = {
   __typename?: 'EcomDiscountsDiscount';
-  /** Data related to `BUY_X_GET_Y` target type. */
-  buyXGetYInfo?: Maybe<EcomDiscountsBuyXGetYInfo>;
   /**
    * Discount type.
    *
@@ -7080,8 +7554,6 @@ export enum EcomDiscountsDiscountDiscountType {
 }
 
 export type EcomDiscountsDiscountInput = {
-  /** Data related to `BUY_X_GET_Y` target type. */
-  buyXGetYInfo?: InputMaybe<EcomDiscountsBuyXGetYInfoInput>;
   /**
    * Discount type.
    *
@@ -7209,13 +7681,13 @@ export enum EcomDiscountsDiscountTargetType {
 
 export type EcomDiscountsDiscountTrigger = {
   __typename?: 'EcomDiscountsDiscountTrigger';
-  /** Chain multiple triggers with `and` operator. */
+  /** Chain multiple triggers with the `and` operator. */
   and?: Maybe<EcomDiscountsDiscountTriggerAnd>;
   /** Custom trigger. */
   customTrigger?: Maybe<EcomDiscountsDiscountTriggerCustom>;
   /** Item quantity trigger range. */
   itemQuantityRange?: Maybe<EcomDiscountsDiscountTriggerItemQuantityRange>;
-  /** Chain multiple triggers with OR operator */
+  /** Chain multiple triggers with the `or` operator. */
   or?: Maybe<EcomDiscountsDiscountTriggerOr>;
   /** Subtotal trigger range. */
   subtotalRange?: Maybe<EcomDiscountsDiscountTriggerSubtotalRange>;
@@ -7263,13 +7735,13 @@ export type EcomDiscountsDiscountTriggerCustomInput = {
 };
 
 export type EcomDiscountsDiscountTriggerInput = {
-  /** Chain multiple triggers with `and` operator. */
+  /** Chain multiple triggers with the `and` operator. */
   and?: InputMaybe<EcomDiscountsDiscountTriggerAndInput>;
   /** Custom trigger. */
   customTrigger?: InputMaybe<EcomDiscountsDiscountTriggerCustomInput>;
   /** Item quantity trigger range. */
   itemQuantityRange?: InputMaybe<EcomDiscountsDiscountTriggerItemQuantityRangeInput>;
-  /** Chain multiple triggers with OR operator */
+  /** Chain multiple triggers with the `or` operator. */
   or?: InputMaybe<EcomDiscountsDiscountTriggerOrInput>;
   /** Subtotal trigger range. */
   subtotalRange?: InputMaybe<EcomDiscountsDiscountTriggerSubtotalRangeInput>;
@@ -7402,21 +7874,11 @@ export enum EcomDiscountsScopeType {
 
 export type EcomDiscountsSpecificItemsInfo = {
   __typename?: 'EcomDiscountsSpecificItemsInfo';
-  /**
-   * limit number of items the discount can be applied to
-   * if no limit specified, the discount will be applied to all items in the request that match 'scopes' field
-   */
-  limit?: Maybe<Scalars['Int']['output']>;
   /** All associated scopes for `SPECIFIC_ITEMS` target type. */
   scopes?: Maybe<Array<Maybe<EcomDiscountsScope>>>;
 };
 
 export type EcomDiscountsSpecificItemsInfoInput = {
-  /**
-   * limit number of items the discount can be applied to
-   * if no limit specified, the discount will be applied to all items in the request that match 'scopes' field
-   */
-  limit?: InputMaybe<Scalars['Int']['input']>;
   /** All associated scopes for `SPECIFIC_ITEMS` target type. */
   scopes?: InputMaybe<Array<InputMaybe<EcomDiscountsScopeInput>>>;
 };
@@ -7622,6 +8084,71 @@ export type EcomMembershipsSpiV1MembershipPaymentCreditsInput = {
   total?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type EcomOrdersFulfillmentsV1CustomFulfillmentInfo = {
+  __typename?: 'EcomOrdersFulfillmentsV1CustomFulfillmentInfo';
+  /** Custom fulfillment info in key:value form. */
+  fieldsData?: Maybe<Scalars['JSON']['output']>;
+};
+
+export type EcomOrdersFulfillmentsV1Fulfillment = {
+  __typename?: 'EcomOrdersFulfillmentsV1Fulfillment';
+  /** Fulfillment handling complete. */
+  completed?: Maybe<Scalars['Boolean']['output']>;
+  /** Fulfillment creation date and time in [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601#Combined_date_and_time_representations) format. */
+  createdDate?: Maybe<Scalars['String']['output']>;
+  /** Custom fulfillment info. */
+  customInfo?: Maybe<EcomOrdersFulfillmentsV1CustomFulfillmentInfo>;
+  /** Fulfillment ID. */
+  id?: Maybe<Scalars['String']['output']>;
+  /** Line items being fulfilled. */
+  lineItems?: Maybe<Array<Maybe<EcomOrdersFulfillmentsV1FulfillmentLineItem>>>;
+  /**
+   * Fulfillment status.
+   *
+   * Supported values:
+   * + `"Pending"`
+   * + `"Accepted"`
+   * + `"Ready"`
+   * + `"In_Delivery"`
+   * + `"Fulfilled"`
+   */
+  status?: Maybe<Scalars['String']['output']>;
+  /** Tracking info. */
+  trackingInfo?: Maybe<EcomOrdersFulfillmentsV1FulfillmentTrackingInfo>;
+};
+
+export type EcomOrdersFulfillmentsV1FulfillmentLineItem = {
+  __typename?: 'EcomOrdersFulfillmentsV1FulfillmentLineItem';
+  /** Line item ID (mirrors the ID of the order line item). */
+  id?: Maybe<Scalars['String']['output']>;
+  /**
+   * Line item quantity.
+   * * If this property isn't passed on creation, it defaults to the number of items not already linked to a fulfillment.
+   * * If the order does not have the requested quantity of line items available to add to this fulfillment, the fulfillment will not be created and an error is returned.
+   *
+   * Min: `1`
+   * Max: `100000`
+   */
+  quantity?: Maybe<Scalars['Int']['output']>;
+};
+
+export type EcomOrdersFulfillmentsV1FulfillmentTrackingInfo = {
+  __typename?: 'EcomOrdersFulfillmentsV1FulfillmentTrackingInfo';
+  /**
+   * Shipping provider. Using one of the following shipping providers will allow for auto-filling the tracking link:
+   * * `'fedex'`
+   * * `'ups'`
+   * * `'usps'`
+   * * `'dhl'`
+   * * `'canadaPost'`
+   */
+  shippingProvider?: Maybe<Scalars['String']['output']>;
+  /** Tracking link. Auto-filled if a predefined shipping provider is used, otherwise provided on creation. */
+  trackingLink?: Maybe<Scalars['String']['output']>;
+  /** Shipping/delivery tracking number. */
+  trackingNumber?: Maybe<Scalars['String']['output']>;
+};
+
 export type EcomOrdersPaymentsCollectorV1BulkMarkOrdersAsPaidRequestInput = {
   /** IDs of orders to mark as paid. */
   ecomOrderIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
@@ -7825,21 +8352,6 @@ export type EcomOrdersPaymentsCollectorV1TriggerRefundResponse = {
   refundId?: Maybe<Scalars['String']['output']>;
 };
 
-export type EcomOrdersPaymentsV1AddPaymentsRequestInput = {
-  /** Order ID. */
-  orderId?: InputMaybe<Scalars['String']['input']>;
-  /** Payments to be added to order. */
-  payments?: InputMaybe<Array<InputMaybe<EcomOrdersPaymentsV1PaymentInput>>>;
-};
-
-export type EcomOrdersPaymentsV1AddPaymentsResponse = {
-  __typename?: 'EcomOrdersPaymentsV1AddPaymentsResponse';
-  /** Order ID and its associated transactions. */
-  orderTransactions?: Maybe<EcomOrdersPaymentsV1OrderTransactions>;
-  /** IDs of added order payments. */
-  paymentsIds?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-};
-
 export type EcomOrdersPaymentsV1AddRefundRequestInput = {
   /** Order ID this refunds related to */
   orderId?: InputMaybe<Scalars['String']['input']>;
@@ -7890,15 +8402,6 @@ export type EcomOrdersPaymentsV1GiftCardPaymentDetails = {
   giftCardPaymentId?: Maybe<Scalars['String']['output']>;
   /** Whether the gift card is voided. */
   voided?: Maybe<Scalars['Boolean']['output']>;
-};
-
-export type EcomOrdersPaymentsV1GiftCardPaymentDetailsInput = {
-  /** ID of the app that created the gift card. */
-  appId?: InputMaybe<Scalars['String']['input']>;
-  /** Gift card payment ID. */
-  giftCardPaymentId?: InputMaybe<Scalars['String']['input']>;
-  /** Whether the gift card is voided. */
-  voided?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type EcomOrdersPaymentsV1ListTransactionsForMultipleOrdersRequestInput = {
@@ -7965,27 +8468,6 @@ export type EcomOrdersPaymentsV1PaymentAndOrderIdInput = {
    * todo: remove comment once UI will use BulkMarkOrderAsPaid
    */
   paymentId?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type EcomOrdersPaymentsV1PaymentInput = {
-  /** Payment amount. */
-  amount?: InputMaybe<EcommercePlatformCommonPriceInput>;
-  /** Date and time the payment was created in [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601#Combined_date_and_time_representations) format. Defaults to current time when not provided. */
-  createdDate?: InputMaybe<Scalars['String']['input']>;
-  /** Gift card payment details. */
-  giftcardPaymentDetails?: InputMaybe<EcomOrdersPaymentsV1GiftCardPaymentDetailsInput>;
-  /** Payment ID. */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /**
-   * Whether refunds for this payment are disabled.
-   * + `true`: This payment is not refundable.
-   * + `false`: This payment may be refunded. However, this ultimately depends on the payment provider.
-   */
-  refundDisabled?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Regular payment details. */
-  regularPaymentDetails?: InputMaybe<EcomOrdersPaymentsV1RegularPaymentDetailsInput>;
-  /** Date and time the payment was last updated in [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601#Combined_date_and_time_representations) format. */
-  updatedDate?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type EcomOrdersPaymentsV1PaymentRefundInput = {
@@ -8132,27 +8614,6 @@ export type EcomOrdersPaymentsV1RegularPaymentDetails = {
   status?: Maybe<PaymentPayV3TransactionTransactionStatus>;
 };
 
-export type EcomOrdersPaymentsV1RegularPaymentDetailsInput = {
-  /**
-   * Payment gateway's transaction ID. This ID can be used with the Wix Payments [Transactions API](https://dev.wix.com/docs/rest/api-reference/wix-payments/transactions/introduction).
-   * This field is only returned when the value of `offline_payment` is `false`.
-   */
-  gatewayTransactionId?: InputMaybe<Scalars['String']['input']>;
-  /** Whether the payment was made offline. For example, when using cash or when marked as paid in the Business Manager. */
-  offlinePayment?: InputMaybe<Scalars['Boolean']['input']>;
-  /**
-   * Payment method. Non-exhaustive list of supported values:
-   * + `CreditCard`, `Alipay`, `AstropayCash`, `AstropayDBT`, `AstropayMBT`, `Bitcoin`, `BitPay`, `Cash`, `ConvenienceStore`, `EPay`, `Fake`, `Giropay`, `IDeal`, `InPerson`, `Klarna`, `MercadoPago`, `Netpay`, `NordeaSolo`, `Offline`, `PagSeguro`, `PayEasy`, `PayPal`, `Paysafecard`, `Paysafecash`, `PointOfSale`, `Poli`, `Privat24`, `Przelewy24`, `RapidTransfer`, `Sepa`, `Skrill`, `Sofort`, `Trustly`, `Neteller`, `Unionpay`, `UniPay`, `Yandex`
-   */
-  paymentMethod?: InputMaybe<Scalars['String']['input']>;
-  /** Wix Payments order ID. */
-  paymentOrderId?: InputMaybe<Scalars['String']['input']>;
-  /** Transaction ID in the payment provider's system. For example, at PayPal, Square, Stripe, etc. Not returned for offline payments. */
-  providerTransactionId?: InputMaybe<Scalars['String']['input']>;
-  /** Payment status. */
-  status?: InputMaybe<PaymentPayV3TransactionTransactionStatus>;
-};
-
 export type EcomOrdersPaymentsV1RestockInfoInput = {
   /** Restocked line items and quantities. Only relevant for `{"type": "SOME_ITEMS"}`. */
   items?: InputMaybe<Array<InputMaybe<EcomOrdersPaymentsV1RestockItemInput>>>;
@@ -8196,7 +8657,6 @@ export type EcomOrdersV1Activity = {
   createdDate?: Maybe<Scalars['String']['output']>;
   /** Custom activity details (optional). `activity.type` must be `CUSTOM_ACTIVITY`. */
   customActivity?: Maybe<EcomOrdersV1CustomActivity>;
-  draftOrderChangesApplied?: Maybe<EcomOrdersV1DraftOrderChangesApplied>;
   /** Activity ID. */
   id?: Maybe<Scalars['String']['output']>;
   /** Merchant comment details (optional). `activity.type` must be `MERCHANT_COMMENT`. */
@@ -8214,7 +8674,6 @@ export type EcomOrdersV1ActivityInput = {
   createdDate?: InputMaybe<Scalars['String']['input']>;
   /** Custom activity details (optional). `activity.type` must be `CUSTOM_ACTIVITY`. */
   customActivity?: InputMaybe<EcomOrdersV1CustomActivityInput>;
-  draftOrderChangesApplied?: InputMaybe<EcomOrdersV1DraftOrderChangesAppliedInput>;
   /** Activity ID. */
   id?: InputMaybe<Scalars['String']['input']>;
   /** Merchant comment details (optional). `activity.type` must be `MERCHANT_COMMENT`. */
@@ -8403,6 +8862,8 @@ export type EcomOrdersV1BulkOrderResult = {
 
 export type EcomOrdersV1BuyerInfo = {
   __typename?: 'EcomOrdersV1BuyerInfo';
+  /** Contact ID. Auto-created if one does not yet exist. For more information, see [Contacts API](https://dev.wix.com/api/rest/contacts/contacts/introduction). */
+  contact?: Maybe<ContactsCoreV4Contact>;
   /** Contact ID. Auto-created if one does not yet exist. For more information, see [Contacts API](https://dev.wix.com/api/rest/contacts/contacts/introduction). */
   contactId?: Maybe<Scalars['String']['output']>;
   /** Buyer email address. */
@@ -8604,6 +9065,8 @@ export type EcomOrdersV1DeliveryLogistics = {
   deliverByDate?: Maybe<Scalars['String']['output']>;
   /** Expected delivery time in free text. For example, `"3-5 business days"`. */
   deliveryTime?: Maybe<Scalars['String']['output']>;
+  /** Expected delivery time. */
+  deliveryTimeSlot?: Maybe<EcomOrdersV1DeliveryTimeSlot>;
   /** Instructions for carrier. For example, `"Please knock on the door. If unanswered, please call contact number. Thanks."`. */
   instructions?: Maybe<Scalars['String']['output']>;
   /** Pickup details. */
@@ -8617,12 +9080,29 @@ export type EcomOrdersV1DeliveryLogisticsInput = {
   deliverByDate?: InputMaybe<Scalars['String']['input']>;
   /** Expected delivery time in free text. For example, `"3-5 business days"`. */
   deliveryTime?: InputMaybe<Scalars['String']['input']>;
+  /** Expected delivery time. */
+  deliveryTimeSlot?: InputMaybe<EcomOrdersV1DeliveryTimeSlotInput>;
   /** Instructions for carrier. For example, `"Please knock on the door. If unanswered, please call contact number. Thanks."`. */
   instructions?: InputMaybe<Scalars['String']['input']>;
   /** Pickup details. */
   pickupDetails?: InputMaybe<EcomOrdersV1PickupDetailsInput>;
   /** Shipping address and contact details. */
   shippingDestination?: InputMaybe<EcommercePlatformCommonAddressWithContactInput>;
+};
+
+export type EcomOrdersV1DeliveryTimeSlot = {
+  __typename?: 'EcomOrdersV1DeliveryTimeSlot';
+  /** Delivery slot starting time. */
+  from?: Maybe<Scalars['String']['output']>;
+  /** Delivery slot ending time. */
+  to?: Maybe<Scalars['String']['output']>;
+};
+
+export type EcomOrdersV1DeliveryTimeSlotInput = {
+  /** Delivery slot starting time. */
+  from?: InputMaybe<Scalars['String']['input']>;
+  /** Delivery slot ending time. */
+  to?: InputMaybe<Scalars['String']['input']>;
 };
 
 export enum EcomOrdersV1DeltaPaymentOptionType {
@@ -8671,213 +9151,6 @@ export type EcomOrdersV1DiscountRuleNameInput = {
   original?: InputMaybe<Scalars['String']['input']>;
   /** Translated discount rule name according to buyer language. Defaults to `original` when not provided. */
   translated?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type EcomOrdersV1DraftOrderChangesApplied = {
-  __typename?: 'EcomOrdersV1DraftOrderChangesApplied';
-  /** Changes applied to order. */
-  changes?: Maybe<Array<Maybe<EcomOrdersV1DraftOrderChangesAppliedTypesOrderChange>>>;
-  /** Draft order id. */
-  draftOrderId?: Maybe<Scalars['String']['output']>;
-  /** Reason for edit, given by user (optional). */
-  reason?: Maybe<Scalars['String']['output']>;
-};
-
-export type EcomOrdersV1DraftOrderChangesAppliedInput = {
-  /** Changes applied to order. */
-  changes?: InputMaybe<Array<InputMaybe<EcomOrdersV1DraftOrderChangesAppliedTypesOrderChangeInput>>>;
-  /** Draft order id. */
-  draftOrderId?: InputMaybe<Scalars['String']['input']>;
-  /** Reason for edit, given by user (optional). */
-  reason?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type EcomOrdersV1DraftOrderChangesAppliedTypesLineItemAmount = {
-  __typename?: 'EcomOrdersV1DraftOrderChangesAppliedTypesLineItemAmount';
-  /** Amount associated with this item. (Discount amount for item / additional fee amount for item) */
-  amount?: Maybe<EcommercePlatformCommonPrice>;
-  /** Order line item id */
-  id?: Maybe<Scalars['String']['output']>;
-  /** Item name. */
-  name?: Maybe<EcommerceCatalogSpiV1ProductName>;
-};
-
-export type EcomOrdersV1DraftOrderChangesAppliedTypesLineItemAmountInput = {
-  /** Amount associated with this item. (Discount amount for item / additional fee amount for item) */
-  amount?: InputMaybe<EcommercePlatformCommonPriceInput>;
-  /** Order line item id */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /** Item name. */
-  name?: InputMaybe<EcommerceCatalogSpiV1ProductNameInput>;
-};
-
-export type EcomOrdersV1DraftOrderChangesAppliedTypesLineItemChanges = {
-  __typename?: 'EcomOrdersV1DraftOrderChangesAppliedTypesLineItemChanges';
-  /** Line item ID. */
-  id?: Maybe<Scalars['String']['output']>;
-  /** Item name. */
-  name?: Maybe<EcommerceCatalogSpiV1ProductName>;
-  /** Item price change. */
-  price?: Maybe<EcomOrdersV1DraftOrderChangesAppliedTypesLineItemPriceChange>;
-  /** Item quantity change. */
-  quantity?: Maybe<EcomOrdersV1DraftOrderChangesAppliedTypesLineItemQuantityChange>;
-};
-
-export type EcomOrdersV1DraftOrderChangesAppliedTypesLineItemChangesInput = {
-  /** Line item ID. */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /** Item name. */
-  name?: InputMaybe<EcommerceCatalogSpiV1ProductNameInput>;
-  /** Item price change. */
-  price?: InputMaybe<EcomOrdersV1DraftOrderChangesAppliedTypesLineItemPriceChangeInput>;
-  /** Item quantity change. */
-  quantity?: InputMaybe<EcomOrdersV1DraftOrderChangesAppliedTypesLineItemQuantityChangeInput>;
-};
-
-export type EcomOrdersV1DraftOrderChangesAppliedTypesLineItemPriceChange = {
-  __typename?: 'EcomOrdersV1DraftOrderChangesAppliedTypesLineItemPriceChange';
-  /** Item price after update. */
-  newPrice?: Maybe<EcommercePlatformCommonPrice>;
-  /** Item price before update. */
-  originalPrice?: Maybe<EcommercePlatformCommonPrice>;
-};
-
-export type EcomOrdersV1DraftOrderChangesAppliedTypesLineItemPriceChangeInput = {
-  /** Item price after update. */
-  newPrice?: InputMaybe<EcommercePlatformCommonPriceInput>;
-  /** Item price before update. */
-  originalPrice?: InputMaybe<EcommercePlatformCommonPriceInput>;
-};
-
-export type EcomOrdersV1DraftOrderChangesAppliedTypesLineItemQuantityChange = {
-  __typename?: 'EcomOrdersV1DraftOrderChangesAppliedTypesLineItemQuantityChange';
-  /** Type of quantity change: increase or decrease. */
-  deltaType?: Maybe<EcomOrdersV1DraftOrderChangesAppliedTypesLineItemQuantityChangeLineItemQuantityChangeType>;
-  /** Difference between original and new quantity. Absolute value. */
-  diff?: Maybe<Scalars['Int']['output']>;
-  /** Item quantity after update. */
-  newQuantity?: Maybe<Scalars['Int']['output']>;
-  /** Item quantity before update. */
-  originalQuantity?: Maybe<Scalars['Int']['output']>;
-};
-
-export type EcomOrdersV1DraftOrderChangesAppliedTypesLineItemQuantityChangeInput = {
-  /** Type of quantity change: increase or decrease. */
-  deltaType?: InputMaybe<EcomOrdersV1DraftOrderChangesAppliedTypesLineItemQuantityChangeLineItemQuantityChangeType>;
-  /** Difference between original and new quantity. Absolute value. */
-  diff?: InputMaybe<Scalars['Int']['input']>;
-  /** Item quantity after update. */
-  newQuantity?: InputMaybe<Scalars['Int']['input']>;
-  /** Item quantity before update. */
-  originalQuantity?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export enum EcomOrdersV1DraftOrderChangesAppliedTypesLineItemQuantityChangeLineItemQuantityChangeType {
-  QuantityDecreased = 'QUANTITY_DECREASED',
-  QuantityIncreased = 'QUANTITY_INCREASED'
-}
-
-export type EcomOrdersV1DraftOrderChangesAppliedTypesManagedAdditionalFee = {
-  __typename?: 'EcomOrdersV1DraftOrderChangesAppliedTypesManagedAdditionalFee';
-  /** Line items additional fee applies to. */
-  affectedLineItems?: Maybe<Array<Maybe<EcomOrdersV1DraftOrderChangesAppliedTypesLineItemAmount>>>;
-  /** Additional fee id. */
-  id?: Maybe<Scalars['String']['output']>;
-  /** Additional fee name. */
-  name?: Maybe<EcomOrdersV1TranslatedValue>;
-  /** Additional fee amount. */
-  totalAmount?: Maybe<EcommercePlatformCommonPrice>;
-};
-
-export type EcomOrdersV1DraftOrderChangesAppliedTypesManagedAdditionalFeeInput = {
-  /** Line items additional fee applies to. */
-  affectedLineItems?: InputMaybe<Array<InputMaybe<EcomOrdersV1DraftOrderChangesAppliedTypesLineItemAmountInput>>>;
-  /** Additional fee id. */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /** Additional fee name. */
-  name?: InputMaybe<EcomOrdersV1TranslatedValueInput>;
-  /** Additional fee amount. */
-  totalAmount?: InputMaybe<EcommercePlatformCommonPriceInput>;
-};
-
-export type EcomOrdersV1DraftOrderChangesAppliedTypesManagedDiscount = {
-  __typename?: 'EcomOrdersV1DraftOrderChangesAppliedTypesManagedDiscount';
-  /** Line items discount applies to. */
-  affectedLineItems?: Maybe<Array<Maybe<EcomOrdersV1DraftOrderChangesAppliedTypesLineItemAmount>>>;
-  /** Discount id. */
-  id?: Maybe<Scalars['String']['output']>;
-  /** Discount name: coupon name / discount rule name / merchant discount description. */
-  name?: Maybe<EcomOrdersV1TranslatedValue>;
-  /** Discount amount. */
-  totalAmount?: Maybe<EcommercePlatformCommonPrice>;
-};
-
-export type EcomOrdersV1DraftOrderChangesAppliedTypesManagedDiscountInput = {
-  /** Line items discount applies to. */
-  affectedLineItems?: InputMaybe<Array<InputMaybe<EcomOrdersV1DraftOrderChangesAppliedTypesLineItemAmountInput>>>;
-  /** Discount id. */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /** Discount name: coupon name / discount rule name / merchant discount description. */
-  name?: InputMaybe<EcomOrdersV1TranslatedValueInput>;
-  /** Discount amount. */
-  totalAmount?: InputMaybe<EcommercePlatformCommonPriceInput>;
-};
-
-export type EcomOrdersV1DraftOrderChangesAppliedTypesManagedLineItem = {
-  __typename?: 'EcomOrdersV1DraftOrderChangesAppliedTypesManagedLineItem';
-  /** Line item ID. */
-  id?: Maybe<Scalars['String']['output']>;
-  /** Item name. */
-  name?: Maybe<EcommerceCatalogSpiV1ProductName>;
-  /** Added or removed item quantity. */
-  quantity?: Maybe<Scalars['Int']['output']>;
-};
-
-export type EcomOrdersV1DraftOrderChangesAppliedTypesManagedLineItemInput = {
-  /** Line item ID. */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /** Item name. */
-  name?: InputMaybe<EcommerceCatalogSpiV1ProductNameInput>;
-  /** Added or removed item quantity. */
-  quantity?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type EcomOrdersV1DraftOrderChangesAppliedTypesOrderChange = {
-  __typename?: 'EcomOrdersV1DraftOrderChangesAppliedTypesOrderChange';
-  additionalFeeAdded?: Maybe<EcomOrdersV1DraftOrderChangesAppliedTypesManagedAdditionalFee>;
-  additionalFeeRemoved?: Maybe<EcomOrdersV1DraftOrderChangesAppliedTypesManagedAdditionalFee>;
-  discountAdded?: Maybe<EcomOrdersV1DraftOrderChangesAppliedTypesManagedDiscount>;
-  discountRemoved?: Maybe<EcomOrdersV1DraftOrderChangesAppliedTypesManagedDiscount>;
-  lineItemAdded?: Maybe<EcomOrdersV1DraftOrderChangesAppliedTypesManagedLineItem>;
-  lineItemChanged?: Maybe<EcomOrdersV1DraftOrderChangesAppliedTypesLineItemChanges>;
-  lineItemRemoved?: Maybe<EcomOrdersV1DraftOrderChangesAppliedTypesManagedLineItem>;
-  totalPriceChanged?: Maybe<EcomOrdersV1DraftOrderChangesAppliedTypesTotalPriceChange>;
-};
-
-export type EcomOrdersV1DraftOrderChangesAppliedTypesOrderChangeInput = {
-  additionalFeeAdded?: InputMaybe<EcomOrdersV1DraftOrderChangesAppliedTypesManagedAdditionalFeeInput>;
-  additionalFeeRemoved?: InputMaybe<EcomOrdersV1DraftOrderChangesAppliedTypesManagedAdditionalFeeInput>;
-  discountAdded?: InputMaybe<EcomOrdersV1DraftOrderChangesAppliedTypesManagedDiscountInput>;
-  discountRemoved?: InputMaybe<EcomOrdersV1DraftOrderChangesAppliedTypesManagedDiscountInput>;
-  lineItemAdded?: InputMaybe<EcomOrdersV1DraftOrderChangesAppliedTypesManagedLineItemInput>;
-  lineItemChanged?: InputMaybe<EcomOrdersV1DraftOrderChangesAppliedTypesLineItemChangesInput>;
-  lineItemRemoved?: InputMaybe<EcomOrdersV1DraftOrderChangesAppliedTypesManagedLineItemInput>;
-  totalPriceChanged?: InputMaybe<EcomOrdersV1DraftOrderChangesAppliedTypesTotalPriceChangeInput>;
-};
-
-export type EcomOrdersV1DraftOrderChangesAppliedTypesTotalPriceChange = {
-  __typename?: 'EcomOrdersV1DraftOrderChangesAppliedTypesTotalPriceChange';
-  /** Order’s total price after discounts and tax. After update */
-  newTotal?: Maybe<EcommercePlatformCommonPrice>;
-  /** Order’s total price after discounts and tax. Before update */
-  originalTotal?: Maybe<EcommercePlatformCommonPrice>;
-};
-
-export type EcomOrdersV1DraftOrderChangesAppliedTypesTotalPriceChangeInput = {
-  /** Order’s total price after discounts and tax. After update */
-  newTotal?: InputMaybe<EcommercePlatformCommonPriceInput>;
-  /** Order’s total price after discounts and tax. Before update */
-  originalTotal?: InputMaybe<EcommercePlatformCommonPriceInput>;
 };
 
 export type EcomOrdersV1DraftOrderCommitSettingsInput = {
@@ -9055,6 +9328,7 @@ export type EcomOrdersV1Order = {
   /** Custom fields. */
   customFields?: Maybe<Array<Maybe<EcomOrdersV1CustomField>>>;
   externalEnrichedLineItemsForTYP?: Maybe<EcomLineItemsEnricherSpiHostV1EnrichLineItemsForThankYouPageResponse>;
+  externalFulfillments?: Maybe<Array<Maybe<EcomOrdersFulfillmentsV1Fulfillment>>>;
   externalTransactions?: Maybe<EcomOrdersPaymentsV1ListTransactionsForSingleOrderResponse>;
   /** Order fulfillment status. */
   fulfillmentStatus?: Maybe<EcomOrdersV1FulfillmentStatus>;
@@ -9062,7 +9336,7 @@ export type EcomOrdersV1Order = {
   id?: Maybe<Scalars['String']['output']>;
   /** Order line items. */
   lineItems?: Maybe<Array<Maybe<EcomOrdersV1OrderLineItem>>>;
-  /** Order number displayed in the site owner's business manager (auto-generated). */
+  /** Order number displayed in the site owner's dashboard (auto-generated). */
   number?: Maybe<Scalars['Int']['output']>;
   /**
    * Order payment status.
@@ -9079,7 +9353,7 @@ export type EcomOrdersV1Order = {
   priceSummary?: Maybe<EcomOrdersV1PriceSummary>;
   /** Persistent ID that correlates between the various eCommerce elements: cart, checkout, and order. */
   purchaseFlowId?: Maybe<Scalars['String']['output']>;
-  /** Whether a human has seen the order. Set when an order is clicked on in the Business Manager. */
+  /** Whether a human has seen the order. Set when an order is clicked on in the dashboard. */
   seenByAHuman?: Maybe<Scalars['Boolean']['output']>;
   /** Shipping info and selected shipping option details. */
   shippingInfo?: Maybe<EcomOrdersV1ShippingInformation>;
@@ -9142,7 +9416,7 @@ export type EcomOrdersV1OrderInput = {
   id?: InputMaybe<Scalars['String']['input']>;
   /** Order line items. */
   lineItems?: InputMaybe<Array<InputMaybe<EcomOrdersV1OrderLineItemInput>>>;
-  /** Order number displayed in the site owner's business manager (auto-generated). */
+  /** Order number displayed in the site owner's dashboard (auto-generated). */
   number?: InputMaybe<Scalars['Int']['input']>;
   /**
    * Order payment status.
@@ -9159,7 +9433,7 @@ export type EcomOrdersV1OrderInput = {
   priceSummary?: InputMaybe<EcomOrdersV1PriceSummaryInput>;
   /** Persistent ID that correlates between the various eCommerce elements: cart, checkout, and order. */
   purchaseFlowId?: InputMaybe<Scalars['String']['input']>;
-  /** Whether a human has seen the order. Set when an order is clicked on in the Business Manager. */
+  /** Whether a human has seen the order. Set when an order is clicked on in the dashboard. */
   seenByAHuman?: InputMaybe<Scalars['Boolean']['input']>;
   /** Shipping info and selected shipping option details. */
   shippingInfo?: InputMaybe<EcomOrdersV1ShippingInformationInput>;
@@ -9189,7 +9463,7 @@ export type EcomOrdersV1OrderLineItem = {
    * This field is empty in the case of a custom line item.
    */
   catalogReference?: Maybe<EcommerceCatalogSpiV1CatalogReference>;
-  /** Item's price amount to be charged during checkout, relevant for items with payment option DEPOSIT_ONLINE */
+  /** Item's price amount to be charged during checkout. Relevant for items with a `paymentOption` value of `"DEPOSIT_ONLINE"`. */
   depositAmount?: Maybe<EcommercePlatformCommonPrice>;
   /** Line item description lines. Used for display purposes for the cart, checkout and order. */
   descriptionLines?: Maybe<Array<Maybe<EcommerceCatalogSpiV1DescriptionLine>>>;
@@ -9239,7 +9513,7 @@ export type EcomOrdersV1OrderLineItem = {
   totalDiscount?: Maybe<EcommercePlatformCommonPrice>;
   /** Total price after all discounts and tax. */
   totalPriceAfterTax?: Maybe<EcommercePlatformCommonPrice>;
-  /** Deprecated - use `total_price_after_tax` minus `tax_details.total_tax` instead. */
+  /** Total price after discounts, and before tax. */
   totalPriceBeforeTax?: Maybe<EcommercePlatformCommonPrice>;
 };
 
@@ -9289,6 +9563,8 @@ export type EcomOrdersV1OrderLineItemChangedDetailsInput = {
   totalDiscount?: InputMaybe<EcommercePlatformCommonPriceInput>;
   /** Total price after all discounts and tax. */
   totalPriceAfterTax?: InputMaybe<EcommercePlatformCommonPriceInput>;
+  /** Total price after all discounts excluding tax. */
+  totalPriceBeforeTax?: InputMaybe<EcommercePlatformCommonPriceInput>;
 };
 
 export type EcomOrdersV1OrderLineItemInput = {
@@ -9297,7 +9573,7 @@ export type EcomOrdersV1OrderLineItemInput = {
    * This field is empty in the case of a custom line item.
    */
   catalogReference?: InputMaybe<EcommerceCatalogSpiV1CatalogReferenceInput>;
-  /** Item's price amount to be charged during checkout, relevant for items with payment option DEPOSIT_ONLINE */
+  /** Item's price amount to be charged during checkout. Relevant for items with a `paymentOption` value of `"DEPOSIT_ONLINE"`. */
   depositAmount?: InputMaybe<EcommercePlatformCommonPriceInput>;
   /** Line item description lines. Used for display purposes for the cart, checkout and order. */
   descriptionLines?: InputMaybe<Array<InputMaybe<EcommerceCatalogSpiV1DescriptionLineInput>>>;
@@ -9347,7 +9623,7 @@ export type EcomOrdersV1OrderLineItemInput = {
   totalDiscount?: InputMaybe<EcommercePlatformCommonPriceInput>;
   /** Total price after all discounts and tax. */
   totalPriceAfterTax?: InputMaybe<EcommercePlatformCommonPriceInput>;
-  /** Deprecated - use `total_price_after_tax` minus `tax_details.total_tax` instead. */
+  /** Total price after discounts, and before tax. */
   totalPriceBeforeTax?: InputMaybe<EcommercePlatformCommonPriceInput>;
 };
 
@@ -9368,6 +9644,10 @@ export type EcomOrdersV1OrderRefundedInput = {
   manual?: InputMaybe<Scalars['Boolean']['input']>;
   /** Reason for refund. */
   reason?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EcomOrdersV1OrderRequestInput = {
+  id: Scalars['ID']['input'];
 };
 
 export enum EcomOrdersV1OrderStatus {
@@ -9455,19 +9735,6 @@ export type EcomOrdersV1PublicActivityInput = {
   merchantComment?: InputMaybe<EcomOrdersV1MerchantCommentInput>;
 };
 
-export type EcomOrdersV1QueryOrderRequestInput = {
-  /** Query options. */
-  query?: InputMaybe<EcommerceCommonsPlatformQueryInput>;
-};
-
-export type EcomOrdersV1QueryOrderResponse = {
-  __typename?: 'EcomOrdersV1QueryOrderResponse';
-  /** Query results */
-  items?: Maybe<Array<Maybe<EcomOrdersV1Order>>>;
-  /** Pagination data */
-  pageInfo?: Maybe<PageInfo>;
-};
-
 export type EcomOrdersV1ShippingInformation = {
   __typename?: 'EcomOrdersV1ShippingInformation';
   /** App Def Id of external provider which was a source of shipping info */
@@ -9515,7 +9782,7 @@ export type EcomOrdersV1ShippingPrice = {
   taxDetails?: Maybe<EcomTaxItemTaxFullDetails>;
   /** Shipping price after all discounts (if any exist), and after tax. */
   totalPriceAfterTax?: Maybe<EcommercePlatformCommonPrice>;
-  /** Deprecated - use `total_price_after_tax` minus `tax_details.total_tax` instead. */
+  /** Total price of shipping after discounts (when relevant), and before tax. */
   totalPriceBeforeTax?: Maybe<EcommercePlatformCommonPrice>;
 };
 
@@ -9528,7 +9795,7 @@ export type EcomOrdersV1ShippingPriceInput = {
   taxDetails?: InputMaybe<EcomTaxItemTaxFullDetailsInput>;
   /** Shipping price after all discounts (if any exist), and after tax. */
   totalPriceAfterTax?: InputMaybe<EcommercePlatformCommonPriceInput>;
-  /** Deprecated - use `total_price_after_tax` minus `tax_details.total_tax` instead. */
+  /** Total price of shipping after discounts (when relevant), and before tax. */
   totalPriceBeforeTax?: InputMaybe<EcommercePlatformCommonPriceInput>;
 };
 
@@ -9587,21 +9854,6 @@ export type EcomOrdersV1SubscriptionSettingsInput = {
   billingCycles?: InputMaybe<Scalars['Int']['input']>;
   /** Frequency of recurring payment. */
   frequency?: InputMaybe<PaymentPayV2SubscriptionFrequency>;
-};
-
-export type EcomOrdersV1TranslatedValue = {
-  __typename?: 'EcomOrdersV1TranslatedValue';
-  /** Value in site default language. */
-  original?: Maybe<Scalars['String']['output']>;
-  /** Translated value. */
-  translated?: Maybe<Scalars['String']['output']>;
-};
-
-export type EcomOrdersV1TranslatedValueInput = {
-  /** Value in site default language. */
-  original?: InputMaybe<Scalars['String']['input']>;
-  /** Translated value. */
-  translated?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type EcomOrdersV1UpdateActivityRequestInput = {
@@ -9884,7 +10136,10 @@ export type EcomTotalsCalculatorV1AppliedDiscount = {
   discountRule?: Maybe<EcomTotalsCalculatorV1DiscountRule>;
   /** Discount type. */
   discountType?: Maybe<EcomTotalsCalculatorV1AppliedDiscountDiscountType>;
-  /** IDs of line items the discount applies to. */
+  /**
+   * IDs of line items the discount applies to.
+   * @deprecated IDs of line items the discount applies to.
+   */
   lineItemIds?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   /** Merchant discount. */
   merchantDiscount?: Maybe<EcomTotalsCalculatorV1MerchantDiscount>;
@@ -9903,8 +10158,6 @@ export type EcomTotalsCalculatorV1AppliedDiscountInput = {
   discountRule?: InputMaybe<EcomTotalsCalculatorV1DiscountRuleInput>;
   /** Discount type. */
   discountType?: InputMaybe<EcomTotalsCalculatorV1AppliedDiscountDiscountType>;
-  /** IDs of line items the discount applies to. */
-  lineItemIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   /** Merchant discount. */
   merchantDiscount?: InputMaybe<EcomTotalsCalculatorV1MerchantDiscountInput>;
 };
@@ -10156,7 +10409,7 @@ export type EcomTotalsCalculatorV1LineItemPricesData = {
   totalDiscount?: Maybe<EcommercePlatformCommonMultiCurrencyPrice>;
   /** Total price after discounts and after tax. */
   totalPriceAfterTax?: Maybe<EcommercePlatformCommonMultiCurrencyPrice>;
-  /** Deprecated - use `total_price_after_tax` minus `tax_details.total_tax` instead. */
+  /** Total price after discounts, and before tax. */
   totalPriceBeforeTax?: Maybe<EcommercePlatformCommonMultiCurrencyPrice>;
 };
 
@@ -10329,7 +10582,7 @@ export type EcomTotalsCalculatorV1SelectedCarrierServiceOptionPrices = {
   totalDiscount?: Maybe<EcommercePlatformCommonMultiCurrencyPrice>;
   /** Total shipping price, after discount and after tax. */
   totalPriceAfterTax?: Maybe<EcommercePlatformCommonMultiCurrencyPrice>;
-  /** Deprecated - use `total_price_after_tax` minus `tax_details.total_tax` instead. */
+  /** Total price of shipping after discounts (when relevant), and before tax. */
   totalPriceBeforeTax?: Maybe<EcommercePlatformCommonMultiCurrencyPrice>;
 };
 
@@ -10342,7 +10595,7 @@ export type EcomTotalsCalculatorV1SelectedCarrierServiceOptionPricesInput = {
   totalDiscount?: InputMaybe<EcommercePlatformCommonMultiCurrencyPriceInput>;
   /** Total shipping price, after discount and after tax. */
   totalPriceAfterTax?: InputMaybe<EcommercePlatformCommonMultiCurrencyPriceInput>;
-  /** Deprecated - use `total_price_after_tax` minus `tax_details.total_tax` instead. */
+  /** Total price of shipping after discounts (when relevant), and before tax. */
   totalPriceBeforeTax?: InputMaybe<EcommercePlatformCommonMultiCurrencyPriceInput>;
 };
 
@@ -10967,16 +11220,16 @@ export enum EcommercePlatformCommonWeightUnit {
 
 export type EcommerceValidationsSpiV1Target = {
   __typename?: 'EcommerceValidationsSpiV1Target';
-  /** Other violation. */
-  lineItem?: Maybe<EcommerceValidationsSpiV1TargetLineItem>;
   /** Specific line item violation. */
+  lineItem?: Maybe<EcommerceValidationsSpiV1TargetLineItem>;
+  /** General (other) violation. */
   other?: Maybe<EcommerceValidationsSpiV1TargetOther>;
 };
 
 export type EcommerceValidationsSpiV1TargetInput = {
-  /** Other violation. */
-  lineItem?: InputMaybe<EcommerceValidationsSpiV1TargetLineItemInput>;
   /** Specific line item violation. */
+  lineItem?: InputMaybe<EcommerceValidationsSpiV1TargetLineItemInput>;
+  /** General (other) violation. */
   other?: InputMaybe<EcommerceValidationsSpiV1TargetOtherInput>;
 };
 
@@ -10984,22 +11237,14 @@ export type EcommerceValidationsSpiV1TargetLineItem = {
   __typename?: 'EcommerceValidationsSpiV1TargetLineItem';
   /** ID of the line item containing the violation. */
   id?: Maybe<Scalars['String']['output']>;
-  /**
-   * Where on the checkout and cart page the violation belonging to a specific line item will be displayed.
-   * Supported values:
-   * + `LINE_ITEM_DEFAULT`: The default location on a checkout or cart page where a line item violation will be displayed.
-   */
+  /** Location on a checkout or a cart page where the specific line item violation will be displayed. */
   name?: Maybe<EcommerceValidationsSpiV1TargetNameInLineItem>;
 };
 
 export type EcommerceValidationsSpiV1TargetLineItemInput = {
   /** ID of the line item containing the violation. */
   id?: InputMaybe<Scalars['String']['input']>;
-  /**
-   * Where on the checkout and cart page the violation belonging to a specific line item will be displayed.
-   * Supported values:
-   * + `LINE_ITEM_DEFAULT`: The default location on a checkout or cart page where a line item violation will be displayed.
-   */
+  /** Location on a checkout or a cart page where the specific line item violation will be displayed. */
   name?: InputMaybe<EcommerceValidationsSpiV1TargetNameInLineItem>;
 };
 
@@ -11015,20 +11260,12 @@ export enum EcommerceValidationsSpiV1TargetNameInOther {
 
 export type EcommerceValidationsSpiV1TargetOther = {
   __typename?: 'EcommerceValidationsSpiV1TargetOther';
-  /**
-   * Where on the checkout and cart page the violation will be displayed.
-   * Supported values:
-   * + `OTHER_DEFAULT`: The default location on a checkout or cart page where a general (other) violation will be displayed.
-   */
+  /** Location on a checkout or a cart page where a general (other) violation will be displayed. */
   name?: Maybe<EcommerceValidationsSpiV1TargetNameInOther>;
 };
 
 export type EcommerceValidationsSpiV1TargetOtherInput = {
-  /**
-   * Where on the checkout and cart page the violation will be displayed.
-   * Supported values:
-   * + `OTHER_DEFAULT`: The default location on a checkout or cart page where a general (other) violation will be displayed.
-   */
+  /** Location on a checkout or a cart page where a general (other) violation will be displayed. */
   name?: InputMaybe<EcommerceValidationsSpiV1TargetNameInOther>;
 };
 
@@ -11061,11 +11298,1108 @@ export enum EcommerceValidationsSpiV1ViolationSeverity {
   Warning = 'WARNING'
 }
 
+export type EventsAgenda = {
+  __typename?: 'EventsAgenda';
+  enabled?: Maybe<Scalars['Boolean']['output']>;
+  /** Agenda page URL. */
+  pageUrl?: Maybe<EventsSiteUrl>;
+};
+
+export type EventsAgendaInput = {
+  enabled?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Agenda page URL. */
+  pageUrl?: InputMaybe<EventsSiteUrlInput>;
+};
+
+export type EventsBulkCancelEventsRequestInput = {
+  /** Filter. See [supported fields and operators](https://dev.wix.com/api/rest/wix-events/wix-events/filter-and-sort#wix-events_wix-events_filter-and-sort_list-query-events). */
+  filter?: InputMaybe<Scalars['JSON']['input']>;
+};
+
+export type EventsBulkDeleteEventsRequestInput = {
+  /** Filter. See [supported fields and operators](https://dev.wix.com/api/rest/wix-events/wix-events/filter-and-sort#wix-events_wix-events_filter-and-sort_list-query-events). */
+  filter?: InputMaybe<Scalars['JSON']['input']>;
+};
+
+export type EventsCalendarLinks = {
+  __typename?: 'EventsCalendarLinks';
+  /** "Add to Google calendar" URL. */
+  google?: Maybe<Scalars['String']['output']>;
+  /** "Download ICS calendar file" URL. */
+  ics?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventsCancelEventRequestInput = {
+  /** Event ID. */
+  id?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EventsCancelEventResponse = {
+  __typename?: 'EventsCancelEventResponse';
+  /** Canceled event. */
+  event?: Maybe<EventsEvent>;
+};
+
+export type EventsCategoriesCategory = {
+  __typename?: 'EventsCategoriesCategory';
+  /** Assigned events count. Deleted events are excluded. */
+  assignedEventsCount?: Maybe<Scalars['Int']['output']>;
+  counts?: Maybe<EventsCategoriesCategoryCounts>;
+  /** Category creation timestamp. */
+  createdDate?: Maybe<Scalars['String']['output']>;
+  /** Category ID. */
+  id?: Maybe<Scalars['String']['output']>;
+  /** Category name. */
+  name?: Maybe<Scalars['String']['output']>;
+  /**
+   * Category state. Default - MANUAL.
+   * WIX_EVENTS.MANAGE_AUTO_CATEGORIES permission is required to use other states.
+   * Field will be ignored on update requests.
+   */
+  states?: Maybe<Array<Maybe<EventsCategoryStateState>>>;
+};
+
+export type EventsCategoriesCategoryCounts = {
+  __typename?: 'EventsCategoriesCategoryCounts';
+  /** Assigned draft events count. */
+  assignedDraftEventsCount?: Maybe<Scalars['Int']['output']>;
+  /** Assigned events count. Deleted events are excluded. */
+  assignedEventsCount?: Maybe<Scalars['Int']['output']>;
+};
+
+export type EventsCategoryFilterInput = {
+  /**
+   * If true - only categorised events will be returned.
+   * If false - only not categorised events will be returned.
+   */
+  categorised?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Category id filter. */
+  categoryId?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  /** Category states filter. Default - any state. */
+  states?: InputMaybe<Array<InputMaybe<EventsCategoryStateState>>>;
+};
+
+export enum EventsCategoryStateState {
+  /** Created automatically. */
+  Auto = 'AUTO',
+  /** Category is used to store component events. */
+  Component = 'COMPONENT',
+  /** Category is hidden. */
+  Hidden = 'HIDDEN',
+  /** Created manually by the user. */
+  Manual = 'MANUAL',
+  /** Created when publishing recurring events. */
+  RecurringEvent = 'RECURRING_EVENT'
+}
+
+export enum EventsConferenceType {
+  /** Everyone in the meeting can publish and subscribe video and audio. */
+  Meeting = 'MEETING',
+  /** Guests can only subscribe to video and audio. */
+  Webinar = 'WEBINAR'
+}
+
+export type EventsCopyEventRequestInput = {
+  /**
+   * If true, event will be copied as draft.
+   * Otherwise copied event will be published, unless it is draft.
+   */
+  draft?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Event ID. */
+  eventId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EventsCopyEventResponse = {
+  __typename?: 'EventsCopyEventResponse';
+  /** Copied event. */
+  event?: Maybe<EventsEvent>;
+};
+
+export type EventsCopyEventV2RequestInput = {
+  /**
+   * If true, event will be copied as draft.
+   * Otherwise copied event will be published, unless it is draft.
+   */
+  draft?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Event data to update (partial) */
+  event?: InputMaybe<EventsEventDataInput>;
+  /**
+   * Set of field paths to update.
+   * <!--ONLY:REST-->
+   * Fields will be auto-populated from the `event` entity unless added to the request explicitly.
+   * <!--END:ONLY:REST-->
+   * Behavior follows [google.protobuf.FieldMask](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.FieldMask) semantics.
+   */
+  fields?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  /** Event ID. */
+  id?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EventsCopyEventV2Response = {
+  __typename?: 'EventsCopyEventV2Response';
+  /** Copied event. */
+  event?: Maybe<EventsEvent>;
+};
+
+export type EventsCreateEventV2RequestInput = {
+  /** Whether event should be created as draft. Draft events are hidden from site visitors. */
+  draft?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Event data. */
+  event?: InputMaybe<EventsEventDataInput>;
+  /**
+   * Content language code in ISO 639-1 format.
+   * Used for translating ticket PDF labels, registration form, automatic emails, etc.
+   * Supported languages: ar, bg, cs, da, de, el, en, es, fi, fr, he, hi, hu, id, it, ja, ko, ms, nl, no, pl, pt, ro, ru, sv, th, tl, tr, uk, zh.
+   * Defaults to en.
+   */
+  language?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EventsCreateEventV2Response = {
+  __typename?: 'EventsCreateEventV2Response';
+  /** Created event. */
+  event?: Maybe<EventsEvent>;
+};
+
+export type EventsDashboard = {
+  __typename?: 'EventsDashboard';
+  /** Guest RSVP summary. */
+  rsvpSummary?: Maybe<EventsDashboardRsvpSummary>;
+  /**
+   * Summary of revenue and tickets sold.
+   * (Archived orders are not included).
+   */
+  ticketingSummary?: Maybe<EventsDashboardTicketingSummary>;
+};
+
+export type EventsDashboardRsvpSummary = {
+  __typename?: 'EventsDashboardRsvpSummary';
+  /** Number of RSVPs with status `NO`. */
+  no?: Maybe<Scalars['Int']['output']>;
+  /** Total number of RSVPs. */
+  total?: Maybe<Scalars['Int']['output']>;
+  /** Number of RSVPs in waitlist. */
+  waitlist?: Maybe<Scalars['Int']['output']>;
+  /** Number of RSVPs with status `YES`. */
+  yes?: Maybe<Scalars['Int']['output']>;
+};
+
+export type EventsDashboardTicketingSummary = {
+  __typename?: 'EventsDashboardTicketingSummary';
+  /** Whether currency is locked and cannot be changed (generally occurs after the first order in the specified currency has been created). */
+  currencyLocked?: Maybe<Scalars['Boolean']['output']>;
+  /** Number of orders placed. */
+  orders?: Maybe<Scalars['Int']['output']>;
+  /**
+   * Total revenue, excluding fees.
+   * (taxes and payment provider fees are not deducted.)
+   */
+  revenue?: Maybe<EventsMoney>;
+  /** Number of tickets sold. */
+  tickets?: Maybe<Scalars['Int']['output']>;
+  /** Total balance of confirmed transactions. */
+  totalSales?: Maybe<EventsMoney>;
+};
+
+export type EventsDeleteEventRequestInput = {
+  /** Event ID. */
+  id?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EventsDeleteEventResponse = {
+  __typename?: 'EventsDeleteEventResponse';
+  /** Deleted event ID. */
+  id?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventsEvent = {
+  __typename?: 'EventsEvent';
+  /** Rich-text content displayed in Wix UI - "About Event" section (HTML). */
+  about?: Maybe<Scalars['String']['output']>;
+  /** Agenda details. */
+  agenda?: Maybe<EventsAgenda>;
+  /** Assigned contacts label key. */
+  assignedContactsLabel?: Maybe<Scalars['String']['output']>;
+  /** "Add to calendar" URLs. */
+  calendarLinks?: Maybe<EventsCalendarLinks>;
+  /** Categories this event is assigned to. */
+  categories?: Maybe<Array<Maybe<EventsCategoriesCategory>>>;
+  /** Event creation timestamp. */
+  created?: Maybe<Scalars['String']['output']>;
+  /** Event dashboard summary of RSVP / ticket sales. */
+  dashboard?: Maybe<EventsDashboard>;
+  /** Event description. */
+  description?: Maybe<Scalars['String']['output']>;
+  /** Visual settings for event. */
+  eventDisplaySettings?: Maybe<EventsEventDisplaySettings>;
+  /** Event page URL components. */
+  eventPageUrl?: Maybe<EventsSiteUrl>;
+  /** Event discussion feed. For internal use. */
+  feed?: Maybe<EventsFeed>;
+  /** Event registration form. */
+  form?: Maybe<EventsFormForm>;
+  /** Guest list configuration. */
+  guestListConfig?: Maybe<EventsGuestListConfig>;
+  /** Event ID. */
+  id?: Maybe<Scalars['String']['output']>;
+  /** Instance ID of the site where event is hosted. */
+  instanceId?: Maybe<Scalars['String']['output']>;
+  /** ISO 639-1 language code of the event (used in content translations). */
+  language?: Maybe<Scalars['String']['output']>;
+  /** Event location. */
+  location?: Maybe<EventsLocation>;
+  /** Main event image. */
+  mainImage?: Maybe<EventsUpstreamCommonImage>;
+  /** Event modified timestamp. */
+  modified?: Maybe<Scalars['String']['output']>;
+  /** Online conferencing details. */
+  onlineConferencing?: Maybe<EventsOnlineConferencing>;
+  /** RSVP or ticketing registration details. */
+  registration?: Maybe<EventsRegistration>;
+  /** Event scheduling. */
+  scheduling?: Maybe<EventsScheduling>;
+  /** SEO settings. */
+  seoSettings?: Maybe<EventsSeoSettings>;
+  /** Event slug URL (generated from event title). */
+  slug?: Maybe<Scalars['String']['output']>;
+  /** Event status. */
+  status?: Maybe<EventsEventStatus>;
+  /** Event title. */
+  title?: Maybe<Scalars['String']['output']>;
+  /** Event creator user ID. */
+  userId?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventsEventDataInput = {
+  /** Rich-text content for About Event section (HTML). */
+  about?: InputMaybe<Scalars['String']['input']>;
+  /** Agenda configuration */
+  agenda?: InputMaybe<EventsAgendaInput>;
+  /** Event description. */
+  description?: InputMaybe<Scalars['String']['input']>;
+  /** Visual settings for event. */
+  eventDisplaySettings?: InputMaybe<EventsEventDisplaySettingsInput>;
+  /** Guest list configuration */
+  guestListConfig?: InputMaybe<EventsGuestListConfigInput>;
+  /**
+   * Event location.
+   * Address is required for non TBD event.
+   * Location name is required for TBD event.
+   */
+  location?: InputMaybe<EventsLocationInput>;
+  /**
+   * Main event image. Printed in ticket PDF.
+   * Currently, only images previously saved in Wix Media are supported.
+   */
+  mainImage?: InputMaybe<EventsUpstreamCommonImageInput>;
+  /** Online conferencing configuration */
+  onlineConferencingConfig?: InputMaybe<EventsOnlineConferencingConfigInput>;
+  /** Registration configuration */
+  registrationConfig?: InputMaybe<EventsRegistrationConfigInput>;
+  /** RSVP collection configuration. Can be used to set limits. */
+  rsvpCollectionConfig?: InputMaybe<EventsRsvpCollectionConfigInput>;
+  /** Event schedule configuration */
+  scheduleConfig?: InputMaybe<EventsScheduleConfigInput>;
+  /** SEO settings */
+  seoSettings?: InputMaybe<EventsSeoSettingsInput>;
+  /** Event title. */
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EventsEventDisplaySettings = {
+  __typename?: 'EventsEventDisplaySettings';
+  /** Whether event details button is hidden. Only available for events with no registration. */
+  hideEventDetailsButton?: Maybe<Scalars['Boolean']['output']>;
+};
+
+export type EventsEventDisplaySettingsInput = {
+  /** Whether event details button is hidden. Only available for events with no registration. */
+  hideEventDetailsButton?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export enum EventsEventFieldset {
+  /** Include `agendaSettings` in the response. */
+  Agenda = 'AGENDA',
+  /** Include `categories` in the response. */
+  Categories = 'CATEGORIES',
+  CustomizableTickets = 'CUSTOMIZABLE_TICKETS',
+  /** Include `dashboard` in the response. */
+  Dashboard = 'DASHBOARD',
+  /** Include `description`, `mainImage` and `calendarLinks` in the response. */
+  Details = 'DETAILS',
+  /** Include `feed` in the response. */
+  Feed = 'FEED',
+  /** Include `form` in the response. */
+  Form = 'FORM',
+  Full = 'FULL',
+  /** Include `onlineConferencing` in the response. */
+  OnlineConferencingSession = 'ONLINE_CONFERENCING_SESSION',
+  /** Include `registration` in the response. */
+  Registration = 'REGISTRATION',
+  /** Include `seoSettings` in the response. */
+  SeoSettings = 'SEO_SETTINGS',
+  /** Include `about` event rich text in the response. */
+  Texts = 'TEXTS',
+  /** Include `eventPageUrl` in the response. */
+  Urls = 'URLS'
+}
+
+export enum EventsEventStatus {
+  /** Event was canceled */
+  Canceled = 'CANCELED',
+  /** Event is not public and needs to be published */
+  Draft = 'DRAFT',
+  /** Event has ended */
+  Ended = 'ENDED',
+  /** Event is public and scheduled to start */
+  Scheduled = 'SCHEDULED',
+  /** Event has started */
+  Started = 'STARTED'
+}
+
+export enum EventsEventType {
+  /** External registration */
+  External = 'EXTERNAL',
+  /** Type not available for this request fieldset */
+  NaEventType = 'NA_EVENT_TYPE',
+  /** Registration not available */
+  NoRegistration = 'NO_REGISTRATION',
+  /** Registration via RSVP */
+  Rsvp = 'RSVP',
+  /** Registration via ticket purchase */
+  Tickets = 'TICKETS'
+}
+
+export type EventsExternalEvent = {
+  __typename?: 'EventsExternalEvent';
+  /** External event registration URL. */
+  registration?: Maybe<Scalars['String']['output']>;
+};
+
 export type EventsFacetCounts = {
   __typename?: 'EventsFacetCounts';
   /** Facet counts aggregated per value */
   counts?: Maybe<Scalars['JSON']['output']>;
 };
+
+export type EventsFeed = {
+  __typename?: 'EventsFeed';
+  /** Event discussion feed token. */
+  token?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventsFindEventRequestInput = {
+  /**
+   * Controls which event properties are returned. See [Fieldset](https://dev.wix.com/api/rest/wix-events/wix-events/fieldset#wix-events_wix-events_fieldset_event-fieldset).
+   * Some fields require additional computation that affects latency.
+   * Use minimum set of required fieldset for best performance.
+   */
+  fieldset?: InputMaybe<Array<InputMaybe<EventsEventFieldset>>>;
+  /** Event ID. */
+  id?: InputMaybe<Scalars['String']['input']>;
+  /** URL slug. */
+  slug?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EventsFindEventResponse = {
+  __typename?: 'EventsFindEventResponse';
+  /** Event. */
+  event?: Maybe<EventsEvent>;
+};
+
+export type EventsFormCheckoutFormMessages = {
+  __typename?: 'EventsFormCheckoutFormMessages';
+  /** Confirmation messages shown after checkout. */
+  confirmation?: Maybe<EventsFormCheckoutFormMessagesResponseConfirmation>;
+  /** Submit form call-to-action label text. */
+  submitActionLabel?: Maybe<Scalars['String']['output']>;
+  /** Main form title for response. */
+  title?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventsFormCheckoutFormMessagesResponseConfirmation = {
+  __typename?: 'EventsFormCheckoutFormMessagesResponseConfirmation';
+  /** "Add to calendar" call-to-action label text. */
+  addToCalendarLabel?: Maybe<Scalars['String']['output']>;
+  /** "Download tickets" call-to-action label text. */
+  downloadTicketsLabel?: Maybe<Scalars['String']['output']>;
+  /** Confirmation message text. */
+  message?: Maybe<Scalars['String']['output']>;
+  /** "Share event" call-to-action label text. */
+  shareEventLabel?: Maybe<Scalars['String']['output']>;
+  /** Confirmation message title. */
+  title?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventsFormForm = {
+  __typename?: 'EventsFormForm';
+  /** Nested fields as an ordered list. */
+  controls?: Maybe<Array<Maybe<EventsFormInputControl>>>;
+  /** Set of configured form messages. */
+  messages?: Maybe<EventsFormFormMessages>;
+};
+
+export type EventsFormFormMessages = {
+  __typename?: 'EventsFormFormMessages';
+  /** Checkout form messages. */
+  checkout?: Maybe<EventsFormCheckoutFormMessages>;
+  /** Messages shown when event registration is closed. */
+  registrationClosed?: Maybe<EventsFormRegistrationClosedMessages>;
+  /** RSVP form messages. */
+  rsvp?: Maybe<EventsFormRsvpFormMessages>;
+  /** Messages shown when event tickets are unavailable. */
+  ticketsUnavailable?: Maybe<EventsFormTicketsUnavailableMessages>;
+};
+
+export type EventsFormInput = {
+  __typename?: 'EventsFormInput';
+  /** Additional labels for multi-valued fields such as address. */
+  additionalLabels?: Maybe<Scalars['JSON']['output']>;
+  /** Deprecated: use `ValueType.TEXT_ARRAY`. */
+  array?: Maybe<Scalars['Boolean']['output']>;
+  /**
+   * Preselected option.
+   * Currently only applicable for dropdown.
+   */
+  defaultOptionSelection?: Maybe<EventsFormOptionSelection>;
+  /** Main field label */
+  label?: Maybe<Scalars['String']['output']>;
+  /** Additional labels for multi-valued fields such as address. */
+  labels?: Maybe<Array<Maybe<EventsFormLabel>>>;
+  /** Whether field is mandatory. */
+  mandatory?: Maybe<Scalars['Boolean']['output']>;
+  /** Maximum number of accepted characters (relevant for text fields). */
+  maxLength?: Maybe<Scalars['Int']['output']>;
+  /**
+   * A maximum accepted values for array input.
+   * Only applicable for inputs of valueType: TEXT_ARRAY.
+   */
+  maxSize?: Maybe<Scalars['Int']['output']>;
+  /** Field name. */
+  name?: Maybe<Scalars['String']['output']>;
+  /** Predefined choice options for fields, such as dropdown. */
+  options?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  /**
+   * Type which determines field format.
+   * Used to validate submitted response.
+   */
+  type?: Maybe<EventsFormValueType>;
+};
+
+export type EventsFormInputControl = {
+  __typename?: 'EventsFormInputControl';
+  /** Unique control ID. */
+  id?: Maybe<Scalars['String']['output']>;
+  /** Child inputs. */
+  inputs?: Maybe<Array<Maybe<EventsFormInput>>>;
+  /** Deprecated: use `inputs.label`. */
+  label?: Maybe<Scalars['String']['output']>;
+  /** Deprecated: Use `id`. */
+  name?: Maybe<Scalars['String']['output']>;
+  /** Field controls are sorted by this value in ascending order. */
+  orderIndex?: Maybe<Scalars['Int']['output']>;
+  /** Whether control is mandatory (such as name & email). When true, only label can be changed. */
+  system?: Maybe<Scalars['Boolean']['output']>;
+  /** Field control type. */
+  type?: Maybe<EventsFormInputControlType>;
+};
+
+export enum EventsFormInputControlType {
+  /** Full address field. */
+  AddressFull = 'ADDRESS_FULL',
+  /** Single-line address field. */
+  AddressShort = 'ADDRESS_SHORT',
+  /** Multiple-choice field of predefined values. */
+  Checkbox = 'CHECKBOX',
+  /** Year, month and day fields. */
+  Date = 'DATE',
+  /** Single-choice field of predefined values. */
+  Dropdown = 'DROPDOWN',
+  /** Additional guests and respective guest names fields. */
+  GuestControl = 'GUEST_CONTROL',
+  /** Single text value field. */
+  Input = 'INPUT',
+  /** First and last name fields. */
+  Name = 'NAME',
+  /** Single-choice field of predefined values. */
+  Radio = 'RADIO',
+  /** Single text value field. */
+  Textarea = 'TEXTAREA'
+}
+
+export type EventsFormLabel = {
+  __typename?: 'EventsFormLabel';
+  /** Field label. */
+  label?: Maybe<Scalars['String']['output']>;
+  /** Field name. */
+  name?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventsFormOptionSelection = {
+  __typename?: 'EventsFormOptionSelection';
+  /** 0-based index from predefined `input.options` which is selected initially. */
+  optionIndex?: Maybe<Scalars['Int']['output']>;
+  /**
+   * Placeholder hint describing expected choices (such as "Please select").
+   * Considered an empty choice.
+   */
+  placeholderText?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventsFormRegistrationClosedMessages = {
+  __typename?: 'EventsFormRegistrationClosedMessages';
+  /** "Explore other events" call-to-action label text. */
+  exploreEventsActionLabel?: Maybe<Scalars['String']['output']>;
+  /** Message shown when event registration is closed. */
+  message?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventsFormRsvpFormMessages = {
+  __typename?: 'EventsFormRsvpFormMessages';
+  /** Messages shown for RSVP = `NO`. */
+  negativeMessages?: Maybe<EventsFormRsvpFormMessagesNegative>;
+  /** Messages shown for RSVP = `YES`. */
+  positiveMessages?: Maybe<EventsFormRsvpFormMessagesPositive>;
+  /** Label text indicating RSVP `NO` response. */
+  rsvpNoOption?: Maybe<Scalars['String']['output']>;
+  /** Label text indicating RSVP `YES` response. */
+  rsvpYesOption?: Maybe<Scalars['String']['output']>;
+  /** "Submit form" call-to-action label text. */
+  submitActionLabel?: Maybe<Scalars['String']['output']>;
+  /** Messages shown for RSVP = `WAITING` (when event is full and waitlist is available). */
+  waitlistMessages?: Maybe<EventsFormRsvpFormMessagesPositive>;
+};
+
+export type EventsFormRsvpFormMessagesNegative = {
+  __typename?: 'EventsFormRsvpFormMessagesNegative';
+  /** Confirmation messages shown after registration. */
+  confirmation?: Maybe<EventsFormRsvpFormMessagesNegativeResponseConfirmation>;
+  /** Main form title for negative response. */
+  title?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventsFormRsvpFormMessagesNegativeResponseConfirmation = {
+  __typename?: 'EventsFormRsvpFormMessagesNegativeResponseConfirmation';
+  /** "Share event" call-to-action label text. */
+  shareActionLabel?: Maybe<Scalars['String']['output']>;
+  /** Confirmation message title. */
+  title?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventsFormRsvpFormMessagesPositive = {
+  __typename?: 'EventsFormRsvpFormMessagesPositive';
+  /** Confirmation messages shown after registration. */
+  confirmation?: Maybe<EventsFormRsvpFormMessagesPositiveResponseConfirmation>;
+  /** Main form title for positive response. */
+  title?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventsFormRsvpFormMessagesPositiveResponseConfirmation = {
+  __typename?: 'EventsFormRsvpFormMessagesPositiveResponseConfirmation';
+  /** "Add to calendar" call-to-action label text. */
+  addToCalendarActionLabel?: Maybe<Scalars['String']['output']>;
+  /** Confirmation message text. */
+  message?: Maybe<Scalars['String']['output']>;
+  /** "Share event" call-to-action label text. */
+  shareActionLabel?: Maybe<Scalars['String']['output']>;
+  /** Confirmation message title. */
+  title?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventsFormTicketsUnavailableMessages = {
+  __typename?: 'EventsFormTicketsUnavailableMessages';
+  /** "Explore other events" call-to-action label text. */
+  exploreEventsActionLabel?: Maybe<Scalars['String']['output']>;
+  /** Message shown when event tickets are unavailable. */
+  message?: Maybe<Scalars['String']['output']>;
+};
+
+export enum EventsFormValueType {
+  Address = 'ADDRESS',
+  DateTime = 'DATE_TIME',
+  Number = 'NUMBER',
+  Text = 'TEXT',
+  TextArray = 'TEXT_ARRAY'
+}
+
+export type EventsGetEventRequestInput = {
+  /**
+   * Controls which event properties are returned. See [Fieldset](https://dev.wix.com/api/rest/wix-events/wix-events/fieldset#wix-events_wix-events_fieldset_event-fieldset).
+   * Some fields require additional computation that affects latency.
+   * Use minimum set of required fieldset for best performance.
+   */
+  fieldset?: InputMaybe<Array<InputMaybe<EventsEventFieldset>>>;
+  /** Event ID. */
+  id?: InputMaybe<Scalars['String']['input']>;
+  /** URL slug. */
+  slug?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EventsGetEventResponse = {
+  __typename?: 'EventsGetEventResponse';
+  /** Event. */
+  event?: Maybe<EventsEvent>;
+};
+
+export type EventsGuestListConfig = {
+  __typename?: 'EventsGuestListConfig';
+  /** Whether members can see other members attending the event (defaults to true). */
+  publicGuestList?: Maybe<Scalars['Boolean']['output']>;
+};
+
+export type EventsGuestListConfigInput = {
+  /** Whether members can see other members attending the event (defaults to true). */
+  publicGuestList?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type EventsListCategoryEventsRequestInput = {
+  /** Category ID */
+  categoryId?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * Controls which event properties are returned. See [Fieldset](https://dev.wix.com/api/rest/wix-events/wix-events/fieldset#wix-events_wix-events_fieldset_event-fieldset).
+   * Some fields require additional computation that affects latency of the service.
+   * Use minimum set of required fieldset for best performance.
+   */
+  fieldset?: InputMaybe<Array<InputMaybe<EventsEventFieldset>>>;
+  paging?: InputMaybe<EventsUpstreamCommonPagingInput>;
+};
+
+export type EventsListCategoryEventsResponse = {
+  __typename?: 'EventsListCategoryEventsResponse';
+  /** Events list. */
+  events?: Maybe<Array<Maybe<EventsEvent>>>;
+  pagingMetadata?: Maybe<CommonPagingMetadataV2>;
+};
+
+export type EventsListEventsRequestInput = {
+  /** Category filter. */
+  categoryFilter?: InputMaybe<EventsCategoryFilterInput>;
+  /**
+   * Filter facets to include in the response.
+   * See [supported facets](https://dev.wix.com/api/rest/wix-events/wix-events/filter-and-sort#wix-events_wix-events_filter-and-sort_list-query-events).
+   */
+  facet?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  /**
+   * Controls which event properties are returned. See [Fieldset](https://dev.wix.com/api/rest/wix-events/wix-events/fieldset#wix-events_wix-events_fieldset_event-fieldset).
+   * Some fields require additional computation that affects latency of the service.
+   * Use minimum set of required fieldset for best performance.
+   */
+  fieldset?: InputMaybe<Array<InputMaybe<EventsEventFieldset>>>;
+  /**
+   * Whether draft events should be returned in the response.
+   * Requires WIX_EVENTS.MANAGE_EVENTS permission.
+   */
+  includeDrafts?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Number of items to load per page. See [Pagination](https://dev.wix.com/api/rest/getting-started/pagination). */
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  /** Number of items to skip. See [Pagination](https://dev.wix.com/api/rest/getting-started/pagination). */
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  /** Recurrence status filter. */
+  recurrenceStatus?: InputMaybe<Array<InputMaybe<EventsRecurrenceStatusStatus>>>;
+  /** Recurring group id filter. */
+  recurringGroupId?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  /** Event URL slug. */
+  slug?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * Sort order, defaults to `"created:asc"`.
+   * See [supported fields](https://dev.wix.com/api/rest/wix-events/wix-events/filter-and-sort#wix-events_wix-events_filter-and-sort_list-query-events).
+   */
+  sort?: InputMaybe<Scalars['String']['input']>;
+  /** Event status. */
+  status?: InputMaybe<Array<InputMaybe<EventsEventStatus>>>;
+  /** User ID filter, by default any */
+  userId?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+export type EventsListEventsResponse = {
+  __typename?: 'EventsListEventsResponse';
+  /** Events list. */
+  events?: Maybe<Array<Maybe<EventsEvent>>>;
+  /** Filter facets. */
+  facets?: Maybe<EventsFacetCounts>;
+  /** Limit. */
+  limit?: Maybe<Scalars['Int']['output']>;
+  /** Offset. */
+  offset?: Maybe<Scalars['Int']['output']>;
+  /** Total number of events that match the given filters. */
+  total?: Maybe<Scalars['Int']['output']>;
+};
+
+export type EventsLocation = {
+  __typename?: 'EventsLocation';
+  /** Single line address representation. */
+  address?: Maybe<Scalars['String']['output']>;
+  /** Location map coordinates. */
+  coordinates?: Maybe<EventsMapCoordinates>;
+  /**
+   * Full address derived from formatted single line `address`.
+   * When `full_address` is used to create or update the event, deprecated `address` and `coordinates` are ignored.
+   * If provided `full_address` has empty `formatted_address` or `coordinates`, it will be auto-completed using Atlas service.
+   *
+   * Migration notes:
+   * - `full_address.formatted_address` is equivalent to `address`.
+   * - `full_address.geocode` is equivalent to `coordinates`.
+   */
+  fullAddress?: Maybe<EventsUpstreamCommonAddress>;
+  /** Location name. */
+  name?: Maybe<Scalars['String']['output']>;
+  /**
+   * Defines event location as TBD (To Be Determined).
+   * When event location is not yet defined, `name` is displayed instead of location address.
+   * `coordinates`, `address`, `type` and `full_address` are not required when location is TBD.
+   */
+  tbd?: Maybe<Scalars['Boolean']['output']>;
+  /** Location type. */
+  type?: Maybe<EventsLocationLocationType>;
+};
+
+export type EventsLocationInput = {
+  /** Single line address representation. */
+  address?: InputMaybe<Scalars['String']['input']>;
+  /** Location map coordinates. */
+  coordinates?: InputMaybe<EventsMapCoordinatesInput>;
+  /**
+   * Full address derived from formatted single line `address`.
+   * When `full_address` is used to create or update the event, deprecated `address` and `coordinates` are ignored.
+   * If provided `full_address` has empty `formatted_address` or `coordinates`, it will be auto-completed using Atlas service.
+   *
+   * Migration notes:
+   * - `full_address.formatted_address` is equivalent to `address`.
+   * - `full_address.geocode` is equivalent to `coordinates`.
+   */
+  fullAddress?: InputMaybe<EventsUpstreamCommonAddressInput>;
+  /** Location name. */
+  name?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * Defines event location as TBD (To Be Determined).
+   * When event location is not yet defined, `name` is displayed instead of location address.
+   * `coordinates`, `address`, `type` and `full_address` are not required when location is TBD.
+   */
+  tbd?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Location type. */
+  type?: InputMaybe<EventsLocationLocationType>;
+};
+
+export enum EventsLocationLocationType {
+  Online = 'ONLINE',
+  Venue = 'VENUE'
+}
+
+export type EventsMapCoordinates = {
+  __typename?: 'EventsMapCoordinates';
+  /** Latitude. */
+  lat?: Maybe<Scalars['Float']['output']>;
+  /** Longitude. */
+  lng?: Maybe<Scalars['Float']['output']>;
+};
+
+export type EventsMapCoordinatesInput = {
+  /** Latitude. */
+  lat?: InputMaybe<Scalars['Float']['input']>;
+  /** Longitude. */
+  lng?: InputMaybe<Scalars['Float']['input']>;
+};
+
+export type EventsMoney = {
+  __typename?: 'EventsMoney';
+  /** *Deprecated:** Use `value` instead. */
+  amount?: Maybe<Scalars['String']['output']>;
+  /** ISO 4217 format of the currency i.e. `USD`. */
+  currency?: Maybe<Scalars['String']['output']>;
+  /** Monetary amount. Decimal string with a period as a decimal separator (e.g., 3.99). Optionally, a single (-), to indicate that the amount is negative. */
+  value?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventsOccurrence = {
+  __typename?: 'EventsOccurrence';
+  /** Event end timestamp. */
+  endDate?: Maybe<Scalars['String']['output']>;
+  /** Whether time zone is displayed in formatted schedule. */
+  showTimeZone?: Maybe<Scalars['Boolean']['output']>;
+  /** Event start timestamp. */
+  startDate?: Maybe<Scalars['String']['output']>;
+  /** Event time zone ID in TZ database format, e.g., `EST`, `America/Los_Angeles`. */
+  timeZoneId?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventsOccurrenceInput = {
+  /** Event end timestamp. */
+  endDate?: InputMaybe<Scalars['String']['input']>;
+  /** Whether time zone is displayed in formatted schedule. */
+  showTimeZone?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Event start timestamp. */
+  startDate?: InputMaybe<Scalars['String']['input']>;
+  /** Event time zone ID in TZ database format, e.g., `EST`, `America/Los_Angeles`. */
+  timeZoneId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EventsOnlineConferencing = {
+  __typename?: 'EventsOnlineConferencing';
+  config?: Maybe<EventsOnlineConferencingConfig>;
+  session?: Maybe<EventsOnlineConferencingSession>;
+};
+
+export type EventsOnlineConferencingConfig = {
+  __typename?: 'EventsOnlineConferencingConfig';
+  /** Conference type */
+  conferenceType?: Maybe<EventsConferenceType>;
+  /**
+   * Whether online conferencing is enabled (not supported for TBD schedules).
+   * When enabled, links to join conferencing are generated and provided to guests.
+   */
+  enabled?: Maybe<Scalars['Boolean']['output']>;
+  /** Conferencing provider ID. */
+  providerId?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventsOnlineConferencingConfigInput = {
+  /** Conference type */
+  conferenceType?: InputMaybe<EventsConferenceType>;
+  /**
+   * Whether online conferencing is enabled (not supported for TBD schedules).
+   * When enabled, links to join conferencing are generated and provided to guests.
+   */
+  enabled?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Conferencing provider ID. */
+  providerId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EventsOnlineConferencingSession = {
+  __typename?: 'EventsOnlineConferencingSession';
+  /** Link for guests to join the online conference session. */
+  guestLink?: Maybe<Scalars['String']['output']>;
+  /** Link for event host to start the online conference session. */
+  hostLink?: Maybe<Scalars['String']['output']>;
+  /** The password required to join online conferencing session (when relevant). */
+  password?: Maybe<Scalars['String']['output']>;
+  /** Indicates that session was created successfully on providers side. */
+  sessionCreated?: Maybe<Scalars['Boolean']['output']>;
+  /** Unique session id */
+  sessionId?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventsPoliciesV2PolicyRequestInput = {
+  id: Scalars['ID']['input'];
+};
+
+export type EventsPublishDraftEventRequestInput = {
+  /** Event ID. */
+  id?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EventsPublishDraftEventResponse = {
+  __typename?: 'EventsPublishDraftEventResponse';
+  /** Published event. */
+  event?: Maybe<EventsEvent>;
+};
+
+export type EventsQueryEventsRequestInput = {
+  /**
+   * Filter facets to include in the response.
+   * See [supported facets](https://dev.wix.com/api/rest/wix-events/wix-events/filter-and-sort#wix-events_wix-events_filter-and-sort_list-query-events).
+   */
+  facet?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  /**
+   * Controls which event properties are returned. See [Fieldset](https://dev.wix.com/api/rest/wix-events/wix-events/fieldset#wix-events_wix-events_fieldset_event-fieldset).
+   * Some fields require additional computation that affects latency.
+   * Use minimum set of required fieldset for best performance.
+   */
+  fieldset?: InputMaybe<Array<InputMaybe<EventsEventFieldset>>>;
+  /** Filter. See [supported fields and operators](https://dev.wix.com/api/rest/wix-events/wix-events/filter-and-sort#wix-events_wix-events_filter-and-sort_list-query-events). */
+  filter?: InputMaybe<Scalars['JSON']['input']>;
+  /**
+   * Whether draft events should be returned in the response.
+   * Requires WIX_EVENTS.MANAGE_EVENTS permission.
+   */
+  includeDrafts?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Number of items to load per page. See [Pagination](https://dev.wix.com/api/rest/getting-started/pagination). */
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  /** Number of items to skip. See [Pagination](https://dev.wix.com/api/rest/getting-started/pagination). */
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  /**
+   * Sort order, defaults to `"created:asc"`.
+   * See [supported fields](https://dev.wix.com/api/rest/wix-events/wix-events/filter-and-sort#wix-events_wix-events_filter-and-sort_list-query-events).
+   */
+  sort?: InputMaybe<Scalars['String']['input']>;
+  /** User ID filter, by default any */
+  userId?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+export type EventsQueryEventsResponse = {
+  __typename?: 'EventsQueryEventsResponse';
+  /** Events list */
+  events?: Maybe<Array<Maybe<EventsEvent>>>;
+  /** Filter facets. */
+  facets?: Maybe<EventsFacetCounts>;
+  /** Limit. */
+  limit?: Maybe<Scalars['Int']['output']>;
+  /** Offset. */
+  offset?: Maybe<Scalars['Int']['output']>;
+  /** Total number of events that match the given filters. */
+  total?: Maybe<Scalars['Int']['output']>;
+};
+
+export type EventsQueryEventsV2RequestInput = {
+  /**
+   * Filter facets to include in the response.
+   * See [supported facets](https://dev.wix.com/api/rest/wix-events/wix-events/filter-and-sort#wix-events_wix-events_filter-and-sort_list-query-events).
+   */
+  facet?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  /**
+   * Controls which event properties are returned. See [Fieldset](https://dev.wix.com/api/rest/wix-events/wix-events/fieldset#wix-events_wix-events_fieldset_event-fieldset).
+   * Some fields require additional computation that affects latency.
+   * Use minimum set of required fieldset for best performance.
+   */
+  fieldset?: InputMaybe<Array<InputMaybe<EventsEventFieldset>>>;
+  /**
+   * Whether draft events should be returned in the response.
+   * Requires WIX_EVENTS.MANAGE_EVENTS permission.
+   */
+  includeDrafts?: InputMaybe<Scalars['Boolean']['input']>;
+  query?: InputMaybe<EventsUpstreamCommonQueryV2Input>;
+};
+
+export type EventsQueryEventsV2Response = {
+  __typename?: 'EventsQueryEventsV2Response';
+  /** Events list */
+  events?: Maybe<Array<Maybe<EventsEvent>>>;
+  /** Filter facets. */
+  facets?: Maybe<EventsFacetCounts>;
+  pagingMetadata?: Maybe<CommonPagingMetadataV2>;
+};
+
+export enum EventsRecurrenceStatusStatus {
+  /** Event occurs only once. */
+  OneTime = 'ONE_TIME',
+  /** Event is recurring. */
+  Recurring = 'RECURRING',
+  /** Marks the most recent canceled occurrence of the recurring event. */
+  RecurringLastCanceled = 'RECURRING_LAST_CANCELED',
+  /** Marks the most recent ended occurrence of the recurring event. */
+  RecurringLastEnded = 'RECURRING_LAST_ENDED',
+  /** Marks the next upcoming occurrence of the recurring event. */
+  RecurringNext = 'RECURRING_NEXT'
+}
+
+export type EventsRecurrences = {
+  __typename?: 'EventsRecurrences';
+  /** Recurring event category ID. */
+  categoryId?: Maybe<Scalars['String']['output']>;
+  /** Event occurrences. */
+  occurrences?: Maybe<Array<Maybe<EventsOccurrence>>>;
+  /** Recurrence status. */
+  status?: Maybe<EventsRecurrenceStatusStatus>;
+};
+
+export type EventsRecurrencesInput = {
+  /** Recurring event category ID. */
+  categoryId?: InputMaybe<Scalars['String']['input']>;
+  /** Event occurrences. */
+  occurrences?: InputMaybe<Array<InputMaybe<EventsOccurrenceInput>>>;
+  /** Recurrence status. */
+  status?: InputMaybe<EventsRecurrenceStatusStatus>;
+};
+
+export type EventsRegistration = {
+  __typename?: 'EventsRegistration';
+  /** External registration details. */
+  external?: Maybe<EventsExternalEvent>;
+  /** Initial event type which was set when creating an event. */
+  initialType?: Maybe<EventsEventType>;
+  /** Types of users allowed to register. */
+  restrictedTo?: Maybe<EventsVisitorType>;
+  /** RSVP collection details. */
+  rsvpCollection?: Maybe<EventsRsvpCollection>;
+  /** Event registration status. */
+  status?: Maybe<EventsRegistrationStatus>;
+  /** Ticketing details. */
+  ticketing?: Maybe<EventsTicketing>;
+  /** Event type. */
+  type?: Maybe<EventsEventType>;
+};
+
+export type EventsRegistrationConfigInput = {
+  /** Whether registration is disabled. */
+  disabledRegistration?: InputMaybe<Scalars['Boolean']['input']>;
+  /** External event registration URL (for external events only). */
+  externalRegistrationUrl?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * Initial event type. Only RSVP and TICKETS are allowed when creating an event.
+   * Updating this field is not allowed.
+   */
+  initialType?: InputMaybe<EventsEventType>;
+  /** Whether registration is closed. */
+  pausedRegistration?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Types of users allowed to register. */
+  restrictedTo?: InputMaybe<EventsVisitorType>;
+  /** Ticketing configuration. */
+  ticketingConfig?: InputMaybe<EventsTicketingConfigInput>;
+};
+
+export enum EventsRegistrationStatus {
+  /** Registration to event is closed */
+  Closed = 'CLOSED',
+  /** Registration to event is closed manually */
+  ClosedManually = 'CLOSED_MANUALLY',
+  /** Registration status is not applicable */
+  NaRegistrationStatus = 'NA_REGISTRATION_STATUS',
+  /** Registration is open via external URL */
+  OpenExternal = 'OPEN_EXTERNAL',
+  /** Registration is open via RSVP */
+  OpenRsvp = 'OPEN_RSVP',
+  /** Registration to event waitlist is open via RSVP */
+  OpenRsvpWaitlist = 'OPEN_RSVP_WAITLIST',
+  /** Registration is open via ticket purchase */
+  OpenTickets = 'OPEN_TICKETS',
+  /** Registration will be open via RSVP */
+  ScheduledRsvp = 'SCHEDULED_RSVP'
+}
+
+export type EventsRsvpCollection = {
+  __typename?: 'EventsRsvpCollection';
+  /** RSVP collection configuration. */
+  config?: Maybe<EventsRsvpCollectionConfig>;
+};
+
+export type EventsRsvpCollectionConfig = {
+  __typename?: 'EventsRsvpCollectionConfig';
+  /** Registration end timestamp. */
+  endDate?: Maybe<Scalars['String']['output']>;
+  /**
+   * Total guest limit available to register to the event.
+   * Additional guests per RSVP are counted towards total guests.
+   */
+  limit?: Maybe<Scalars['Int']['output']>;
+  /** Defines the supported RSVP statuses. */
+  rsvpStatusOptions?: Maybe<EventsRsvpCollectionConfigRsvpStatusOptions>;
+  /** Registration start timestamp. */
+  startDate?: Maybe<Scalars['String']['output']>;
+  /** Whether a waitlist is opened when total guest limit is reached, allowing guests to create RSVP with WAITING RSVP status. */
+  waitlist?: Maybe<Scalars['Boolean']['output']>;
+};
+
+export type EventsRsvpCollectionConfigInput = {
+  /** Registration end timestamp. */
+  endDate?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * Total guest limit available to register to the event.
+   * Additional guests per RSVP are counted towards total guests.
+   */
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  /** Defines the supported RSVP statuses. */
+  rsvpStatusOptions?: InputMaybe<EventsRsvpCollectionConfigRsvpStatusOptions>;
+  /** Registration start timestamp. */
+  startDate?: InputMaybe<Scalars['String']['input']>;
+  /** Whether a waitlist is opened when total guest limit is reached, allowing guests to create RSVP with WAITING RSVP status. */
+  waitlist?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export enum EventsRsvpCollectionConfigRsvpStatusOptions {
+  /** YES and NO RSVP status options are available for the registration */
+  YesAndNo = 'YES_AND_NO',
+  /** Only YES RSVP status is available for RSVP registration */
+  YesOnly = 'YES_ONLY'
+}
 
 export type EventsScheduleAddScheduleItemRequestInput = {
   /** Event ID. */
@@ -11078,6 +12412,57 @@ export type EventsScheduleAddScheduleItemResponse = {
   __typename?: 'EventsScheduleAddScheduleItemResponse';
   /** Schedule item. */
   item?: Maybe<EventsScheduleScheduleItem>;
+};
+
+export type EventsScheduleBookmarksV1ScheduleItemRequestInput = {
+  id: Scalars['ID']['input'];
+};
+
+export type EventsScheduleConfig = {
+  __typename?: 'EventsScheduleConfig';
+  /** Event end timestamp. */
+  endDate?: Maybe<Scalars['String']['output']>;
+  /** Whether end date is hidden in the formatted schedule. */
+  endDateHidden?: Maybe<Scalars['Boolean']['output']>;
+  /** Event recurrences. */
+  recurrences?: Maybe<EventsRecurrences>;
+  /**
+   * Defines event as TBD (To Be Determined) schedule.
+   * When event time is not yet defined, TBD message is displayed instead of event start and end times.
+   * `startDate`, `endDate` and `timeZoneId` are not required when schedule is TBD.
+   */
+  scheduleTbd?: Maybe<Scalars['Boolean']['output']>;
+  /** TBD message. */
+  scheduleTbdMessage?: Maybe<Scalars['String']['output']>;
+  /** Whether time zone is displayed in formatted schedule. */
+  showTimeZone?: Maybe<Scalars['Boolean']['output']>;
+  /** Event start timestamp. */
+  startDate?: Maybe<Scalars['String']['output']>;
+  /** Event time zone ID in TZ database format, e.g., `EST`, `America/Los_Angeles`. */
+  timeZoneId?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventsScheduleConfigInput = {
+  /** Event end timestamp. */
+  endDate?: InputMaybe<Scalars['String']['input']>;
+  /** Whether end date is hidden in the formatted schedule. */
+  endDateHidden?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Event recurrences. */
+  recurrences?: InputMaybe<EventsRecurrencesInput>;
+  /**
+   * Defines event as TBD (To Be Determined) schedule.
+   * When event time is not yet defined, TBD message is displayed instead of event start and end times.
+   * `startDate`, `endDate` and `timeZoneId` are not required when schedule is TBD.
+   */
+  scheduleTbd?: InputMaybe<Scalars['Boolean']['input']>;
+  /** TBD message. */
+  scheduleTbdMessage?: InputMaybe<Scalars['String']['input']>;
+  /** Whether time zone is displayed in formatted schedule. */
+  showTimeZone?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Event start timestamp. */
+  startDate?: InputMaybe<Scalars['String']['input']>;
+  /** Event time zone ID in TZ database format, e.g., `EST`, `America/Los_Angeles`. */
+  timeZoneId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type EventsScheduleCreateBookmarkRequestInput = {
@@ -11313,6 +12698,143 @@ export type EventsScheduleUpdateScheduleItemResponse = {
   item?: Maybe<EventsScheduleScheduleItem>;
 };
 
+export type EventsScheduleV1ScheduleItemRequestInput = {
+  id: Scalars['ID']['input'];
+};
+
+export type EventsScheduling = {
+  __typename?: 'EventsScheduling';
+  /** Schedule configuration. */
+  config?: Maybe<EventsScheduleConfig>;
+  /** Formatted end date of the event (empty for TBD schedules or when end date is hidden). */
+  endDateFormatted?: Maybe<Scalars['String']['output']>;
+  /** Formatted end time of the event (empty for TBD schedules or when end date is hidden). */
+  endTimeFormatted?: Maybe<Scalars['String']['output']>;
+  /** Formatted schedule representation. */
+  formatted?: Maybe<Scalars['String']['output']>;
+  /** Formatted start date of the event (empty for TBD schedules). */
+  startDateFormatted?: Maybe<Scalars['String']['output']>;
+  /** Formatted start time of the event (empty for TBD schedules). */
+  startTimeFormatted?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventsSeoSettings = {
+  __typename?: 'EventsSeoSettings';
+  /** Advanced SEO data */
+  advancedSeoData?: Maybe<AdvancedSeoSeoSchema>;
+  /** Hidden from SEO Site Map */
+  hidden?: Maybe<Scalars['Boolean']['output']>;
+  /** URL slug */
+  slug?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventsSeoSettingsInput = {
+  /** Advanced SEO data */
+  advancedSeoData?: InputMaybe<AdvancedSeoSeoSchemaInput>;
+  /** Hidden from SEO Site Map */
+  hidden?: InputMaybe<Scalars['Boolean']['input']>;
+  /** URL slug */
+  slug?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EventsSiteUrl = {
+  __typename?: 'EventsSiteUrl';
+  /**
+   * Base URL. For premium sites, this will be the domain.
+   * For free sites, this would be site URL (e.g `mysite.wixsite.com/mysite`)
+   */
+  base?: Maybe<Scalars['String']['output']>;
+  /** The path to that page - e.g `/my-events/weekly-meetup-2` */
+  path?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventsSiteUrlInput = {
+  /**
+   * Base URL. For premium sites, this will be the domain.
+   * For free sites, this would be site URL (e.g `mysite.wixsite.com/mysite`)
+   */
+  base?: InputMaybe<Scalars['String']['input']>;
+  /** The path to that page - e.g `/my-events/weekly-meetup-2` */
+  path?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EventsTaxConfig = {
+  __typename?: 'EventsTaxConfig';
+  /** Applies taxes for donations, default true. */
+  appliesToDonations?: Maybe<Scalars['Boolean']['output']>;
+  /** Tax name. */
+  name?: Maybe<Scalars['String']['output']>;
+  /** Tax rate (e.g.,`21.55`). */
+  rate?: Maybe<Scalars['String']['output']>;
+  /** Tax application settings. */
+  type?: Maybe<EventsTaxType>;
+};
+
+export type EventsTaxConfigInput = {
+  /** Applies taxes for donations, default true. */
+  appliesToDonations?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Tax name. */
+  name?: InputMaybe<Scalars['String']['input']>;
+  /** Tax rate (e.g.,`21.55`). */
+  rate?: InputMaybe<Scalars['String']['input']>;
+  /** Tax application settings. */
+  type?: InputMaybe<EventsTaxType>;
+};
+
+export enum EventsTaxType {
+  /** Tax is added to the order at the checkout */
+  Added = 'ADDED',
+  /** Tax is added to the final total at the checkout */
+  AddedAtCheckout = 'ADDED_AT_CHECKOUT',
+  /** Tax is included in the ticket price */
+  Included = 'INCLUDED'
+}
+
+export type EventsTicketing = {
+  __typename?: 'EventsTicketing';
+  /** Ticketing configuration. */
+  config?: Maybe<EventsTicketingConfig>;
+  /** Currency used in event transactions. */
+  currency?: Maybe<Scalars['String']['output']>;
+  /** Deprecated. */
+  highestPrice?: Maybe<Scalars['String']['output']>;
+  /** Price of highest priced ticket. */
+  highestTicketPrice?: Maybe<EventsMoney>;
+  /** Formatted price of highest priced ticket. */
+  highestTicketPriceFormatted?: Maybe<Scalars['String']['output']>;
+  /** Deprecated. */
+  lowestPrice?: Maybe<Scalars['String']['output']>;
+  /** Price of lowest priced ticket. */
+  lowestTicketPrice?: Maybe<EventsMoney>;
+  /** Formatted price of lowest priced ticket. */
+  lowestTicketPriceFormatted?: Maybe<Scalars['String']['output']>;
+  /** Whether all tickets are sold for this event. */
+  soldOut?: Maybe<Scalars['Boolean']['output']>;
+};
+
+export type EventsTicketingConfig = {
+  __typename?: 'EventsTicketingConfig';
+  /** Whether the form must be filled out separately for each ticket. */
+  guestAssignedTickets?: Maybe<Scalars['Boolean']['output']>;
+  /** Duration for which the tickets being bought are reserved. */
+  reservationDurationInMinutes?: Maybe<Scalars['Int']['output']>;
+  /** Tax configuration. */
+  taxConfig?: Maybe<EventsTaxConfig>;
+  /** Limit of tickets that can be purchased per order, default 20. */
+  ticketLimitPerOrder?: Maybe<Scalars['Int']['output']>;
+};
+
+export type EventsTicketingConfigInput = {
+  /** Whether the form must be filled out separately for each ticket. */
+  guestAssignedTickets?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Duration for which the tickets being bought are reserved. */
+  reservationDurationInMinutes?: InputMaybe<Scalars['Int']['input']>;
+  /** Tax configuration. */
+  taxConfig?: InputMaybe<EventsTaxConfigInput>;
+  /** Limit of tickets that can be purchased per order, default 20. */
+  ticketLimitPerOrder?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type EventsTimeInterval = {
   __typename?: 'EventsTimeInterval';
   /** End of the interval. Non-inclusive. */
@@ -11336,6 +12858,127 @@ export type EventsTimeIntervalInput = {
    * Defaults to `Etc/UTC` when not set.
    */
   timeZoneId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EventsUpdateEventRequestInput = {
+  /** Event data to update (partial) */
+  event?: InputMaybe<EventsEventDataInput>;
+  /**
+   * Set of field paths to update.
+   * <!--ONLY:REST-->
+   * Fields will be auto-populated from the `event` entity unless added to the request explicitly.
+   * <!--END:ONLY:REST-->
+   * Behavior follows [google.protobuf.FieldMask](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.FieldMask) semantics.
+   */
+  fields?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  /** Event ID. */
+  id?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * Content language code in ISO 639-1 format.
+   * Used for translating ticket PDF labels, registration form, automatic emails, etc.
+   * Supported languages: ar, bg, cs, da, de, el, en, es, fi, fr, he, hi, hu, id, it, ja, ko, ms, nl, no, pl, pt, ro, ru, sv, th, tl, tr, uk, zh.
+   * Defaults to en.
+   */
+  language?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EventsUpdateEventResponse = {
+  __typename?: 'EventsUpdateEventResponse';
+  /** Updated event. */
+  event?: Maybe<EventsEvent>;
+};
+
+export type EventsUpstreamCommonAddress = {
+  __typename?: 'EventsUpstreamCommonAddress';
+  /** Main address line (usually street and number) as free text */
+  addressLine?: Maybe<Scalars['String']['output']>;
+  /** Free text providing more detailed address info. Usually contains Apt, Suite, Floor */
+  addressLine2?: Maybe<Scalars['String']['output']>;
+  /** city name */
+  city?: Maybe<Scalars['String']['output']>;
+  /** country code */
+  country?: Maybe<Scalars['String']['output']>;
+  /** country full-name */
+  countryFullname?: Maybe<Scalars['String']['output']>;
+  /** A string containing the human-readable address of this location */
+  formattedAddress?: Maybe<Scalars['String']['output']>;
+  /** coordinates of the physical address */
+  geocode?: Maybe<EventsUpstreamCommonAddressLocation>;
+  /** Free text for human-to-human textual orientation aid purposes */
+  hint?: Maybe<Scalars['String']['output']>;
+  /** zip/postal code */
+  postalCode?: Maybe<Scalars['String']['output']>;
+  /** a break down of the street to number and street name */
+  streetAddress?: Maybe<EventsUpstreamCommonStreetAddress>;
+  /** subdivision (usually state or region) code according to ISO 3166-2 */
+  subdivision?: Maybe<Scalars['String']['output']>;
+  /** multi-level subdivisions from top to bottom */
+  subdivisions?: Maybe<Array<Maybe<EventsUpstreamCommonSubdivision>>>;
+};
+
+export type EventsUpstreamCommonAddressInput = {
+  /** Main address line (usually street and number) as free text */
+  addressLine?: InputMaybe<Scalars['String']['input']>;
+  /** Free text providing more detailed address info. Usually contains Apt, Suite, Floor */
+  addressLine2?: InputMaybe<Scalars['String']['input']>;
+  /** city name */
+  city?: InputMaybe<Scalars['String']['input']>;
+  /** country code */
+  country?: InputMaybe<Scalars['String']['input']>;
+  /** country full-name */
+  countryFullname?: InputMaybe<Scalars['String']['input']>;
+  /** A string containing the human-readable address of this location */
+  formattedAddress?: InputMaybe<Scalars['String']['input']>;
+  /** coordinates of the physical address */
+  geocode?: InputMaybe<EventsUpstreamCommonAddressLocationInput>;
+  /** Free text for human-to-human textual orientation aid purposes */
+  hint?: InputMaybe<Scalars['String']['input']>;
+  /** zip/postal code */
+  postalCode?: InputMaybe<Scalars['String']['input']>;
+  /** a break down of the street to number and street name */
+  streetAddress?: InputMaybe<EventsUpstreamCommonStreetAddressInput>;
+  /** subdivision (usually state or region) code according to ISO 3166-2 */
+  subdivision?: InputMaybe<Scalars['String']['input']>;
+  /** multi-level subdivisions from top to bottom */
+  subdivisions?: InputMaybe<Array<InputMaybe<EventsUpstreamCommonSubdivisionInput>>>;
+};
+
+export type EventsUpstreamCommonAddressLocation = {
+  __typename?: 'EventsUpstreamCommonAddressLocation';
+  latitude?: Maybe<Scalars['Float']['output']>;
+  longitude?: Maybe<Scalars['Float']['output']>;
+};
+
+export type EventsUpstreamCommonAddressLocationInput = {
+  latitude?: InputMaybe<Scalars['Float']['input']>;
+  longitude?: InputMaybe<Scalars['Float']['input']>;
+};
+
+export type EventsUpstreamCommonImage = {
+  __typename?: 'EventsUpstreamCommonImage';
+  /** Image alt text. Optional. */
+  altText?: Maybe<Scalars['String']['output']>;
+  /** Original image height. */
+  height?: Maybe<Scalars['Int']['output']>;
+  /** WixMedia image ID. */
+  id?: Maybe<Scalars['String']['output']>;
+  /** Image URL. */
+  url?: Maybe<Scalars['String']['output']>;
+  /** Original image width. */
+  width?: Maybe<Scalars['Int']['output']>;
+};
+
+export type EventsUpstreamCommonImageInput = {
+  /** Image alt text. Optional. */
+  altText?: InputMaybe<Scalars['String']['input']>;
+  /** Original image height. */
+  height?: InputMaybe<Scalars['Int']['input']>;
+  /** WixMedia image ID. */
+  id?: InputMaybe<Scalars['String']['input']>;
+  /** Image URL. */
+  url?: InputMaybe<Scalars['String']['input']>;
+  /** Original image width. */
+  width?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type EventsUpstreamCommonPagingInput = {
@@ -11365,6 +13008,36 @@ export type EventsUpstreamCommonSortingInput = {
   fieldName?: InputMaybe<Scalars['String']['input']>;
   /** Sort order (ASC/DESC). Defaults to ASC */
   order?: InputMaybe<CommonSortOrder>;
+};
+
+export type EventsUpstreamCommonStreetAddress = {
+  __typename?: 'EventsUpstreamCommonStreetAddress';
+  /** street name */
+  name?: Maybe<Scalars['String']['output']>;
+  /** street number */
+  number?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventsUpstreamCommonStreetAddressInput = {
+  /** street name */
+  name?: InputMaybe<Scalars['String']['input']>;
+  /** street number */
+  number?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EventsUpstreamCommonSubdivision = {
+  __typename?: 'EventsUpstreamCommonSubdivision';
+  /** subdivision short code */
+  code?: Maybe<Scalars['String']['output']>;
+  /** subdivision full-name */
+  name?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventsUpstreamCommonSubdivisionInput = {
+  /** subdivision short code */
+  code?: InputMaybe<Scalars['String']['input']>;
+  /** subdivision full-name */
+  name?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type EventsV2CreatePolicyRequestInput = {
@@ -11492,6 +13165,31 @@ export type EventsV2UpdatePolicyResponse = {
   policy?: Maybe<EventsV2Policy>;
 };
 
+export enum EventsVisitorType {
+  /** Site member */
+  Member = 'MEMBER',
+  /** Site visitor (including member) */
+  Visitor = 'VISITOR',
+  /** Site visitor or member */
+  VisitorOrMember = 'VISITOR_OR_MEMBER'
+}
+
+export type FormsUpstreamCommonImage = {
+  __typename?: 'FormsUpstreamCommonImage';
+  /** Image alt text. */
+  altText?: Maybe<Scalars['String']['output']>;
+  /** Image filename. */
+  filename?: Maybe<Scalars['String']['output']>;
+  /** Original image height. */
+  height?: Maybe<Scalars['Int']['output']>;
+  /** WixMedia image ID. */
+  id?: Maybe<Scalars['String']['output']>;
+  /** Image URL. */
+  url?: Maybe<Scalars['String']['output']>;
+  /** Original image width. */
+  width?: Maybe<Scalars['Int']['output']>;
+};
+
 export type FormsV4BreakPoint = {
   __typename?: 'FormsV4BreakPoint';
   /** Amount of columns of layout grid. */
@@ -11558,6 +13256,8 @@ export type FormsV4Form = {
 
 export type FormsV4FormField = {
   __typename?: 'FormsV4FormField';
+  /** Details identifying field, which is extension of other entity */
+  dataExtensionsDetails?: Maybe<FormsV4FormFieldDataExtensionsDetails>;
   /** Whether the field is hidden. */
   hidden?: Maybe<Scalars['Boolean']['output']>;
   /** Item ID. */
@@ -11654,7 +13354,8 @@ export enum FormsV4FormFieldContactInfoContactField {
   Phone = 'PHONE',
   Position = 'POSITION',
   Subscription = 'SUBSCRIPTION',
-  Undefined = 'UNDEFINED'
+  Undefined = 'UNDEFINED',
+  VatId = 'VAT_ID'
 }
 
 export type FormsV4FormFieldContactInfoCustomFieldInfo = {
@@ -11684,6 +13385,12 @@ export enum FormsV4FormFieldContactInfoPhoneInfoTag {
   Main = 'MAIN',
   Untagged = 'UNTAGGED'
 }
+
+export type FormsV4FormFieldDataExtensionsDetails = {
+  __typename?: 'FormsV4FormFieldDataExtensionsDetails';
+  /** FQDNS which can be extended with this field */
+  fqdns?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+};
 
 export type FormsV4FormFieldIntegerType = {
   __typename?: 'FormsV4FormFieldIntegerType';
@@ -11751,6 +13458,10 @@ export type FormsV4FormFieldObjectTypePropertiesType = {
 
 export type FormsV4FormFieldPaymentInfo = {
   __typename?: 'FormsV4FormFieldPaymentInfo';
+  /** Maximum amount of different products. */
+  maxItems?: Maybe<Scalars['Int']['output']>;
+  /** Minimum amount of different products. */
+  minItems?: Maybe<Scalars['Int']['output']>;
   /** Field mapped to products. */
   products?: Maybe<Array<Maybe<FormsV4FormFieldPaymentInfoProduct>>>;
 };
@@ -11767,6 +13478,8 @@ export type FormsV4FormFieldPaymentInfoProduct = {
   priceType?: Maybe<FormsV4FormFieldPaymentInfoProductPriceTypeEnumPriceType>;
   /** Product type. */
   productType?: Maybe<FormsV4FormFieldPaymentInfoProductProductTypeEnumProductType>;
+  /** Quantity limit. */
+  quantityLimit?: Maybe<FormsV4FormFieldPaymentInfoProductQuantityLimit>;
 };
 
 export type FormsV4FormFieldPaymentInfoProductDynamicPriceOptions = {
@@ -11798,6 +13511,14 @@ export enum FormsV4FormFieldPaymentInfoProductProductTypeEnumProductType {
   Shippable = 'SHIPPABLE',
   Unknown = 'UNKNOWN'
 }
+
+export type FormsV4FormFieldPaymentInfoProductQuantityLimit = {
+  __typename?: 'FormsV4FormFieldPaymentInfoProductQuantityLimit';
+  /** Maximum quantity. */
+  maximum?: Maybe<Scalars['Int']['output']>;
+  /** Minimum quantity. */
+  minimum?: Maybe<Scalars['Int']['output']>;
+};
 
 export type FormsV4FormFieldPredefinedValidation = {
   __typename?: 'FormsV4FormFieldPredefinedValidation';
@@ -11839,6 +13560,7 @@ export enum FormsV4FormFieldStringTypeFormatEnumFormat {
   ColorHex = 'COLOR_HEX',
   Currency = 'CURRENCY',
   Date = 'DATE',
+  DateOptionalTime = 'DATE_OPTIONAL_TIME',
   DateTime = 'DATE_TIME',
   Email = 'EMAIL',
   Hostname = 'HOSTNAME',
@@ -11911,6 +13633,8 @@ export type FormsV4FormFieldV2InputField = {
   numberOptions?: Maybe<FormsV4FormFieldV2InputFieldNumber>;
   /** Input return object as value */
   objectOptions?: Maybe<FormsV4FormFieldV2InputFieldObject>;
+  /** Input returns selected products as value. */
+  paymentOptions?: Maybe<FormsV4FormFieldV2InputFieldPayment>;
   /**
    * Mark the field as containing personal information. This will encrypt user data when storing it.
    * Default: false
@@ -11968,8 +13692,12 @@ export type FormsV4FormFieldV2InputFieldArrayCheckboxGroupOption = {
   __typename?: 'FormsV4FormFieldV2InputFieldArrayCheckboxGroupOption';
   /** Flag identifying that option should be selected by default */
   default?: Maybe<Scalars['Boolean']['output']>;
+  /** Option id. Used as binding for translations */
+  id?: Maybe<Scalars['String']['output']>;
   /** Selectable option label */
   label?: Maybe<Scalars['String']['output']>;
+  /** Media item. Media, associated with option, like image. */
+  media?: Maybe<FormsV4FormFieldV2MediaItem>;
   /** Selectable option value, which is saved to DB. */
   value?: Maybe<Scalars['JSON']['output']>;
 };
@@ -12062,6 +13790,7 @@ export enum FormsV4FormFieldV2InputFieldInputType {
   Boolean = 'BOOLEAN',
   Number = 'NUMBER',
   Object = 'OBJECT',
+  Payment = 'PAYMENT',
   String = 'STRING',
   Unknown = 'UNKNOWN',
   WixFile = 'WIX_FILE'
@@ -12073,9 +13802,9 @@ export type FormsV4FormFieldV2InputFieldIntegerType = {
   enum?: Maybe<Array<Maybe<Scalars['Int']['output']>>>;
   /** Custom error message when validation fails. */
   errorMessages?: Maybe<FormsV4FormFieldV2InputFieldNumberErrorMessages>;
-  /** Minimum value. */
-  maximum?: Maybe<Scalars['Int']['output']>;
   /** Maximum value. */
+  maximum?: Maybe<Scalars['Int']['output']>;
+  /** Minimum value. */
   minimum?: Maybe<Scalars['Int']['output']>;
   /** Multiple of value. */
   multipleOf?: Maybe<Scalars['Int']['output']>;
@@ -12178,12 +13907,47 @@ export enum FormsV4FormFieldV2InputFieldObjectTypePropertiesTypePropertiesType {
   Unknown = 'UNKNOWN'
 }
 
+export type FormsV4FormFieldV2InputFieldPayment = {
+  __typename?: 'FormsV4FormFieldV2InputFieldPayment';
+  /** Checkbox group input field. */
+  checkboxGroupOptions?: Maybe<FormsV4FormFieldV2InputFieldPaymentCheckboxGroup>;
+  /** Component type of the payment input field. */
+  componentType?: Maybe<FormsV4FormFieldV2InputFieldPaymentComponentType>;
+};
+
+export type FormsV4FormFieldV2InputFieldPaymentCheckboxGroup = {
+  __typename?: 'FormsV4FormFieldV2InputFieldPaymentCheckboxGroup';
+  /** Description of the field. */
+  description?: Maybe<RichContentV1RichContent>;
+  /** Label of the field. */
+  label?: Maybe<Scalars['String']['output']>;
+  /** List of options to select from. */
+  options?: Maybe<Array<Maybe<FormsV4FormFieldV2InputFieldPaymentCheckboxGroupOption>>>;
+};
+
+export type FormsV4FormFieldV2InputFieldPaymentCheckboxGroupOption = {
+  __typename?: 'FormsV4FormFieldV2InputFieldPaymentCheckboxGroupOption';
+  /** Option id. Used as binding for translations. */
+  id?: Maybe<Scalars['String']['output']>;
+  /** Selectable option label. */
+  label?: Maybe<Scalars['String']['output']>;
+  /** Media item. Media, associated with option, like image. */
+  media?: Maybe<FormsV4FormFieldV2MediaItem>;
+  /** Selectable option value, which is saved to DB. Corresponds to product id, found in payment trigger field's products list. */
+  value?: Maybe<Scalars['JSON']['output']>;
+};
+
+export enum FormsV4FormFieldV2InputFieldPaymentComponentType {
+  CheckboxGroup = 'CHECKBOX_GROUP',
+  Unknown = 'UNKNOWN'
+}
+
 export type FormsV4FormFieldV2InputFieldString = {
   __typename?: 'FormsV4FormFieldV2InputFieldString';
   /** Component type of the string input field */
   componentType?: Maybe<FormsV4FormFieldV2InputFieldStringComponentType>;
   /** Selection field as drop down */
-  dropDownOptions?: Maybe<FormsV4FormFieldV2InputFieldStringDropDown>;
+  dropdownOptions?: Maybe<FormsV4FormFieldV2InputFieldStringDropdown>;
   /** Selection field as radio group */
   radioGroupOptions?: Maybe<FormsV4FormFieldV2InputFieldStringRadioGroup>;
   /** Text input field */
@@ -12193,22 +13957,24 @@ export type FormsV4FormFieldV2InputFieldString = {
 };
 
 export enum FormsV4FormFieldV2InputFieldStringComponentType {
-  DropDown = 'DROP_DOWN',
+  Dropdown = 'DROPDOWN',
   RadioGroup = 'RADIO_GROUP',
   TextInput = 'TEXT_INPUT',
   Unknown = 'UNKNOWN'
 }
 
-export type FormsV4FormFieldV2InputFieldStringDropDown = {
-  __typename?: 'FormsV4FormFieldV2InputFieldStringDropDown';
+export type FormsV4FormFieldV2InputFieldStringDropdown = {
+  __typename?: 'FormsV4FormFieldV2InputFieldStringDropdown';
   /** Option which can be specified by UoU, enabled when this object is specified. */
-  customOption?: Maybe<FormsV4FormFieldV2InputFieldStringDropDownCustomOption>;
+  customOption?: Maybe<FormsV4FormFieldV2InputFieldStringDropdownCustomOption>;
   /** Description of the field */
   description?: Maybe<RichContentV1RichContent>;
   /** Label of the field */
   label?: Maybe<Scalars['String']['output']>;
   /** List of options to select from */
-  options?: Maybe<Array<Maybe<FormsV4FormFieldV2InputFieldStringDropDownOption>>>;
+  options?: Maybe<Array<Maybe<FormsV4FormFieldV2InputFieldStringDropdownOption>>>;
+  /** Placeholder of dropdown input */
+  placeholder?: Maybe<Scalars['String']['output']>;
   /**
    * Flag identifying to hide or not label
    * Default: true
@@ -12216,18 +13982,20 @@ export type FormsV4FormFieldV2InputFieldStringDropDown = {
   showLabel?: Maybe<Scalars['Boolean']['output']>;
 };
 
-export type FormsV4FormFieldV2InputFieldStringDropDownCustomOption = {
-  __typename?: 'FormsV4FormFieldV2InputFieldStringDropDownCustomOption';
+export type FormsV4FormFieldV2InputFieldStringDropdownCustomOption = {
+  __typename?: 'FormsV4FormFieldV2InputFieldStringDropdownCustomOption';
   /** Label of custom option input */
   label?: Maybe<Scalars['String']['output']>;
   /** Placeholder of custom option input */
   placeholder?: Maybe<Scalars['String']['output']>;
 };
 
-export type FormsV4FormFieldV2InputFieldStringDropDownOption = {
-  __typename?: 'FormsV4FormFieldV2InputFieldStringDropDownOption';
+export type FormsV4FormFieldV2InputFieldStringDropdownOption = {
+  __typename?: 'FormsV4FormFieldV2InputFieldStringDropdownOption';
   /** Flag identifying that option should be selected by default */
   default?: Maybe<Scalars['Boolean']['output']>;
+  /** Option id. Used as binding for translations */
+  id?: Maybe<Scalars['String']['output']>;
   /** Selectable option label */
   label?: Maybe<Scalars['String']['output']>;
   /** Selectable option value, which is saved to DB. */
@@ -12272,6 +14040,8 @@ export type FormsV4FormFieldV2InputFieldStringRadioGroupOption = {
   __typename?: 'FormsV4FormFieldV2InputFieldStringRadioGroupOption';
   /** Flag identifying that option should be selected by default */
   default?: Maybe<Scalars['Boolean']['output']>;
+  /** Option id. Used as binding for translations */
+  id?: Maybe<Scalars['String']['output']>;
   /** Selectable option label */
   label?: Maybe<Scalars['String']['output']>;
   /** Selectable option value, which is saved to DB. */
@@ -12313,6 +14083,7 @@ export enum FormsV4FormFieldV2InputFieldStringTypeFormatEnumFormat {
   ColorHex = 'COLOR_HEX',
   Currency = 'CURRENCY',
   Date = 'DATE',
+  DateOptionalTime = 'DATE_OPTIONAL_TIME',
   DateTime = 'DATE_TIME',
   Email = 'EMAIL',
   Hostname = 'HOSTNAME',
@@ -12370,6 +14141,12 @@ export enum FormsV4FormFieldV2InputFieldWixFileFileUploadUploadFileFormatEnumUpl
   /** Video files */
   Video = 'VIDEO'
 }
+
+export type FormsV4FormFieldV2MediaItem = {
+  __typename?: 'FormsV4FormFieldV2MediaItem';
+  /** WixMedia image. */
+  image?: Maybe<FormsUpstreamCommonImage>;
+};
 
 export type FormsV4FormFieldV2SubmitButton = {
   __typename?: 'FormsV4FormFieldV2SubmitButton';
@@ -12472,7 +14249,7 @@ export type FormsV4FormRule = {
 
 export type FormsV4FormRuleFormOverride = {
   __typename?: 'FormsV4FormRuleFormOverride';
-  /** Overridden entity id */
+  /** Overridden entity id. Either fieldId, or "{fieldIdWithNestedForm}/{nestedFormFieldId}" */
   entityId?: Maybe<Scalars['String']['output']>;
   /** Override entity type. */
   entityType?: Maybe<FormsV4FormRuleFormOverrideOverrideEntityTypeEnumOverrideEntityType>;
@@ -12904,6 +14681,144 @@ export type IdentityOauth2V1AuthorizeRequestInput = {
   state?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type InventoryV1DecrementDataInput = {
+  /** Number to decrement inventory by. */
+  decrementBy?: InputMaybe<Scalars['Int']['input']>;
+  /** Deprecated: use productId. */
+  externalId?: InputMaybe<Scalars['String']['input']>;
+  /** Inventory item ID. */
+  inventoryId?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * Whether the request to decrement the item's inventory was made as part of a purchase that includes preorder items.
+   * If true and the item is available for preorder, we allow negative inventory.
+   * If false and the item is not available for preorder, we allow regular buy flow (no negative inventory).
+   */
+  preorderRequest?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Product ID. */
+  productId?: InputMaybe<Scalars['String']['input']>;
+  /** Variant ID. */
+  variantId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type InventoryV1DecrementInventoryRequestInput = {
+  decrementData?: InputMaybe<Array<InputMaybe<InventoryV1DecrementDataInput>>>;
+};
+
+export type InventoryV1GetInventoryVariantsRequestInput = {
+  /** Deprecated (use productID instead). */
+  externalId?: InputMaybe<Scalars['String']['input']>;
+  /** Inventory item ID. */
+  inventoryId?: InputMaybe<Scalars['String']['input']>;
+  /** Product ID. */
+  productId?: InputMaybe<Scalars['String']['input']>;
+  /** Variant IDs to query for this inventory item (optional). */
+  variantIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+export type InventoryV1GetInventoryVariantsResponse = {
+  __typename?: 'InventoryV1GetInventoryVariantsResponse';
+  /** Inventory item. */
+  inventoryItem?: Maybe<InventoryV1InventoryItemV2>;
+};
+
+export type InventoryV1IncrementDataInput = {
+  /** Number to increment inventory by. */
+  incrementBy?: InputMaybe<Scalars['Int']['input']>;
+  /** Inventory item ID. */
+  inventoryId?: InputMaybe<Scalars['String']['input']>;
+  /** Product ID. */
+  productId?: InputMaybe<Scalars['String']['input']>;
+  /** Variant ID. */
+  variantId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type InventoryV1IncrementInventoryRequestInput = {
+  incrementData?: InputMaybe<Array<InputMaybe<InventoryV1IncrementDataInput>>>;
+};
+
+export type InventoryV1InventoryItemV2 = {
+  __typename?: 'InventoryV1InventoryItemV2';
+  /** Deprecated: use productId. */
+  externalId?: Maybe<Scalars['String']['output']>;
+  /** Inventory item ID. */
+  id?: Maybe<Scalars['String']['output']>;
+  /** Last updated timestamp. */
+  lastUpdated?: Maybe<Scalars['String']['output']>;
+  /**
+   * Inventory’s unique numeric ID (assigned in ascending order).
+   * Primarily for sorting and filtering when crawling all inventories.
+   */
+  numericId?: Maybe<Scalars['Int']['output']>;
+  /** Preorder information. */
+  preorderInfo?: Maybe<InventoryV1PreorderInfo>;
+  /** Product ID. */
+  productId?: Maybe<Scalars['String']['output']>;
+  /** Whether quantity is being tracked. */
+  trackQuantity?: Maybe<Scalars['Boolean']['output']>;
+  /** Variants associated with this inventory item. */
+  variants?: Maybe<Array<Maybe<InventoryV1InventoryVariantV2>>>;
+};
+
+export type InventoryV1InventoryItemV2Input = {
+  /** Deprecated: use productId. */
+  externalId?: InputMaybe<Scalars['String']['input']>;
+  /** Inventory item ID. */
+  id?: InputMaybe<Scalars['String']['input']>;
+  /** Last updated timestamp. */
+  lastUpdated?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * Inventory’s unique numeric ID (assigned in ascending order).
+   * Primarily for sorting and filtering when crawling all inventories.
+   */
+  numericId?: InputMaybe<Scalars['Int']['input']>;
+  /** Preorder information. */
+  preorderInfo?: InputMaybe<InventoryV1PreorderInfoInput>;
+  /** Product ID. */
+  productId?: InputMaybe<Scalars['String']['input']>;
+  /** Whether quantity is being tracked. */
+  trackQuantity?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Variants associated with this inventory item. */
+  variants?: InputMaybe<Array<InputMaybe<InventoryV1InventoryVariantV2Input>>>;
+};
+
+export type InventoryV1InventoryVariantV2 = {
+  __typename?: 'InventoryV1InventoryVariantV2';
+  /** Whether the variant is available for preorder. When `true`, the variant is out of stock and preorder is enabled on inventory level. */
+  availableForPreorder?: Maybe<Scalars['Boolean']['output']>;
+  /** Whether the product is listed as in stock. */
+  inStock?: Maybe<Scalars['Boolean']['output']>;
+  /** Quantity currently left in inventory. */
+  quantity?: Maybe<Scalars['Int']['output']>;
+  /** Variant ID. */
+  variantId?: Maybe<Scalars['String']['output']>;
+};
+
+export type InventoryV1InventoryVariantV2Input = {
+  /** Whether the variant is available for preorder. When `true`, the variant is out of stock and preorder is enabled on inventory level. */
+  availableForPreorder?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Whether the product is listed as in stock. */
+  inStock?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Quantity currently left in inventory. */
+  quantity?: InputMaybe<Scalars['Int']['input']>;
+  /** Variant ID. */
+  variantId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type InventoryV1PagingInput = {
+  /** Amount of items to load per page */
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  /** Number of items to skip in the display (relevant for all pages after the first) */
+  offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type InventoryV1PagingMetadata = {
+  __typename?: 'InventoryV1PagingMetadata';
+  /** Amount of items to load per page */
+  items?: Maybe<Scalars['Int']['output']>;
+  /** Number of items to skip in the display (relevant for all pages after the first) */
+  offset?: Maybe<Scalars['Int']['output']>;
+};
+
 export type InventoryV1PreorderInfo = {
   __typename?: 'InventoryV1PreorderInfo';
   /** Whether the item is available for preorder. */
@@ -12912,6 +14827,42 @@ export type InventoryV1PreorderInfo = {
   limit?: Maybe<Scalars['Int']['output']>;
   /** A message the buyer will see when the item is out of stock and preorder is enabled. */
   message?: Maybe<Scalars['String']['output']>;
+};
+
+export type InventoryV1PreorderInfoInput = {
+  /** Whether the item is available for preorder. */
+  enabled?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Number of products that can be preordered after stock reaches zero. */
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  /** A message the buyer will see when the item is out of stock and preorder is enabled. */
+  message?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type InventoryV1QueryInput = {
+  /** Filter string */
+  filter?: InputMaybe<Scalars['String']['input']>;
+  paging?: InputMaybe<InventoryV1PagingInput>;
+  /** Sort string */
+  sort?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type InventoryV1QueryInventoryRequestInput = {
+  query?: InputMaybe<InventoryV1QueryInput>;
+};
+
+export type InventoryV1QueryInventoryResponse = {
+  __typename?: 'InventoryV1QueryInventoryResponse';
+  /** Inventory items. */
+  inventoryItems?: Maybe<Array<Maybe<InventoryV1InventoryItemV2>>>;
+  /** Display metadata. */
+  metadata?: Maybe<InventoryV1PagingMetadata>;
+  /** Number of total results. */
+  totalResults?: Maybe<Scalars['Int']['output']>;
+};
+
+export type InventoryV1UpdateInventoryVariantsRequestInput = {
+  /** Inventory item. */
+  inventoryItem?: InputMaybe<InventoryV1InventoryItemV2Input>;
 };
 
 export type LocationsAddress = {
@@ -13049,6 +15000,8 @@ export type LocationsLocation = {
    * **Note:** Currently not supported.
    */
   locationType?: Maybe<LocationsLocationType>;
+  /** Location types. */
+  locationTypes?: Maybe<Array<Maybe<LocationsLocationType>>>;
   /** Location name. */
   name?: Maybe<Scalars['String']['output']>;
   /** Phone number. */
@@ -13099,6 +15052,8 @@ export type LocationsLocationInput = {
    * **Note:** Currently not supported.
    */
   locationType?: InputMaybe<LocationsLocationType>;
+  /** Location types. */
+  locationTypes?: InputMaybe<Array<InputMaybe<LocationsLocationType>>>;
   /** Location name. */
   name?: InputMaybe<Scalars['String']['input']>;
   /** Phone number. */
@@ -13126,6 +15081,7 @@ export enum LocationsLocationStatus {
 export enum LocationsLocationType {
   Branch = 'BRANCH',
   Headquarters = 'HEADQUARTERS',
+  Inventory = 'INVENTORY',
   Offices = 'OFFICES',
   Reception = 'RECEPTION',
   Unknown = 'UNKNOWN'
@@ -14298,10 +16254,6 @@ export type Mutation = {
    * + `loginUrl`
    */
   authManagementOAuthAppsV1UpdateOAuthApp?: Maybe<HeadlessV1UpdateOAuthAppResponse>;
-  /** Creates a category. */
-  blogCategoriesV3CreateCategory?: Maybe<NpmCommunitiesPlatformizedBlogV3CreateCategoryResponse>;
-  /** Deletes a category. */
-  blogCategoriesV3DeleteCategory?: Maybe<Scalars['Void']['output']>;
   /** Gets a category with the provided slug. */
   blogCategoriesV3GetCategoryBySlug?: Maybe<NpmCommunitiesPlatformizedBlogV3GetCategoryBySlugResponse>;
   /**
@@ -14314,8 +16266,6 @@ export type Mutation = {
    * List Categories is sorted by `displayPosition` in descending order. This cannot be overridden.
    */
   blogCategoriesV3ListCategories?: Maybe<NpmCommunitiesPlatformizedBlogV3ListCategoriesResponse>;
-  /** Updates a category. */
-  blogCategoriesV3UpdateCategory?: Maybe<NpmCommunitiesPlatformizedBlogV3UpdateCategoryResponse>;
   /** Gets a post with the provided slug. */
   blogPostsV3GetPostBySlug?: Maybe<NpmCommunitiesPlatformizedBlogV3GetPostBySlugResponse>;
   /** Gets a specified post's metrics. */
@@ -14342,10 +16292,6 @@ export type Mutation = {
    * > Note: If there are no published posts in a month within the time range, that month is not included in the response. For example, let's say a blog has `0` posts dated in February 2022. If `rangeStart` is set to `'2022-01-01'` and `months` is set to `3`, the response includes `postCount` values for January and March, but not February.
    */
   blogPostsV3QueryPostCountStats?: Maybe<NpmCommunitiesPlatformizedBlogQueryPostCountStatsResponse>;
-  /** Creates a new tag with the provided label if a tag with the same label doesn't already exist. */
-  blogTagsV3CreateTag?: Maybe<NpmCommunitiesPlatformizedBlogCreateTagResponse>;
-  /** Deletes a tag. Deleting a tag removes that tag from all blog posts that contain it. */
-  blogTagsV3DeleteTag?: Maybe<Scalars['Void']['output']>;
   /**
    * Gets a tag by the provided label.
    *
@@ -14356,6 +16302,16 @@ export type Mutation = {
   blogTagsV3GetTagByLabel?: Maybe<NpmCommunitiesPlatformizedBlogGetTagByLabelResponse>;
   /** Gets a tag with the provided slug. */
   blogTagsV3GetTagBySlug?: Maybe<NpmCommunitiesPlatformizedBlogGetTagBySlugResponse>;
+  /**
+   * Sets information about whether a booking's session was attended for multiple bookings
+   *
+   *
+   * See [SetAttendance](https://dev.wix.com/docs/rest/api-reference/wix-bookings/attendance/set-attendance) documentation for more information.
+   *
+   * If any of the attendance list required fields were not passed on the request or if the caller doesn't have the required permissions to set the attendance, the call fails.
+   * If the request contains attendance info for unavailable sessions, the call completes successfully but the attendance info for the unavailable sessions are not created and are not considered as failures in the response.
+   */
+  bookingsAttendanceV2BulkSetAttendance?: Maybe<BookingsAttendanceV2BulkSetAttendanceResponse>;
   /**
    * Sets information about whether a booking's session was attended. This information
    * is saved in an `Attendance` object.
@@ -14447,42 +16403,6 @@ export type Mutation = {
    */
   bookingsServicesV2UpdateService?: Maybe<BookingsServicesV2UpdateServiceResponse>;
   /**
-   * Creates a session.
-   *
-   * A session is one of the following:
-   * + `"EVENT"`: Reserved period of time on any [schedule](wix-bookings-backend.sessions/introduction#schedules). For example, an appointment, class, or course. Events are visible in the Dashboard in the Bookings app's [**Booking Calendar**](https://support.wix.com/en/article/wix-bookings-about-the-wix-bookings-calendar) page. Set `type` to `"EVENT"` when creating sessions that reserve time on a service's schedule, or when creating a blocked time for a resource.
-   * + `"WORKING_HOURS"`: Placeholder for available time on a resource’s schedule. Set `type` to `"WORKING_HOURS"` when creating sessions for resource availability.
-   *
-   * Sessions belong to a schedule. Schedules are owned by a resource or a service.
-   *
-   * A session may be an individual session or a recurring session.
-   * An individual session has a discrete start and end date, while a recurring session defines a series of repeating sessions. An instance of a recurring session is a specific session in a series of repeating sessions, generated according to the recurrence rule.
-   * The `start` and `end` properties set the time and duration of the session. For non-recurring sessions, you can use either the `timestamp` or `localDateTime` properties.
-   * For recurring sessions, use the `localDateTime` property only. For recurring sessions, the `start` property sets the date and time of the first recurring session, subject to the recurrence rule. For example, if you set the `start` to Saturday, May 1 and your recurrence rule says every second Monday, then the first session will only be on Monday, May 10.
-   *
-   * The `year`, `monthOfYear` and `dayOfMonth` properties in the `end` property are used with the `hourOfDay` and `minutesOfHour` properties to set the duration of each session relative to the `start`.
-   * The `UNTIL` keyword in the `recurrence` property sets the date for the last recurring session.
-   *
-   * You can create a session that blocks hours on the resource's calendar, making the resource unavailable.
-   * Create a non-recurring session of type `"EVENT"`, and add `"Blocked"` to the `tags` array.
-   *
-   * >**Notes:**
-   * > + For properties where there is no explicit time zone information, the time zone used is the business’s time zone.
-   * > + Only users with **[Bookings Admin](https://support.wix.com/en/article/roles-permissions-overview#bookings-admin)** permissions can create a session. You can override the permissions by setting the `suppressAuth` option to `true`.
-   */
-  bookingsSessionsV1CreateSession?: Maybe<BookingsSchedulesVeloV2CreateSessionResponse>;
-  /**
-   * Deletes a session.
-   *
-   * Use the `participantNotification` property to send an email to the participants when the session is deleted.
-   * When deleting a session of type `"EVENT"` where a booking exists, the booking's status is updated to `"CANCELED"`.
-   * To delete a set of recurring sessions, specify the session's `recurringSessionId` in the `sessionId` property in the parameters.
-   * When deleting a recurrence, only future instances of the recurrence are deleted.
-   *
-   * >**Note:** Only users with **[Bookings Admin](https://support.wix.com/en/article/roles-permissions-overview#bookings-admin)** permissions can delete a session. You can override the permissions by setting the `suppressAuth` option to `true`.
-   */
-  bookingsSessionsV1DeleteSession?: Maybe<Scalars['Void']['output']>;
-  /**
    * Retrieves a list of sessions by their IDs.
    *
    *
@@ -14490,25 +16410,6 @@ export type Mutation = {
    * To retrieve full session objects including all personal information, use the `ALL_PI` fieldset. This requires the CALENDAR.SESSION_READ_PI permission scope.
    */
   bookingsSessionsV1ListSessions?: Maybe<BookingsCalendarV2ListSessionsResponse>;
-  /**
-   * Updates a session.
-   *
-   * When you update a recurring session, only the future instances of the recurrence will be updated. Changing an individual instance's `start` or `end` time will change the way updates to `start` and `end` on the recurring session affect the session instance:
-   * |Change made to the instance | Effect of changes made to the recurrence
-   * |--|--|
-   * |Instance `start` time changed.|Changes to the recurring session's `start` or `end` time will not update the instance.|
-   * |Instance `end` time changed, changing the session's duration| Changes made to the recurring session's start time will be updated on the instance while keeping the new duration, but changes to the recurring session's `end` time not be updated on the instance.
-   * |Updating a changed `start` time for an instance back to the recurring session's value.|Future changes to the recurring session `start` and `end` times will update the instance's `starts` and `end` time.
-   *
-   * Changes to properties on the recurring session, other than `start` and `end`, are always updated on the recurrence instance.
-   *
-   * Use the `options.participantNotification` object to notify participants if the session has been booked.
-   *
-   * >**Notes:**
-   * > + Where there is no explicit timezone information, the timezone used is the business’s timezone.
-   * > + Only users with **[Bookings Admin](https://support.wix.com/en/article/roles-permissions-overview#bookings-admin)** permissions can update a session. You can override the permissions by setting the `suppressAuth` option to `true`.
-   */
-  bookingsSessionsV1UpdateSession?: Maybe<BookingsSchedulesVeloV2UpdateSessionResponse>;
   /**
    * Archives a location.
    *
@@ -14542,6 +16443,93 @@ export type Mutation = {
    */
   businessToolsLocationsV1UpdateLocation?: Maybe<LocationsUpdateLocationResponse>;
   /**
+   * Creates a new contact.
+   *
+   * The request body must include a name, a phone number, or an email address.
+   * If all 3 of these parameters are missing,
+   * the contact won't be created.
+   *
+   * By default,
+   * if the creation request contains an email already in use by another contact,
+   * the new contact won't be created.
+   * To override this behavior, set `allowDuplicates` to `true`.
+   */
+  crmContactsV4CreateContact?: Maybe<ContactsCoreV4CreateContactResponse>;
+  /**
+   * Deletes a contact.
+   *
+   * Deleting a contact permanently removes them from the Contact List.
+   *
+   * If a contact is also a site member or site contributor, or has a valid billing subscriptions,
+   * the contact cannot be deleted.
+   * The related site member or site contributor must first be deleted and any valid billing subscriptions must be canceled,
+   * before the contact can also be deleted.
+   */
+  crmContactsV4DeleteContact?: Maybe<Scalars['Void']['output']>;
+  /**
+   * Adds labels to a contact.
+   *
+   * - **To create new labels:** Use [Find or Create Label](https://dev.wix.com/api/rest/contacts/labels/find-or-create-label).
+   * - **To find labels:** Use [Find or Create Label](https://dev.wix.com/api/rest/contacts/labels/find-or-create-label), [Get Label](https://dev.wix.com/api/rest/contacts/labels/get-label), or [List Labels](https://dev.wix.com/api/rest/contacts/labels/list-labels).
+   */
+  crmContactsV4LabelContact?: Maybe<ContactsCoreV4LabelContactResponse>;
+  /**
+   * Merges source contacts into a target contact.
+   *
+   * Merging contacts has these effects on the target contact:
+   *
+   * - No target contact data is overwritten or deleted.
+   * - Arrays (emails, phones, addresses, and labels) are merged from the source contacts.
+   * - If merging more than one source contact, the 1st source is given precedence, then the 2nd, and so on.
+   *
+   * <blockquote class="important">
+   *
+   * __Important:__
+   * Merges cannot be undone.
+   * Use [Preview Merge Contacts](#preview-merge-contacts)
+   * to test before merging.
+   *
+   * </blockquote>
+   *
+   * Source contacts are deleted when merging.
+   * However, if a source contact is a site member or contributor,
+   * the merge fails because site contributors and members can't be deleted.
+   * Site members and contributors can be target contacts only.
+   *
+   * After merging,
+   * if you call [Get Contact](#get-contact) with a deleted source contact ID,
+   * the target contact ID is returned.
+   * This is supported when calling Get Contact only.
+   * Deleted source contact IDs are not supported on any other endpoint.
+   *
+   * Merging contacts triggers these webhooks:
+   *
+   * - [Contact Merged](https://dev.wix.com/api/rest/contacts/contacts/contacts-v4/contact-merged-webhook) is triggered.
+   * - [Contact Updated](https://dev.wix.com/api/rest/contacts/contacts/contacts-v4/contact-updated-webhook) is triggered for the target contact. `originatedFrom` is set to `merge`.
+   * - [Contact Deleted](https://dev.wix.com/api/rest/contacts/contacts/contacts-v4/contact-deleted-webhook) is triggered for each source contact. `originatedFrom` is set to `merge`.
+   */
+  crmContactsV4MergeContacts?: Maybe<ContactsCoreV4MergeContactsResponse>;
+  /**
+   * Removes labels from a contact.
+   *
+   * If a label is no longer needed
+   * and you want to remove it from all contacts,
+   * you can delete it with
+   * [Delete Label](https://dev.wix.com/api/rest/contacts/labels/delete-label)
+   * (in the Labels API).
+   */
+  crmContactsV4UnlabelContact?: Maybe<ContactsCoreV4UnlabelContactResponse>;
+  /**
+   * Updates a contact.
+   *
+   * Each time the contact is updated,
+   * `revision` increments by 1.
+   * The existing `revision` must be included when updating the contact.
+   * This ensures you're working with the latest contact information,
+   * and it prevents unintended overwrites.
+   */
+  crmContactsV4UpdateContact?: Maybe<ContactsCoreV4UpdateContactResponse>;
+  /**
    * Deletes an extended field.
    *
    * When an extended field is deleted,
@@ -14560,8 +16548,6 @@ export type Mutation = {
    * [List Extended Fields](https:dev.wix.com/api/rest/contacts/extended-fields/list-extended-fields).
    */
   crmExtendedFieldsV4FindOrCreateExtendedField?: Maybe<ContactsFieldsV4FindOrCreateExtendedFieldResponse>;
-  /** Retrieves a list of extended fields. */
-  crmExtendedFieldsV4ListExtendedFields?: Maybe<ContactsFieldsV4ListExtendedFieldsResponse>;
   /** Updates an extended field's specified properties. */
   crmExtendedFieldsV4UpdateExtendedField?: Maybe<ContactsFieldsV4UpdateExtendedFieldResponse>;
   /** Deletes a label from the site and removes it from contacts it applies to. */
@@ -14584,8 +16570,6 @@ export type Mutation = {
    * [List Labels](https://dev.wix.com/api/rest/contacts/labels/list-labels).
    */
   crmLabelsV4FindOrCreateLabel?: Maybe<ContactsLabelsV4FindOrCreateLabelResponse>;
-  /** Lists all contact labels for a site. */
-  crmLabelsV4ListLabels?: Maybe<ContactsLabelsV4ListLabelsResponse>;
   /** Updates a label's specified properties. */
   crmLabelsV4UpdateLabel?: Maybe<ContactsLabelsV4UpdateLabelResponse>;
   /**
@@ -14842,6 +16826,19 @@ export type Mutation = {
    */
   ecomCheckoutV1CreateCheckout?: Maybe<EcomCheckoutV1CreateCheckoutResponse>;
   /**
+   * Creates an order from a specified checkout.
+   *
+   *
+   * > **Note:** The following requirements must be met for an order to be created from a checkout.
+   * > + A checkout cannot have calculation errors. Pass the `checkout._id` to [Get Checkout](https://www.wix.com/velo/reference/wix-ecom-backend/checkout/getcheckout) and take a look at the `calculationErrors` field.
+   * > + A checkout must have at least 1 line item.
+   * > + All of the line Items have an `availability.status` of `"AVAILABLE"` or `"PARTIALLY_AVAILABLE"`.
+   * > + If there is a payment to be made, meaning that `priceSummary.total` is greater than 0, the `billingInfo.address` field must be provided.
+   * > + When a checkout has line items to be shipped, the `shippingInfo.shippingDestination.address` and `shippingInfo.selectedCarrierServiceOption` fields must be provided.
+   * > + When a checkout has line items for pickup, the `shippingInfo.selectedCarrierServiceOption.logistics.pickupDetails` field must be provided.
+   */
+  ecomCheckoutV1CreateOrder?: Maybe<EcomCheckoutV1CreateOrderResponse>;
+  /**
    * Retrieves the checkout page URL of a specified checkout.
    *
    * By default, a `checkoutUrl` generates for a checkout and directs to a standard Wix checkout page.
@@ -14970,6 +16967,16 @@ export type Mutation = {
    * This ensures you're working with the latest discount rule information, and it prevents unintended overwrites.
    */
   ecomDiscountRulesV1UpdateDiscountRule?: Maybe<EcomDiscountsUpdateDiscountRuleResponse>;
+  /** Add refunds for payments for an order and changes payments statuses accordingly */
+  ecomOrderTransactionsV1AddRefund?: Maybe<EcomOrdersPaymentsV1AddRefundResponse>;
+  /** Updates the payment status of multiple order transactions. */
+  ecomOrderTransactionsV1BulkUpdatePaymentStatuses?: Maybe<EcomOrdersPaymentsV1BulkUpdatePaymentStatusesResponse>;
+  /** Retrieves transactions associated with all specified orders. */
+  ecomOrderTransactionsV1ListTransactionsForMultipleOrders?: Maybe<EcomOrdersPaymentsV1ListTransactionsForMultipleOrdersResponse>;
+  /** Retrieves transactions associated with a specified order. */
+  ecomOrderTransactionsV1ListTransactionsForSingleOrder?: Maybe<EcomOrdersPaymentsV1ListTransactionsForSingleOrderResponse>;
+  /** Updates the payment status of an order transaction. */
+  ecomOrderTransactionsV1UpdatePaymentStatus?: Maybe<EcomOrdersPaymentsV1UpdatePaymentStatusResponse>;
   /**
    * Add's a custom activity or a merchant comment to an order.
    *
@@ -15076,23 +17083,16 @@ export type Mutation = {
   ecomOrdersV1TriggerRefund?: Maybe<EcomOrdersPaymentsCollectorV1TriggerRefundResponse>;
   /** Updates an order's activity. */
   ecomOrdersV1UpdateActivity?: Maybe<EcomOrdersV1UpdateActivityResponse>;
+  /**
+   * Updates an order's properties.
+   *
+   * To update a field's value, include the new value in the `order` field in the body params.
+   * To remove a field's value, pass `null`.
+   *
+   * > **Note:** Removing contact and buyer info is not allowed.
+   */
   ecomOrdersV1UpdateOrder?: Maybe<EcomOrdersV1UpdateOrderResponse>;
   ecomOrdersV1UpdateOrderLineItem?: Maybe<EcomOrdersV1UpdateOrderLineItemResponse>;
-  /**
-   * Adds up to 50 payment records to an order.
-   * > **Note:** This does **NOT** perform the actual charging - the order is only updated with records of the payments.
-   */
-  ecomPaymentsV1AddPayments?: Maybe<EcomOrdersPaymentsV1AddPaymentsResponse>;
-  /** Add refunds for payments for an order and changes payments statuses accordingly */
-  ecomPaymentsV1AddRefund?: Maybe<EcomOrdersPaymentsV1AddRefundResponse>;
-  /** Updates the payment status of multiple order transactions. */
-  ecomPaymentsV1BulkUpdatePaymentStatuses?: Maybe<EcomOrdersPaymentsV1BulkUpdatePaymentStatusesResponse>;
-  /** Retrieves transactions associated with all specified orders. */
-  ecomPaymentsV1ListTransactionsForMultipleOrders?: Maybe<EcomOrdersPaymentsV1ListTransactionsForMultipleOrdersResponse>;
-  /** Retrieves transactions associated with a specified order. */
-  ecomPaymentsV1ListTransactionsForSingleOrder?: Maybe<EcomOrdersPaymentsV1ListTransactionsForSingleOrderResponse>;
-  /** Updates the payment status of an order transaction. */
-  ecomPaymentsV1UpdatePaymentStatus?: Maybe<EcomOrdersPaymentsV1UpdatePaymentStatusResponse>;
   /**
    * Returns a recommendation object containing a list of items to recommend to the customer.
    *
@@ -15203,6 +17203,94 @@ export type Mutation = {
    * All modifications are performed on a draft schedule, even if schedule item has already been published.
    */
   eventsScheduleV1UpdateScheduleItem?: Maybe<EventsScheduleUpdateScheduleItemResponse>;
+  /**
+   * Cancels events by filter.
+   * If event cancellation notifications are enabled, canceling an event automatically sends cancellation emails and/or push notifications to registered guests.
+   */
+  eventsWixEventsV1BulkCancelEvents?: Maybe<Scalars['Void']['output']>;
+  /**
+   * Deletes events by filter.
+   * Deleted events are not returned via API. The only way to retrieve them is via GDPR access request.
+   */
+  eventsWixEventsV1BulkDeleteEvents?: Maybe<Scalars['Void']['output']>;
+  /**
+   * Cancels an event and closes registration.
+   * If event cancellation notifications are enabled, canceling an event automatically sends cancellation emails and/or push notifications to registered guests.
+   */
+  eventsWixEventsV1CancelEvent?: Maybe<EventsCancelEventResponse>;
+  /**
+   * Copies an event, including its registration form, notifications and tickets configuration - scheduled two weeks from the original event.
+   * Multilingual translations are also copied to the new event.
+   *
+   * When an event with same title already exists, appends (1), (2), ... to it. For example, copying an event titled "My Event" creates "My Event (1)".
+   * Very long event titles are cropped: "Daily stand-up ev... (2)".
+   */
+  eventsWixEventsV1Copy?: Maybe<EventsCopyEventResponse>;
+  /**
+   * Copies an event, including its registration form, notifications and tickets configuration - scheduled two weeks from the original event.
+   * Multilingual translations are also copied to the new event.
+   * Supports partial update of the original event fields. See [Partial Updates](https://dev.wix.com/api/rest/wix-events/wix-events/partial-updates) for more information.
+   *
+   * When an event with same title already exists, appends (1), (2), ... to it. For example, copying an event titled "My Event" creates "My Event (1)".
+   * Very long event titles are cropped: "Daily stand-up ev... (2)".
+   */
+  eventsWixEventsV1CopyEventV2?: Maybe<EventsCopyEventV2Response>;
+  /**
+   * Creates a new event, with a default registration form in the given language.
+   * Default registration form includes first name, last name, and email inputs.
+   * To learn more about registration form and customize it, see [Registration Form](https://dev.wix.com/api/rest/wix-events/wix-events/registration-form/about-the-registration-form-api).
+   * The event is automatically configured to send daily summary reports of new registrations to site business email.
+   * RegistrationConfig.initialType is required - allowed value when creating is RSVP or TICKETS.
+   */
+  eventsWixEventsV1CreateEventV2?: Maybe<EventsCreateEventV2Response>;
+  /**
+   * Deletes an event.
+   * Deleted events are not returned via API. The only way to retrieve them is via GDPR access request.
+   */
+  eventsWixEventsV1DeleteEvent?: Maybe<EventsDeleteEventResponse>;
+  /**
+   * Finds an event by ID or URL slug. In contrast to Get Event endpoint which returns not found error,
+   * Find Event returns empty response when an event is not found.
+   */
+  eventsWixEventsV1FindEvent?: Maybe<EventsFindEventResponse>;
+  /** Retrieves an event by ID or URL slug. */
+  eventsWixEventsV1GetEvent?: Maybe<EventsGetEventResponse>;
+  /**
+   * Retrieves a list of up to 100 events, given the provided [paging](https://dev.wix.com/api/rest/getting-started/pagination) and category_id.
+   * Events are sorted by the sort index defined by CategoryManagement.
+   */
+  eventsWixEventsV1ListCategoryEvents?: Maybe<EventsListCategoryEventsResponse>;
+  /** Retrieves a list of up to 100 events, given the provided [paging](https://dev.wix.com/api/rest/getting-started/pagination), [filtering & sorting](https://dev.wix.com/api/rest/wix-events/wix-events/filter-and-sort#wix-events_wix-events_filter-and-sort_list-query-events). */
+  eventsWixEventsV1ListEvents?: Maybe<EventsListEventsResponse>;
+  /**
+   * Publishes draft event so that it becomes available to site visitors.
+   * If recurring events are set, category with state RECURRING_EVENT will be created.
+   * All recurring events will be assigned to this category.
+   */
+  eventsWixEventsV1PublishDraftEvent?: Maybe<EventsPublishDraftEventResponse>;
+  /** Retrieves a list of up to 1,000 events, given the provided [paging](https://dev.wix.com/api/rest/getting-started/pagination), [filtering and sorting](https://dev.wix.com/api/rest/wix-events/wix-events/filter-and-sort#wix-events_wix-events_filter-and-sort_list-query-events). */
+  eventsWixEventsV1Query?: Maybe<EventsQueryEventsResponse>;
+  /**
+   * Retrieves a list of up to 1,000 events, given the provided paging, filtering and sorting.
+   *
+   * ** Important **:
+   * - All results are for one specific business, resolved from the request context.
+   *
+   * Query object support:
+   * - `filter` - supported, see [filtering and sorting](https://dev.wix.com/api/rest/wix-events/wix-events/filter-and-sort#wix-events_wix-events_filter-and-sort_list-query-events).
+   * - `sort` - supported, see [filtering and sorting](https://dev.wix.com/api/rest/wix-events/wix-events/filter-and-sort#wix-events_wix-events_filter-and-sort_list-query-events).
+   * - `paging` - supported, see [paging](https://dev.wix.com/api/rest/getting-started/pagination).
+   * - `fields` - not supported.
+   * - `fieldsets` - not supported, use request-level `fieldset` instead.
+   * - `cursorPaging` - not supported, use offset pagination instead.
+   *
+   * Defaults:
+   * - When filter is not specified, returns all events that caller is authorized to read.
+   * - When sorting is not specified, defaults to `created` in `DESC` order.
+   */
+  eventsWixEventsV1QueryEventsV2?: Maybe<EventsQueryEventsV2Response>;
+  /** Updates an event's parameters. See [Partial Updates](https://dev.wix.com/api/rest/wix-events/wix-events/partial-updates) for more information. */
+  eventsWixEventsV1UpdateEvent?: Maybe<EventsUpdateEventResponse>;
   /**
    * Creates a site member.
    *
@@ -15372,111 +17460,20 @@ export type Mutation = {
    * 1. Make sure the pages at the callback URLs you provided take care of the next stages in your visitor flow.
    */
   redirectsRedirectsV1CreateRedirectSession?: Maybe<HeadlessV1CreateRedirectSessionResponse>;
-  /** Bulk create new Items */
-  restaurantsMenuItemsV1BulkCreateItems?: Maybe<RestaurantsMenusItemV1BulkCreateItemsResponse>;
-  /** Bulk delete Items */
-  restaurantsMenuItemsV1BulkDeleteItems?: Maybe<RestaurantsMenusItemV1BulkDeleteItemsResponse>;
-  /** Bulk update an Item, supports partial update */
-  restaurantsMenuItemsV1BulkUpdateItem?: Maybe<RestaurantsMenusItemV1BulkUpdateItemResponse>;
-  restaurantsMenuItemsV1ConsumeItemDomainEvents?: Maybe<Scalars['Void']['output']>;
-  restaurantsMenuItemsV1ConsumeItemLabelDomainEvents?: Maybe<Scalars['Void']['output']>;
-  /** Creates a new Item */
-  restaurantsMenuItemsV1CreateItem?: Maybe<RestaurantsMenusItemV1CreateItemResponse>;
-  /** Delete an Item */
-  restaurantsMenuItemsV1DeleteItem?: Maybe<Scalars['Void']['output']>;
-  /** List Items */
-  restaurantsMenuItemsV1ListItems?: Maybe<RestaurantsMenusItemV1ListItemsResponse>;
-  /**
-   * Update an Item, supports partial update
-   * Pass the latest `revision` for a successful update
-   */
-  restaurantsMenuItemsV1UpdateItem?: Maybe<RestaurantsMenusItemV1UpdateItemResponse>;
-  restaurantsMenusItemLabelsV1ConsumeLabelDomainEvents?: Maybe<Scalars['Void']['output']>;
-  /** Creates a new Label */
-  restaurantsMenusItemLabelsV1CreateLabel?: Maybe<RestaurantsMenusItemLabelsV1CreateLabelResponse>;
-  /** Delete a Label */
-  restaurantsMenusItemLabelsV1DeleteLabel?: Maybe<Scalars['Void']['output']>;
-  /** List Labels */
-  restaurantsMenusItemLabelsV1ListLabels?: Maybe<RestaurantsMenusItemLabelsV1ListLabelsResponse>;
-  /**
-   * Update a Label, supports partial update
-   * Pass the latest `revision` for a successful update
-   */
-  restaurantsMenusItemLabelsV1UpdateLabel?: Maybe<RestaurantsMenusItemLabelsV1UpdateLabelResponse>;
-  /** Bulk create new Modifiers */
-  restaurantsMenusItemModifierV1BulkCreateModifiers?: Maybe<RestaurantsMenusItemModifierV1BulkCreateModifiersResponse>;
-  /** Bulk update new Modifiers */
-  restaurantsMenusItemModifierV1BulkUpdateModifiers?: Maybe<RestaurantsMenusItemModifierV1BulkUpdateModifiersResponse>;
-  restaurantsMenusItemModifierV1ConsumeModifiersDomainEvents?: Maybe<Scalars['Void']['output']>;
-  /** Creates a new Modifier */
-  restaurantsMenusItemModifierV1CreateModifier?: Maybe<RestaurantsMenusItemModifierV1CreateModifierResponse>;
-  /** Delete a Modifier */
-  restaurantsMenusItemModifierV1DeleteModifier?: Maybe<Scalars['Void']['output']>;
-  /** List Modifiers */
-  restaurantsMenusItemModifierV1ListModifiers?: Maybe<RestaurantsMenusItemModifierV1ListModifiersResponse>;
-  /**
-   * Update a Modifier, supports partial update
-   * Pass the latest `revision` for a successful update
-   */
-  restaurantsMenusItemModifierV1UpdateModifier?: Maybe<RestaurantsMenusItemModifierV1UpdateModifierResponse>;
-  /** Bulk create new Menus */
-  restaurantsMenusV1BulkCreateMenus?: Maybe<RestaurantsMenusMenuV1BulkCreateMenusResponse>;
-  /** Bulk create new Modifier Groups */
-  restaurantsMenusV1BulkCreateModifierGroups?: Maybe<RestaurantsMenusV1BulkCreateModifierGroupsResponse>;
-  /** Bulk update a Menu, supports partial update */
-  restaurantsMenusV1BulkUpdateMenu?: Maybe<RestaurantsMenusMenuV1BulkUpdateMenuResponse>;
-  /** Bulk update Modifier Groups */
-  restaurantsMenusV1BulkUpdateModifierGroups?: Maybe<RestaurantsMenusV1BulkUpdateModifierGroupsResponse>;
-  restaurantsMenusV1ConsumeDeleteOrphanSections?: Maybe<Scalars['Void']['output']>;
-  restaurantsMenusV1ConsumeMenuDomainEvents?: Maybe<Scalars['Void']['output']>;
-  restaurantsMenusV1ConsumeModifierGroupsDomainEvents?: Maybe<Scalars['Void']['output']>;
-  restaurantsMenusV1ConsumeSectionDomainEvents?: Maybe<Scalars['Void']['output']>;
-  /** Creates a new Menu */
-  restaurantsMenusV1CreateMenu?: Maybe<RestaurantsMenusMenuV1CreateMenuResponse>;
-  /** Creates a new ModifierGroup */
-  restaurantsMenusV1CreateModifierGroup?: Maybe<RestaurantsMenusV1CreateModifierGroupResponse>;
-  /** Delete a Menu */
-  restaurantsMenusV1DeleteMenu?: Maybe<Scalars['Void']['output']>;
-  /** Delete a ModifierGroup */
-  restaurantsMenusV1DeleteModifierGroup?: Maybe<Scalars['Void']['output']>;
-  /** List Menus */
-  restaurantsMenusV1ListMenus?: Maybe<RestaurantsMenusMenuV1ListMenusResponse>;
-  /** List Modifier Group */
-  restaurantsMenusV1ListModifierGroups?: Maybe<RestaurantsMenusV1ListModifierGroupResponse>;
-  /** Update Extended Fields of the Menu */
-  restaurantsMenusV1UpdateExtendedFields?: Maybe<RestaurantsMenusMenuV1UpdateExtendedFieldsResponse>;
-  /**
-   * Update a Menu, supports partial update
-   * Pass the latest `revision` for a successful update
-   */
-  restaurantsMenusV1UpdateMenu?: Maybe<RestaurantsMenusMenuV1UpdateMenuResponse>;
-  /**
-   * Update a ModifierGroup, supports partial update
-   * Pass the latest `revision` for a successful update
-   */
-  restaurantsMenusV1UpdateModifierGroup?: Maybe<RestaurantsMenusV1UpdateModifierGroupResponse>;
-  /** Bulk create new Sections */
-  restaurantsSectionsV1BulkCreateSections?: Maybe<RestaurantsMenusSectionV1BulkCreateSectionsResponse>;
-  /** Bulk delete Sections */
-  restaurantsSectionsV1BulkDeleteSections?: Maybe<RestaurantsMenusSectionV1BulkDeleteSectionsResponse>;
-  /** Bulk update a Section, supports partial update */
-  restaurantsSectionsV1BulkUpdateSection?: Maybe<RestaurantsMenusSectionV1BulkUpdateSectionResponse>;
-  restaurantsSectionsV1ConsumeDeleteOrphanItems?: Maybe<Scalars['Void']['output']>;
-  restaurantsSectionsV1ConsumeItemDomainEvents?: Maybe<Scalars['Void']['output']>;
-  restaurantsSectionsV1ConsumeSectionDomainEvents?: Maybe<Scalars['Void']['output']>;
-  /** Creates a new Section */
-  restaurantsSectionsV1CreateSection?: Maybe<RestaurantsMenusSectionV1CreateSectionResponse>;
-  /** Delete a Section */
-  restaurantsSectionsV1DeleteSection?: Maybe<Scalars['Void']['output']>;
-  /** List Sections */
-  restaurantsSectionsV1ListSections?: Maybe<RestaurantsMenusSectionV1ListSectionsResponse>;
-  /**
-   * Update a Section, supports partial update
-   * Pass the latest `revision` for a successful update
-   */
-  restaurantsSectionsV1UpdateSection?: Maybe<RestaurantsMenusSectionV1UpdateSectionResponse>;
   /** Retrieves a collection with the provided slug. */
   storesCollectionsV1GetCollectionBySlug?: Maybe<CatalogV2GetCollectionBySlugResponse>;
+  /** Subtracts a set number of items from inventory. */
+  storesInventoryV2DecrementInventory?: Maybe<Scalars['Void']['output']>;
+  storesInventoryV2GetInventoryVariants?: Maybe<InventoryV1GetInventoryVariantsResponse>;
+  /** Adds a set number of items to inventory. */
+  storesInventoryV2IncrementInventory?: Maybe<Scalars['Void']['output']>;
+  /**
+   * Returns a list of up inventory items, given the provided paging, sorting and filtering.
+   * See [Stores Pagination](https://dev.wix.com/api/rest/wix-stores/pagination) for more information.
+   */
+  storesInventoryV2QueryInventory?: Maybe<InventoryV1QueryInventoryResponse>;
+  /** Updates product inventory, including total quantity, whether the product is in stock, and whether the product inventory is tracked. */
+  storesInventoryV2UpdateInventoryVariants?: Maybe<Scalars['Void']['output']>;
   /** Adds media items to a specified product, either via URL or existing media ID. */
   storesProductsV1AddProductMedia?: Maybe<Scalars['Void']['output']>;
   /**
@@ -15583,16 +17580,6 @@ export type MutationAuthManagementOAuthAppsV1UpdateOAuthAppArgs = {
 };
 
 
-export type MutationBlogCategoriesV3CreateCategoryArgs = {
-  input?: InputMaybe<NpmCommunitiesPlatformizedBlogV3CreateCategoryRequestInput>;
-};
-
-
-export type MutationBlogCategoriesV3DeleteCategoryArgs = {
-  input?: InputMaybe<NpmCommunitiesPlatformizedBlogV3DeleteCategoryRequestInput>;
-};
-
-
 export type MutationBlogCategoriesV3GetCategoryBySlugArgs = {
   input?: InputMaybe<NpmCommunitiesPlatformizedBlogV3GetCategoryBySlugRequestInput>;
 };
@@ -15600,11 +17587,6 @@ export type MutationBlogCategoriesV3GetCategoryBySlugArgs = {
 
 export type MutationBlogCategoriesV3ListCategoriesArgs = {
   input?: InputMaybe<NpmCommunitiesPlatformizedBlogV3ListCategoriesRequestInput>;
-};
-
-
-export type MutationBlogCategoriesV3UpdateCategoryArgs = {
-  input?: InputMaybe<NpmCommunitiesPlatformizedBlogV3UpdateCategoryRequestInput>;
 };
 
 
@@ -15633,16 +17615,6 @@ export type MutationBlogPostsV3QueryPostCountStatsArgs = {
 };
 
 
-export type MutationBlogTagsV3CreateTagArgs = {
-  input?: InputMaybe<NpmCommunitiesPlatformizedBlogCreateTagRequestInput>;
-};
-
-
-export type MutationBlogTagsV3DeleteTagArgs = {
-  input?: InputMaybe<NpmCommunitiesPlatformizedBlogDeleteTagRequestInput>;
-};
-
-
 export type MutationBlogTagsV3GetTagByLabelArgs = {
   input?: InputMaybe<NpmCommunitiesPlatformizedBlogGetTagByLabelRequestInput>;
 };
@@ -15650,6 +17622,11 @@ export type MutationBlogTagsV3GetTagByLabelArgs = {
 
 export type MutationBlogTagsV3GetTagBySlugArgs = {
   input?: InputMaybe<NpmCommunitiesPlatformizedBlogGetTagBySlugRequestInput>;
+};
+
+
+export type MutationBookingsAttendanceV2BulkSetAttendanceArgs = {
+  input?: InputMaybe<BookingsAttendanceV2BulkSetAttendanceRequestInput>;
 };
 
 
@@ -15708,23 +17685,8 @@ export type MutationBookingsServicesV2UpdateServiceArgs = {
 };
 
 
-export type MutationBookingsSessionsV1CreateSessionArgs = {
-  input?: InputMaybe<BookingsSchedulesVeloV2CreateSessionRequestInput>;
-};
-
-
-export type MutationBookingsSessionsV1DeleteSessionArgs = {
-  input?: InputMaybe<BookingsSchedulesVeloV2DeleteSessionRequestInput>;
-};
-
-
 export type MutationBookingsSessionsV1ListSessionsArgs = {
   input?: InputMaybe<BookingsCalendarV2ListSessionsRequestInput>;
-};
-
-
-export type MutationBookingsSessionsV1UpdateSessionArgs = {
-  input?: InputMaybe<BookingsSchedulesVeloV2UpdateSessionRequestInput>;
 };
 
 
@@ -15753,6 +17715,36 @@ export type MutationBusinessToolsLocationsV1UpdateLocationArgs = {
 };
 
 
+export type MutationCrmContactsV4CreateContactArgs = {
+  input?: InputMaybe<ContactsCoreV4CreateContactRequestInput>;
+};
+
+
+export type MutationCrmContactsV4DeleteContactArgs = {
+  input?: InputMaybe<ContactsCoreV4DeleteContactRequestInput>;
+};
+
+
+export type MutationCrmContactsV4LabelContactArgs = {
+  input?: InputMaybe<ContactsCoreV4LabelContactRequestInput>;
+};
+
+
+export type MutationCrmContactsV4MergeContactsArgs = {
+  input?: InputMaybe<ContactsCoreV4MergeContactsRequestInput>;
+};
+
+
+export type MutationCrmContactsV4UnlabelContactArgs = {
+  input?: InputMaybe<ContactsCoreV4UnlabelContactRequestInput>;
+};
+
+
+export type MutationCrmContactsV4UpdateContactArgs = {
+  input?: InputMaybe<ContactsCoreV4UpdateContactRequestInput>;
+};
+
+
 export type MutationCrmExtendedFieldsV4DeleteExtendedFieldArgs = {
   input?: InputMaybe<ContactsFieldsV4DeleteExtendedFieldRequestInput>;
 };
@@ -15760,11 +17752,6 @@ export type MutationCrmExtendedFieldsV4DeleteExtendedFieldArgs = {
 
 export type MutationCrmExtendedFieldsV4FindOrCreateExtendedFieldArgs = {
   input?: InputMaybe<ContactsFieldsV4FindOrCreateExtendedFieldRequestInput>;
-};
-
-
-export type MutationCrmExtendedFieldsV4ListExtendedFieldsArgs = {
-  input?: InputMaybe<ContactsFieldsV4ListExtendedFieldsRequestInput>;
 };
 
 
@@ -15780,11 +17767,6 @@ export type MutationCrmLabelsV4DeleteLabelArgs = {
 
 export type MutationCrmLabelsV4FindOrCreateLabelArgs = {
   input?: InputMaybe<ContactsLabelsV4FindOrCreateLabelRequestInput>;
-};
-
-
-export type MutationCrmLabelsV4ListLabelsArgs = {
-  input?: InputMaybe<ContactsLabelsV4ListLabelsRequestInput>;
 };
 
 
@@ -15988,6 +17970,11 @@ export type MutationEcomCheckoutV1CreateCheckoutArgs = {
 };
 
 
+export type MutationEcomCheckoutV1CreateOrderArgs = {
+  input?: InputMaybe<EcomCheckoutV1CreateOrderRequestInput>;
+};
+
+
 export type MutationEcomCheckoutV1GetCheckoutUrlArgs = {
   input?: InputMaybe<EcomCheckoutV1GetCheckoutUrlRequestInput>;
 };
@@ -16133,6 +18120,31 @@ export type MutationEcomDiscountRulesV1UpdateDiscountRuleArgs = {
 };
 
 
+export type MutationEcomOrderTransactionsV1AddRefundArgs = {
+  input?: InputMaybe<EcomOrdersPaymentsV1AddRefundRequestInput>;
+};
+
+
+export type MutationEcomOrderTransactionsV1BulkUpdatePaymentStatusesArgs = {
+  input?: InputMaybe<EcomOrdersPaymentsV1BulkUpdatePaymentStatusesRequestInput>;
+};
+
+
+export type MutationEcomOrderTransactionsV1ListTransactionsForMultipleOrdersArgs = {
+  input?: InputMaybe<EcomOrdersPaymentsV1ListTransactionsForMultipleOrdersRequestInput>;
+};
+
+
+export type MutationEcomOrderTransactionsV1ListTransactionsForSingleOrderArgs = {
+  input?: InputMaybe<EcomOrdersPaymentsV1ListTransactionsForSingleOrderRequestInput>;
+};
+
+
+export type MutationEcomOrderTransactionsV1UpdatePaymentStatusArgs = {
+  input?: InputMaybe<EcomOrdersPaymentsV1UpdatePaymentStatusRequestInput>;
+};
+
+
 export type MutationEcomOrdersV1AddActivityArgs = {
   input?: InputMaybe<EcomOrdersV1AddActivityRequestInput>;
 };
@@ -16225,36 +18237,6 @@ export type MutationEcomOrdersV1UpdateOrderArgs = {
 
 export type MutationEcomOrdersV1UpdateOrderLineItemArgs = {
   input?: InputMaybe<EcomOrdersV1UpdateOrderLineItemRequestInput>;
-};
-
-
-export type MutationEcomPaymentsV1AddPaymentsArgs = {
-  input?: InputMaybe<EcomOrdersPaymentsV1AddPaymentsRequestInput>;
-};
-
-
-export type MutationEcomPaymentsV1AddRefundArgs = {
-  input?: InputMaybe<EcomOrdersPaymentsV1AddRefundRequestInput>;
-};
-
-
-export type MutationEcomPaymentsV1BulkUpdatePaymentStatusesArgs = {
-  input?: InputMaybe<EcomOrdersPaymentsV1BulkUpdatePaymentStatusesRequestInput>;
-};
-
-
-export type MutationEcomPaymentsV1ListTransactionsForMultipleOrdersArgs = {
-  input?: InputMaybe<EcomOrdersPaymentsV1ListTransactionsForMultipleOrdersRequestInput>;
-};
-
-
-export type MutationEcomPaymentsV1ListTransactionsForSingleOrderArgs = {
-  input?: InputMaybe<EcomOrdersPaymentsV1ListTransactionsForSingleOrderRequestInput>;
-};
-
-
-export type MutationEcomPaymentsV1UpdatePaymentStatusArgs = {
-  input?: InputMaybe<EcomOrdersPaymentsV1UpdatePaymentStatusRequestInput>;
 };
 
 
@@ -16398,6 +18380,81 @@ export type MutationEventsScheduleV1UpdateScheduleItemArgs = {
 };
 
 
+export type MutationEventsWixEventsV1BulkCancelEventsArgs = {
+  input?: InputMaybe<EventsBulkCancelEventsRequestInput>;
+};
+
+
+export type MutationEventsWixEventsV1BulkDeleteEventsArgs = {
+  input?: InputMaybe<EventsBulkDeleteEventsRequestInput>;
+};
+
+
+export type MutationEventsWixEventsV1CancelEventArgs = {
+  input?: InputMaybe<EventsCancelEventRequestInput>;
+};
+
+
+export type MutationEventsWixEventsV1CopyArgs = {
+  input?: InputMaybe<EventsCopyEventRequestInput>;
+};
+
+
+export type MutationEventsWixEventsV1CopyEventV2Args = {
+  input?: InputMaybe<EventsCopyEventV2RequestInput>;
+};
+
+
+export type MutationEventsWixEventsV1CreateEventV2Args = {
+  input?: InputMaybe<EventsCreateEventV2RequestInput>;
+};
+
+
+export type MutationEventsWixEventsV1DeleteEventArgs = {
+  input?: InputMaybe<EventsDeleteEventRequestInput>;
+};
+
+
+export type MutationEventsWixEventsV1FindEventArgs = {
+  input?: InputMaybe<EventsFindEventRequestInput>;
+};
+
+
+export type MutationEventsWixEventsV1GetEventArgs = {
+  input?: InputMaybe<EventsGetEventRequestInput>;
+};
+
+
+export type MutationEventsWixEventsV1ListCategoryEventsArgs = {
+  input?: InputMaybe<EventsListCategoryEventsRequestInput>;
+};
+
+
+export type MutationEventsWixEventsV1ListEventsArgs = {
+  input?: InputMaybe<EventsListEventsRequestInput>;
+};
+
+
+export type MutationEventsWixEventsV1PublishDraftEventArgs = {
+  input?: InputMaybe<EventsPublishDraftEventRequestInput>;
+};
+
+
+export type MutationEventsWixEventsV1QueryArgs = {
+  input?: InputMaybe<EventsQueryEventsRequestInput>;
+};
+
+
+export type MutationEventsWixEventsV1QueryEventsV2Args = {
+  input?: InputMaybe<EventsQueryEventsV2RequestInput>;
+};
+
+
+export type MutationEventsWixEventsV1UpdateEventArgs = {
+  input?: InputMaybe<EventsUpdateEventRequestInput>;
+};
+
+
 export type MutationMembersMembersV1CreateMemberArgs = {
   input?: InputMaybe<MembersCreateMemberRequestInput>;
 };
@@ -16508,248 +18565,33 @@ export type MutationRedirectsRedirectsV1CreateRedirectSessionArgs = {
 };
 
 
-export type MutationRestaurantsMenuItemsV1BulkCreateItemsArgs = {
-  input?: InputMaybe<RestaurantsMenusItemV1BulkCreateItemsRequestInput>;
-};
-
-
-export type MutationRestaurantsMenuItemsV1BulkDeleteItemsArgs = {
-  input?: InputMaybe<RestaurantsMenusItemV1BulkDeleteItemsRequestInput>;
-};
-
-
-export type MutationRestaurantsMenuItemsV1BulkUpdateItemArgs = {
-  input?: InputMaybe<RestaurantsMenusItemV1BulkUpdateItemRequestInput>;
-};
-
-
-export type MutationRestaurantsMenuItemsV1ConsumeItemDomainEventsArgs = {
-  input?: InputMaybe<CommonDomaineventsDomainEventInput>;
-};
-
-
-export type MutationRestaurantsMenuItemsV1ConsumeItemLabelDomainEventsArgs = {
-  input?: InputMaybe<CommonDomaineventsDomainEventInput>;
-};
-
-
-export type MutationRestaurantsMenuItemsV1CreateItemArgs = {
-  input?: InputMaybe<RestaurantsMenusItemV1CreateItemRequestInput>;
-};
-
-
-export type MutationRestaurantsMenuItemsV1DeleteItemArgs = {
-  input?: InputMaybe<RestaurantsMenusItemV1DeleteItemRequestInput>;
-};
-
-
-export type MutationRestaurantsMenuItemsV1ListItemsArgs = {
-  input?: InputMaybe<RestaurantsMenusItemV1ListItemsRequestInput>;
-};
-
-
-export type MutationRestaurantsMenuItemsV1UpdateItemArgs = {
-  input?: InputMaybe<RestaurantsMenusItemV1UpdateItemRequestInput>;
-};
-
-
-export type MutationRestaurantsMenusItemLabelsV1ConsumeLabelDomainEventsArgs = {
-  input?: InputMaybe<CommonDomaineventsDomainEventInput>;
-};
-
-
-export type MutationRestaurantsMenusItemLabelsV1CreateLabelArgs = {
-  input?: InputMaybe<RestaurantsMenusItemLabelsV1CreateLabelRequestInput>;
-};
-
-
-export type MutationRestaurantsMenusItemLabelsV1DeleteLabelArgs = {
-  input?: InputMaybe<RestaurantsMenusItemLabelsV1DeleteLabelRequestInput>;
-};
-
-
-export type MutationRestaurantsMenusItemLabelsV1ListLabelsArgs = {
-  input?: InputMaybe<Scalars['Void']['input']>;
-};
-
-
-export type MutationRestaurantsMenusItemLabelsV1UpdateLabelArgs = {
-  input?: InputMaybe<RestaurantsMenusItemLabelsV1UpdateLabelRequestInput>;
-};
-
-
-export type MutationRestaurantsMenusItemModifierV1BulkCreateModifiersArgs = {
-  input?: InputMaybe<RestaurantsMenusItemModifierV1BulkCreateModifiersRequestInput>;
-};
-
-
-export type MutationRestaurantsMenusItemModifierV1BulkUpdateModifiersArgs = {
-  input?: InputMaybe<RestaurantsMenusItemModifierV1BulkUpdateModifiersRequestInput>;
-};
-
-
-export type MutationRestaurantsMenusItemModifierV1ConsumeModifiersDomainEventsArgs = {
-  input?: InputMaybe<CommonDomaineventsDomainEventInput>;
-};
-
-
-export type MutationRestaurantsMenusItemModifierV1CreateModifierArgs = {
-  input?: InputMaybe<RestaurantsMenusItemModifierV1CreateModifierRequestInput>;
-};
-
-
-export type MutationRestaurantsMenusItemModifierV1DeleteModifierArgs = {
-  input?: InputMaybe<RestaurantsMenusItemModifierV1DeleteModifierRequestInput>;
-};
-
-
-export type MutationRestaurantsMenusItemModifierV1ListModifiersArgs = {
-  input?: InputMaybe<RestaurantsMenusItemModifierV1ListModifiersRequestInput>;
-};
-
-
-export type MutationRestaurantsMenusItemModifierV1UpdateModifierArgs = {
-  input?: InputMaybe<RestaurantsMenusItemModifierV1UpdateModifierRequestInput>;
-};
-
-
-export type MutationRestaurantsMenusV1BulkCreateMenusArgs = {
-  input?: InputMaybe<RestaurantsMenusMenuV1BulkCreateMenusRequestInput>;
-};
-
-
-export type MutationRestaurantsMenusV1BulkCreateModifierGroupsArgs = {
-  input?: InputMaybe<RestaurantsMenusV1BulkCreateModifierGroupsRequestInput>;
-};
-
-
-export type MutationRestaurantsMenusV1BulkUpdateMenuArgs = {
-  input?: InputMaybe<RestaurantsMenusMenuV1BulkUpdateMenuRequestInput>;
-};
-
-
-export type MutationRestaurantsMenusV1BulkUpdateModifierGroupsArgs = {
-  input?: InputMaybe<RestaurantsMenusV1BulkUpdateModifierGroupsRequestInput>;
-};
-
-
-export type MutationRestaurantsMenusV1ConsumeDeleteOrphanSectionsArgs = {
-  input?: InputMaybe<RestaurantsMenusMenuV1DeleteOrphanSectionsInput>;
-};
-
-
-export type MutationRestaurantsMenusV1ConsumeMenuDomainEventsArgs = {
-  input?: InputMaybe<CommonDomaineventsDomainEventInput>;
-};
-
-
-export type MutationRestaurantsMenusV1ConsumeModifierGroupsDomainEventsArgs = {
-  input?: InputMaybe<CommonDomaineventsDomainEventInput>;
-};
-
-
-export type MutationRestaurantsMenusV1ConsumeSectionDomainEventsArgs = {
-  input?: InputMaybe<CommonDomaineventsDomainEventInput>;
-};
-
-
-export type MutationRestaurantsMenusV1CreateMenuArgs = {
-  input?: InputMaybe<RestaurantsMenusMenuV1CreateMenuRequestInput>;
-};
-
-
-export type MutationRestaurantsMenusV1CreateModifierGroupArgs = {
-  input?: InputMaybe<RestaurantsMenusV1CreateModifierGroupRequestInput>;
-};
-
-
-export type MutationRestaurantsMenusV1DeleteMenuArgs = {
-  input?: InputMaybe<RestaurantsMenusMenuV1DeleteMenuRequestInput>;
-};
-
-
-export type MutationRestaurantsMenusV1DeleteModifierGroupArgs = {
-  input?: InputMaybe<RestaurantsMenusV1DeleteModifierGroupRequestInput>;
-};
-
-
-export type MutationRestaurantsMenusV1ListMenusArgs = {
-  input?: InputMaybe<RestaurantsMenusMenuV1ListMenusRequestInput>;
-};
-
-
-export type MutationRestaurantsMenusV1ListModifierGroupsArgs = {
-  input?: InputMaybe<RestaurantsMenusV1ListModifierGroupRequestInput>;
-};
-
-
-export type MutationRestaurantsMenusV1UpdateExtendedFieldsArgs = {
-  input?: InputMaybe<CommonDataDataextensionsUpdateExtendedFieldsRequestInput>;
-};
-
-
-export type MutationRestaurantsMenusV1UpdateMenuArgs = {
-  input?: InputMaybe<RestaurantsMenusMenuV1UpdateMenuRequestInput>;
-};
-
-
-export type MutationRestaurantsMenusV1UpdateModifierGroupArgs = {
-  input?: InputMaybe<RestaurantsMenusV1UpdateModifierGroupRequestInput>;
-};
-
-
-export type MutationRestaurantsSectionsV1BulkCreateSectionsArgs = {
-  input?: InputMaybe<RestaurantsMenusSectionV1BulkCreateSectionsRequestInput>;
-};
-
-
-export type MutationRestaurantsSectionsV1BulkDeleteSectionsArgs = {
-  input?: InputMaybe<RestaurantsMenusSectionV1BulkDeleteSectionsRequestInput>;
-};
-
-
-export type MutationRestaurantsSectionsV1BulkUpdateSectionArgs = {
-  input?: InputMaybe<RestaurantsMenusSectionV1BulkUpdateSectionRequestInput>;
-};
-
-
-export type MutationRestaurantsSectionsV1ConsumeDeleteOrphanItemsArgs = {
-  input?: InputMaybe<RestaurantsMenusSectionV1DeleteOrphanItemsInput>;
-};
-
-
-export type MutationRestaurantsSectionsV1ConsumeItemDomainEventsArgs = {
-  input?: InputMaybe<CommonDomaineventsDomainEventInput>;
-};
-
-
-export type MutationRestaurantsSectionsV1ConsumeSectionDomainEventsArgs = {
-  input?: InputMaybe<CommonDomaineventsDomainEventInput>;
-};
-
-
-export type MutationRestaurantsSectionsV1CreateSectionArgs = {
-  input?: InputMaybe<RestaurantsMenusSectionV1CreateSectionRequestInput>;
-};
-
-
-export type MutationRestaurantsSectionsV1DeleteSectionArgs = {
-  input?: InputMaybe<RestaurantsMenusSectionV1DeleteSectionRequestInput>;
-};
-
-
-export type MutationRestaurantsSectionsV1ListSectionsArgs = {
-  input?: InputMaybe<RestaurantsMenusSectionV1ListSectionsRequestInput>;
-};
-
-
-export type MutationRestaurantsSectionsV1UpdateSectionArgs = {
-  input?: InputMaybe<RestaurantsMenusSectionV1UpdateSectionRequestInput>;
-};
-
-
 export type MutationStoresCollectionsV1GetCollectionBySlugArgs = {
   input?: InputMaybe<CatalogV2GetCollectionBySlugRequestInput>;
+};
+
+
+export type MutationStoresInventoryV2DecrementInventoryArgs = {
+  input?: InputMaybe<InventoryV1DecrementInventoryRequestInput>;
+};
+
+
+export type MutationStoresInventoryV2GetInventoryVariantsArgs = {
+  input?: InputMaybe<InventoryV1GetInventoryVariantsRequestInput>;
+};
+
+
+export type MutationStoresInventoryV2IncrementInventoryArgs = {
+  input?: InputMaybe<InventoryV1IncrementInventoryRequestInput>;
+};
+
+
+export type MutationStoresInventoryV2QueryInventoryArgs = {
+  input?: InputMaybe<InventoryV1QueryInventoryRequestInput>;
+};
+
+
+export type MutationStoresInventoryV2UpdateInventoryVariantsArgs = {
+  input?: InputMaybe<InventoryV1UpdateInventoryVariantsRequestInput>;
 };
 
 
@@ -16943,47 +18785,6 @@ export type NpmCommunitiesPlatformizedBlogCoverMedia = {
   image?: Maybe<CommonImage>;
   /** Video url. */
   video?: Maybe<CommonVideo>;
-};
-
-export type NpmCommunitiesPlatformizedBlogCoverMediaInput = {
-  /** Whether cover media is custom. If `false` the cover image is set to the first media item that appears in the content. */
-  custom?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Whether cover media is displayed. */
-  displayed?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Image url. */
-  image?: InputMaybe<CommonImageInput>;
-  /** Video url. */
-  video?: InputMaybe<CommonVideoInput>;
-};
-
-export type NpmCommunitiesPlatformizedBlogCreateTagRequestInput = {
-  /**
-   * List of additional tag fields to include in the response. For example, use the `URL` fieldset to retrieve the url field in
-   * the response in addition to the tag's base fields. Base fields don’t include any of the supported fieldset values. By default
-   * only the tag's base fields are returned.
-   */
-  fieldsets?: InputMaybe<Array<InputMaybe<NpmCommunitiesPlatformizedBlogTagFieldField>>>;
-  /** Tag label. The label for each tag in a blog must be unique. */
-  label?: InputMaybe<Scalars['String']['input']>;
-  /**
-   * Tag language.
-   *
-   * 2-letter language code in [ISO 639-1 alpha-2](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) format.
-   */
-  language?: InputMaybe<Scalars['String']['input']>;
-  /** Preferred tag slug. For example, `'tag-slug'`. */
-  slug?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type NpmCommunitiesPlatformizedBlogCreateTagResponse = {
-  __typename?: 'NpmCommunitiesPlatformizedBlogCreateTagResponse';
-  /** Tag info. */
-  tag?: Maybe<NpmCommunitiesPlatformizedBlogTag>;
-};
-
-export type NpmCommunitiesPlatformizedBlogDeleteTagRequestInput = {
-  /** Tag ID. */
-  tagId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type NpmCommunitiesPlatformizedBlogEmbedMedia = {
@@ -17280,74 +19081,6 @@ export enum NpmCommunitiesPlatformizedBlogV3CategoryFieldField {
   Url = 'URL'
 }
 
-export type NpmCommunitiesPlatformizedBlogV3CategoryInput = {
-  /** Category cover image. */
-  coverImage?: InputMaybe<CommonImageInput>;
-  /**
-   * __Deprecated.__ Use `coverImage` instead.
-   * This property will be removed on June 30, 2023.
-   *
-   * Category cover image or video.
-   */
-  coverMedia?: InputMaybe<NpmCommunitiesPlatformizedBlogCoverMediaInput>;
-  /** Category description. */
-  description?: InputMaybe<Scalars['String']['input']>;
-  /**
-   * Category position in sequence. Categories with a lower display position are displayed first. Categories with a position of `-1` appear at the end of the sequence.
-   *
-   * Default: `-1`
-   */
-  displayPosition?: InputMaybe<Scalars['Int']['input']>;
-  /** Category ID. */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /** Reserved for internal use. */
-  internalId?: InputMaybe<Scalars['String']['input']>;
-  /** Category label. Displayed in the Category Menu. */
-  label?: InputMaybe<Scalars['String']['input']>;
-  /**
-   * Category language.
-   *
-   * Two-letter language code in [ISO 639-1 alpha-2](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) format.
-   */
-  language?: InputMaybe<Scalars['String']['input']>;
-  /** Reserved for internal use. */
-  oldRank?: InputMaybe<Scalars['Int']['input']>;
-  /** Number of posts in the category. */
-  postCount?: InputMaybe<Scalars['Int']['input']>;
-  /** SEO data. */
-  seoData?: InputMaybe<AdvancedSeoSeoSchemaInput>;
-  /** Category slug. For example, `'category-slug'`. */
-  slug?: InputMaybe<Scalars['String']['input']>;
-  /** Category title. */
-  title?: InputMaybe<Scalars['String']['input']>;
-  /** ID of the category's translations. All translations of a single category share the same `translationId`. */
-  translationId?: InputMaybe<Scalars['String']['input']>;
-  /** Category URL. */
-  url?: InputMaybe<CommonPageUrlInput>;
-};
-
-export type NpmCommunitiesPlatformizedBlogV3CreateCategoryRequestInput = {
-  /** Category info. */
-  category?: InputMaybe<NpmCommunitiesPlatformizedBlogV3CategoryInput>;
-  /**
-   * List of additional category fields to include in the response. For example, use the `URL` fieldset to retrieve the url field in
-   * the response in addition to the category’s base fields. Base fields don’t include any of the supported fieldset values. By default
-   * only the category’s base fields are returned.
-   */
-  fieldsets?: InputMaybe<Array<InputMaybe<NpmCommunitiesPlatformizedBlogV3CategoryFieldField>>>;
-};
-
-export type NpmCommunitiesPlatformizedBlogV3CreateCategoryResponse = {
-  __typename?: 'NpmCommunitiesPlatformizedBlogV3CreateCategoryResponse';
-  /** Category info. */
-  category?: Maybe<NpmCommunitiesPlatformizedBlogV3Category>;
-};
-
-export type NpmCommunitiesPlatformizedBlogV3DeleteCategoryRequestInput = {
-  /** Category ID. */
-  categoryId?: InputMaybe<Scalars['String']['input']>;
-};
-
 export type NpmCommunitiesPlatformizedBlogV3GetCategoryBySlugRequestInput = {
   /**
    * List of additional category fields to include in the response. For example, use the `URL` fieldset to retrieve the url field in
@@ -17606,7 +19339,10 @@ export type NpmCommunitiesPlatformizedBlogV3Post = {
   mostRecentContributorId?: Maybe<Scalars['String']['output']>;
   /** Whether the post is pinned. If `true`, the post is placed at the top of the post list. */
   pinned?: Maybe<Scalars['Boolean']['output']>;
-  /** Indicates if the returned content is a paid content preview for non-paying users. */
+  /**
+   * Whether the returned content is a preview of premium content. Defaults to `false`.
+   * A preview displays a limited number of paragraphs of paid content to non-subscribed users.
+   */
   preview?: Maybe<Scalars['Boolean']['output']>;
   /** [Pricing plan IDs](https://dev.wix.com/api/rest/wix-pricing-plans). Only relevant if a post is assigned to a specific pricing plan. */
   pricingPlanIds?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
@@ -17700,25 +19436,6 @@ export type NpmCommunitiesPlatformizedBlogV3QueryPostsResponse = {
   items?: Maybe<Array<Maybe<NpmCommunitiesPlatformizedBlogV3Post>>>;
   /** Pagination data */
   pageInfo?: Maybe<PageInfo>;
-};
-
-export type NpmCommunitiesPlatformizedBlogV3UpdateCategoryRequestInput = {
-  /** Category info. */
-  category?: InputMaybe<NpmCommunitiesPlatformizedBlogV3CategoryInput>;
-  /** Field mask of fields to update. */
-  fieldMask?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  /**
-   * List of additional category fields to include in the response. For example, use the `URL` fieldset to retrieve the url field in
-   * the response in addition to the category’s base fields. Base fields don’t include any of the supported fieldset values. By default
-   * only the category’s base fields are returned.
-   */
-  fieldsets?: InputMaybe<Array<InputMaybe<NpmCommunitiesPlatformizedBlogV3CategoryFieldField>>>;
-};
-
-export type NpmCommunitiesPlatformizedBlogV3UpdateCategoryResponse = {
-  __typename?: 'NpmCommunitiesPlatformizedBlogV3UpdateCategoryResponse';
-  /** Category info. */
-  category?: Maybe<NpmCommunitiesPlatformizedBlogV3Category>;
 };
 
 export type NpmCommunitiesPlatformizedBlogWixMedia = {
@@ -17849,6 +19566,10 @@ export enum PaymentPayV3TransactionTransactionStatus {
   Undefined = 'UNDEFINED',
   Voided = 'VOIDED'
 }
+
+export type PricingPlansPlansV2PlanRequestInput = {
+  id: Scalars['ID']['input'];
+};
 
 export type Query = {
   __typename?: 'Query';
@@ -18051,6 +19772,22 @@ export type Query = {
   businessToolsLocationsV1Location?: Maybe<LocationsLocation>;
   /** Retrieves locations, given the provided filters, sorting, and paging. */
   businessToolsLocationsV1Locations?: Maybe<LocationsQueryLocationsResponse>;
+  /**
+   * Retrieves a contact.
+   *
+   * #### Getting Merged Contacts
+   *
+   * When a source contact is merged
+   * with a target contact, the source contact is deleted.
+   * When calling Get Contact for a merged contact,
+   * you can use the source or target contact ID.
+   * In both bases, the target contact is returned.
+   *
+   * This is supported only when calling Get Contact,
+   * and only for merged contacts.
+   * Deleted source contact IDs are not supported on any other endpoint.
+   */
+  crmContactsV4Contact?: Maybe<ContactsCoreV4Contact>;
   /** Retrieves an extended field. */
   crmExtendedFieldsV4ExtendedField?: Maybe<ContactsFieldsV4ExtendedField>;
   /**
@@ -18095,17 +19832,6 @@ export type Query = {
   ecomDiscountRulesV1DiscountRules?: Maybe<EcomDiscountsQueryDiscountRulesResponse>;
   /** Retrieves an order with the provided ID. */
   ecomOrdersV1Order?: Maybe<EcomOrdersV1Order>;
-  /**
-   * <!--ONLY:REST-->
-   * Returns a list of up to 300 orders, given the provided paging, filtering and sorting.
-   *
-   * To learn how to query orders, see
-   * [API Query Language](https://dev.wix.com/api/rest/getting-started/api-query-language).
-   * For a detailed list of supported filters and sorting options,
-   * see [Field Support for Filtering and Sorting](https://bo.wix.com/wix-docs/rest/ecommerce/orders/filter-and-sort#ecommerce_orders_filter-and-sort_field-support-for-filtering-and-sorting).
-   * <!--END:ONLY:REST-->
-   */
-  ecomOrdersV1Orders?: Maybe<EcomOrdersV1QueryOrderResponse>;
   /** Retrieves a list of policies according to the provided filters and paging. */
   eventsPoliciesV2Policies?: Maybe<EventsV2QueryPoliciesResponse>;
   /** Retrieves a policy. */
@@ -18190,30 +19916,6 @@ export type Query = {
   pricingPlansPlansV2Plan?: Maybe<MembershipV2PlansPlan>;
   /** Retrieves a list of up to 1,000 public pricing plans, given the provided pagination, [sorting, and filtering](https://dev.wix.com/api/rest/wix-pricing-plans/pricing-plans/plans/filter-and-sort). */
   pricingPlansPlansV2Plans?: Maybe<MembershipV2PlansQueryPublicPlansResponse>;
-  /** Get an Item by id */
-  restaurantsMenuItemsV1Item?: Maybe<RestaurantsMenusItemV1Item>;
-  /** Query Items */
-  restaurantsMenuItemsV1Items?: Maybe<RestaurantsMenusItemV1QueryItemsResponse>;
-  /** Get a Label by id */
-  restaurantsMenusItemLabelsV1Label?: Maybe<RestaurantsMenusItemLabelsV1Label>;
-  /** Query Labels */
-  restaurantsMenusItemLabelsV1Labels?: Maybe<RestaurantsMenusItemLabelsV1QueryLabelsResponse>;
-  /** Get a Modifier by id */
-  restaurantsMenusItemModifierV1Modifier?: Maybe<RestaurantsMenusItemModifierV1Modifier>;
-  /** Query Modifiers */
-  restaurantsMenusItemModifierV1Modifiers?: Maybe<RestaurantsMenusItemModifierV1QueryModifiersResponse>;
-  /** Query ModifierGroups */
-  restaurantsMenusV1Items?: Maybe<RestaurantsMenusV1QueryModifierGroupsResponse>;
-  /** Get a Menu by id */
-  restaurantsMenusV1Menu?: Maybe<RestaurantsMenusMenuV1Menu>;
-  /** Query Menus */
-  restaurantsMenusV1Menus?: Maybe<RestaurantsMenusMenuV1QueryMenusResponse>;
-  /** Get a ModifierGroup by id */
-  restaurantsMenusV1ModifierGroup?: Maybe<RestaurantsMenusV1ModifierGroup>;
-  /** Get a Section by id */
-  restaurantsSectionsV1Section?: Maybe<RestaurantsMenusSectionV1Section>;
-  /** Query Sections */
-  restaurantsSectionsV1Sections?: Maybe<RestaurantsMenusSectionV1QuerySectionsResponse>;
   /** Retrieves a collection with the provided ID. */
   storesCollectionsV1Collection?: Maybe<CatalogV1Collection>;
   /**
@@ -18229,7 +19931,7 @@ export type Query = {
 
 
 export type QueryAuthManagementOAuthAppsV1OAuthAppArgs = {
-  id: Scalars['ID']['input'];
+  queryInput?: InputMaybe<AuthManagementOAuthAppsV1OAuthAppRequestInput>;
 };
 
 
@@ -18244,12 +19946,12 @@ export type QueryBlogCategoriesV3CategoriesArgs = {
 
 
 export type QueryBlogCategoriesV3CategoryArgs = {
-  id: Scalars['ID']['input'];
+  queryInput?: InputMaybe<BlogCategoriesV3CategoryRequestInput>;
 };
 
 
 export type QueryBlogPostsV3PostArgs = {
-  id: Scalars['ID']['input'];
+  queryInput?: InputMaybe<BlogPostsV3PostRequestInput>;
 };
 
 
@@ -18259,7 +19961,7 @@ export type QueryBlogPostsV3PostsArgs = {
 
 
 export type QueryBlogTagsV3TagArgs = {
-  id: Scalars['ID']['input'];
+  queryInput?: InputMaybe<BlogTagsV3TagRequestInput>;
 };
 
 
@@ -18269,7 +19971,7 @@ export type QueryBlogTagsV3TagsArgs = {
 
 
 export type QueryBookingsAttendanceV2AttendanceArgs = {
-  id: Scalars['ID']['input'];
+  queryInput?: InputMaybe<BookingsAttendanceV2AttendanceRequestInput>;
 };
 
 
@@ -18279,7 +19981,7 @@ export type QueryBookingsAttendanceV2AttendancesArgs = {
 
 
 export type QueryBookingsServiceOptionsAndVariantsV1ServiceOptionsAndVariantsArgs = {
-  id: Scalars['ID']['input'];
+  queryInput?: InputMaybe<BookingsServiceOptionsAndVariantsV1ServiceOptionsAndVariantsRequestInput>;
 };
 
 
@@ -18289,7 +19991,7 @@ export type QueryBookingsServiceOptionsAndVariantsV1ServiceOptionsAndVariantsLis
 
 
 export type QueryBookingsServicesV2ServiceArgs = {
-  id: Scalars['ID']['input'];
+  queryInput?: InputMaybe<BookingsServicesV2ServiceRequestInput>;
 };
 
 
@@ -18299,7 +20001,7 @@ export type QueryBookingsServicesV2ServicesArgs = {
 
 
 export type QueryBookingsSessionsV1SessionArgs = {
-  id: Scalars['ID']['input'];
+  queryInput?: InputMaybe<BookingsSessionsV1SessionRequestInput>;
 };
 
 
@@ -18309,7 +20011,7 @@ export type QueryBookingsSessionsV1SessionsArgs = {
 
 
 export type QueryBusinessToolsLocationsV1LocationArgs = {
-  id: Scalars['ID']['input'];
+  queryInput?: InputMaybe<BusinessToolsLocationsV1LocationRequestInput>;
 };
 
 
@@ -18318,8 +20020,13 @@ export type QueryBusinessToolsLocationsV1LocationsArgs = {
 };
 
 
+export type QueryCrmContactsV4ContactArgs = {
+  queryInput?: InputMaybe<CrmContactsV4ContactRequestInput>;
+};
+
+
 export type QueryCrmExtendedFieldsV4ExtendedFieldArgs = {
-  id: Scalars['ID']['input'];
+  queryInput?: InputMaybe<CrmExtendedFieldsV4ExtendedFieldRequestInput>;
 };
 
 
@@ -18329,7 +20036,7 @@ export type QueryCrmExtendedFieldsV4FieldsArgs = {
 
 
 export type QueryCrmLabelsV4ContactLabelArgs = {
-  id: Scalars['ID']['input'];
+  queryInput?: InputMaybe<CrmLabelsV4ContactLabelRequestInput>;
 };
 
 
@@ -18339,7 +20046,7 @@ export type QueryCrmLabelsV4LabelsArgs = {
 
 
 export type QueryDataItemsV2DataItemArgs = {
-  id: Scalars['ID']['input'];
+  queryInput?: InputMaybe<DataItemsV2DataItemRequestInput>;
 };
 
 
@@ -18349,7 +20056,7 @@ export type QueryDataItemsV2DataItemsArgs = {
 
 
 export type QueryEcomCartV1CartArgs = {
-  id: Scalars['ID']['input'];
+  queryInput?: InputMaybe<EcomCartV1CartRequestInput>;
 };
 
 
@@ -18359,7 +20066,7 @@ export type QueryEcomCheckoutV1CheckoutArgs = {
 
 
 export type QueryEcomCurrentCartV1CartArgs = {
-  id: Scalars['ID']['input'];
+  queryInput?: InputMaybe<EcomCurrentCartV1CartRequestInput>;
 };
 
 
@@ -18374,12 +20081,7 @@ export type QueryEcomDiscountRulesV1DiscountRulesArgs = {
 
 
 export type QueryEcomOrdersV1OrderArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type QueryEcomOrdersV1OrdersArgs = {
-  queryInput?: InputMaybe<EcomOrdersV1QueryOrderRequestInput>;
+  queryInput?: InputMaybe<EcomOrdersV1OrderRequestInput>;
 };
 
 
@@ -18389,7 +20091,7 @@ export type QueryEventsPoliciesV2PoliciesArgs = {
 
 
 export type QueryEventsPoliciesV2PolicyArgs = {
-  id: Scalars['ID']['input'];
+  queryInput?: InputMaybe<EventsPoliciesV2PolicyRequestInput>;
 };
 
 
@@ -18399,7 +20101,7 @@ export type QueryEventsScheduleBookmarksV1ItemsArgs = {
 
 
 export type QueryEventsScheduleBookmarksV1ScheduleItemArgs = {
-  id: Scalars['ID']['input'];
+  queryInput?: InputMaybe<EventsScheduleBookmarksV1ScheduleItemRequestInput>;
 };
 
 
@@ -18409,7 +20111,7 @@ export type QueryEventsScheduleV1ItemsArgs = {
 
 
 export type QueryEventsScheduleV1ScheduleItemArgs = {
-  id: Scalars['ID']['input'];
+  queryInput?: InputMaybe<EventsScheduleV1ScheduleItemRequestInput>;
 };
 
 
@@ -18424,7 +20126,7 @@ export type QueryMembersMembersV1MembersArgs = {
 
 
 export type QueryPricingPlansPlansV2PlanArgs = {
-  id: Scalars['ID']['input'];
+  queryInput?: InputMaybe<PricingPlansPlansV2PlanRequestInput>;
 };
 
 
@@ -18433,68 +20135,8 @@ export type QueryPricingPlansPlansV2PlansArgs = {
 };
 
 
-export type QueryRestaurantsMenuItemsV1ItemArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type QueryRestaurantsMenuItemsV1ItemsArgs = {
-  queryInput?: InputMaybe<RestaurantsMenusItemV1QueryItemsRequestInput>;
-};
-
-
-export type QueryRestaurantsMenusItemLabelsV1LabelArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type QueryRestaurantsMenusItemLabelsV1LabelsArgs = {
-  queryInput?: InputMaybe<RestaurantsMenusItemLabelsV1QueryLabelsRequestInput>;
-};
-
-
-export type QueryRestaurantsMenusItemModifierV1ModifierArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type QueryRestaurantsMenusItemModifierV1ModifiersArgs = {
-  queryInput?: InputMaybe<RestaurantsMenusItemModifierV1QueryModifiersRequestInput>;
-};
-
-
-export type QueryRestaurantsMenusV1ItemsArgs = {
-  queryInput?: InputMaybe<RestaurantsMenusV1QueryModifierGroupsRequestInput>;
-};
-
-
-export type QueryRestaurantsMenusV1MenuArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type QueryRestaurantsMenusV1MenusArgs = {
-  queryInput?: InputMaybe<RestaurantsMenusMenuV1QueryMenusRequestInput>;
-};
-
-
-export type QueryRestaurantsMenusV1ModifierGroupArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type QueryRestaurantsSectionsV1SectionArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type QueryRestaurantsSectionsV1SectionsArgs = {
-  queryInput?: InputMaybe<RestaurantsMenusSectionV1QuerySectionsRequestInput>;
-};
-
-
 export type QueryStoresCollectionsV1CollectionArgs = {
-  id: Scalars['ID']['input'];
+  queryInput?: InputMaybe<StoresCollectionsV1CollectionRequestInput>;
 };
 
 
@@ -18504,1442 +20146,12 @@ export type QueryStoresCollectionsV1CollectionsArgs = {
 
 
 export type QueryStoresProductsV1ProductArgs = {
-  id: Scalars['ID']['input'];
+  queryInput?: InputMaybe<StoresProductsV1ProductRequestInput>;
 };
 
 
 export type QueryStoresProductsV1ProductsArgs = {
   queryInput?: InputMaybe<CatalogV1QueryProductsPlatformizedRequestInput>;
-};
-
-export type RestaurantsMenusItemLabelsV1CreateLabelRequestInput = {
-  /** Label to be created */
-  label?: InputMaybe<RestaurantsMenusItemLabelsV1LabelInput>;
-};
-
-export type RestaurantsMenusItemLabelsV1CreateLabelResponse = {
-  __typename?: 'RestaurantsMenusItemLabelsV1CreateLabelResponse';
-  /** The created Label */
-  label?: Maybe<RestaurantsMenusItemLabelsV1Label>;
-};
-
-export type RestaurantsMenusItemLabelsV1DeleteLabelRequestInput = {
-  /** Id of the Label to delete */
-  labelId?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type RestaurantsMenusItemLabelsV1Label = {
-  __typename?: 'RestaurantsMenusItemLabelsV1Label';
-  /** Represents the time this Label was created */
-  createdDate?: Maybe<Scalars['String']['output']>;
-  /** Label icon */
-  icon?: Maybe<RestaurantsMenusItemLabelsV1UpstreamCommonImage>;
-  /** Label ID */
-  id?: Maybe<Scalars['String']['output']>;
-  /** Label name */
-  name?: Maybe<Scalars['String']['output']>;
-  /** Represents the current state of a menu. Each time the menu is modified, its `revision` changes by the server. for an update operation to succeed, you MUST pass the latest revision */
-  revision?: Maybe<Scalars['Int']['output']>;
-  /** Represents the time this Label was last updated */
-  updatedDate?: Maybe<Scalars['String']['output']>;
-};
-
-export type RestaurantsMenusItemLabelsV1LabelInput = {
-  /** Represents the time this Label was created */
-  createdDate?: InputMaybe<Scalars['String']['input']>;
-  /** Label icon */
-  icon?: InputMaybe<RestaurantsMenusItemLabelsV1UpstreamCommonImageInput>;
-  /** Label ID */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /** Label name */
-  name?: InputMaybe<Scalars['String']['input']>;
-  /** Represents the current state of a menu. Each time the menu is modified, its `revision` changes by the server. for an update operation to succeed, you MUST pass the latest revision */
-  revision?: InputMaybe<Scalars['Int']['input']>;
-  /** Represents the time this Label was last updated */
-  updatedDate?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type RestaurantsMenusItemLabelsV1ListLabelsResponse = {
-  __typename?: 'RestaurantsMenusItemLabelsV1ListLabelsResponse';
-  labels?: Maybe<Array<Maybe<RestaurantsMenusItemLabelsV1Label>>>;
-};
-
-export type RestaurantsMenusItemLabelsV1QueryLabelsRequestInput = {
-  query?: InputMaybe<RestaurantsMenusItemLabelsV1UpstreamCommonCursorQueryInput>;
-};
-
-export type RestaurantsMenusItemLabelsV1QueryLabelsResponse = {
-  __typename?: 'RestaurantsMenusItemLabelsV1QueryLabelsResponse';
-  /** Query results */
-  items?: Maybe<Array<Maybe<RestaurantsMenusItemLabelsV1Label>>>;
-  /** Pagination data */
-  pageInfo?: Maybe<PageInfo>;
-};
-
-export type RestaurantsMenusItemLabelsV1UpdateLabelRequestInput = {
-  /** Label to be updated, may be partial */
-  label?: InputMaybe<RestaurantsMenusItemLabelsV1LabelInput>;
-  /** Explicit list of fields to update */
-  mask?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-};
-
-export type RestaurantsMenusItemLabelsV1UpdateLabelResponse = {
-  __typename?: 'RestaurantsMenusItemLabelsV1UpdateLabelResponse';
-  /** The updated Label */
-  label?: Maybe<RestaurantsMenusItemLabelsV1Label>;
-};
-
-export type RestaurantsMenusItemLabelsV1UpstreamCommonCursorPagingInput = {
-  /**
-   * Pointer to the next or previous page in the list of results.
-   *
-   * You can get the relevant cursor token
-   * from the `pagingMetadata` object in the previous call's response.
-   * Not relevant for the first request.
-   */
-  cursor?: InputMaybe<Scalars['String']['input']>;
-  /** Number of items to load. */
-  limit?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type RestaurantsMenusItemLabelsV1UpstreamCommonCursorQueryInput = {
-  /** Cursor token pointing to a page of results. Not used in the first request. Following requests use the cursor token and not `filter` or `sort`. */
-  cursorPaging?: InputMaybe<RestaurantsMenusItemLabelsV1UpstreamCommonCursorPagingInput>;
-  /**
-   * Filter object in the following format:
-   * `"filter" : {
-   * "fieldName1": "value1",
-   * "fieldName2":{"$operator":"value2"}
-   * }`
-   * Example of operators: `$eq`, `$ne`, `$lt`, `$lte`, `$gt`, `$gte`, `$in`, `$hasSome`, `$hasAll`, `$startsWith`, `$contains`
-   */
-  filter?: InputMaybe<Scalars['JSON']['input']>;
-  /**
-   * Sort object in the following format:
-   * `[{"fieldName":"sortField1","order":"ASC"},{"fieldName":"sortField2","order":"DESC"}]`
-   */
-  sort?: InputMaybe<Array<InputMaybe<CommonSortingInput>>>;
-};
-
-export type RestaurantsMenusItemLabelsV1UpstreamCommonImage = {
-  __typename?: 'RestaurantsMenusItemLabelsV1UpstreamCommonImage';
-  /** Image alt text. */
-  altText?: Maybe<Scalars['String']['output']>;
-  /** Image filename. */
-  filename?: Maybe<Scalars['String']['output']>;
-  /** Original image height. */
-  height?: Maybe<Scalars['Int']['output']>;
-  /** WixMedia image ID. */
-  id?: Maybe<Scalars['String']['output']>;
-  /** Image size in bytes. */
-  sizeInBytes?: Maybe<Scalars['String']['output']>;
-  /** Image URL. */
-  url?: Maybe<Scalars['String']['output']>;
-  /** Image URL expiration date (when relevant). */
-  urlExpirationDate?: Maybe<Scalars['String']['output']>;
-  /** Original image width. */
-  width?: Maybe<Scalars['Int']['output']>;
-};
-
-export type RestaurantsMenusItemLabelsV1UpstreamCommonImageInput = {
-  /** Image alt text. */
-  altText?: InputMaybe<Scalars['String']['input']>;
-  /** Image filename. */
-  filename?: InputMaybe<Scalars['String']['input']>;
-  /** Original image height. */
-  height?: InputMaybe<Scalars['Int']['input']>;
-  /** WixMedia image ID. */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /** Image size in bytes. */
-  sizeInBytes?: InputMaybe<Scalars['String']['input']>;
-  /** Image URL. */
-  url?: InputMaybe<Scalars['String']['input']>;
-  /** Image URL expiration date (when relevant). */
-  urlExpirationDate?: InputMaybe<Scalars['String']['input']>;
-  /** Original image width. */
-  width?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type RestaurantsMenusItemModifierV1BulkCreateModifierResult = {
-  __typename?: 'RestaurantsMenusItemModifierV1BulkCreateModifierResult';
-  itemMetadata?: Maybe<CommonItemMetadata>;
-  modifier?: Maybe<RestaurantsMenusItemModifierV1Modifier>;
-};
-
-export type RestaurantsMenusItemModifierV1BulkCreateModifiersRequestInput = {
-  modifiers?: InputMaybe<Array<InputMaybe<RestaurantsMenusItemModifierV1ModifierInput>>>;
-  returnEntity?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type RestaurantsMenusItemModifierV1BulkCreateModifiersResponse = {
-  __typename?: 'RestaurantsMenusItemModifierV1BulkCreateModifiersResponse';
-  bulkActionMetadata?: Maybe<CommonBulkActionMetadata>;
-  results?: Maybe<Array<Maybe<RestaurantsMenusItemModifierV1BulkCreateModifierResult>>>;
-};
-
-export type RestaurantsMenusItemModifierV1BulkUpdateModifierResult = {
-  __typename?: 'RestaurantsMenusItemModifierV1BulkUpdateModifierResult';
-  itemMetadata?: Maybe<CommonItemMetadata>;
-  modifier?: Maybe<RestaurantsMenusItemModifierV1Modifier>;
-};
-
-export type RestaurantsMenusItemModifierV1BulkUpdateModifiersRequestInput = {
-  modifiers?: InputMaybe<Array<InputMaybe<RestaurantsMenusItemModifierV1MaskedModifierInput>>>;
-  returnEntity?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type RestaurantsMenusItemModifierV1BulkUpdateModifiersResponse = {
-  __typename?: 'RestaurantsMenusItemModifierV1BulkUpdateModifiersResponse';
-  bulkActionMetadata?: Maybe<CommonBulkActionMetadata>;
-  results?: Maybe<Array<Maybe<RestaurantsMenusItemModifierV1BulkUpdateModifierResult>>>;
-};
-
-export type RestaurantsMenusItemModifierV1CreateModifierRequestInput = {
-  /** Modifier to be created */
-  modifier?: InputMaybe<RestaurantsMenusItemModifierV1ModifierInput>;
-};
-
-export type RestaurantsMenusItemModifierV1CreateModifierResponse = {
-  __typename?: 'RestaurantsMenusItemModifierV1CreateModifierResponse';
-  /** The created Modifier */
-  modifier?: Maybe<RestaurantsMenusItemModifierV1Modifier>;
-};
-
-export type RestaurantsMenusItemModifierV1DeleteModifierRequestInput = {
-  /** Id of the Modifier to delete */
-  modifierId?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type RestaurantsMenusItemModifierV1Inventory = {
-  __typename?: 'RestaurantsMenusItemModifierV1Inventory';
-  /** Whether the Modifier is out of stock */
-  outOfStock?: Maybe<Scalars['Boolean']['output']>;
-};
-
-export type RestaurantsMenusItemModifierV1InventoryInput = {
-  /** Whether the Modifier is out of stock */
-  outOfStock?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type RestaurantsMenusItemModifierV1ListModifiersRequestInput = {
-  modifierIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  paging?: InputMaybe<RestaurantsMenusItemModifierV1UpstreamCommonCursorPagingInput>;
-};
-
-export type RestaurantsMenusItemModifierV1ListModifiersResponse = {
-  __typename?: 'RestaurantsMenusItemModifierV1ListModifiersResponse';
-  metadata?: Maybe<RestaurantsMenusItemModifierV1UpstreamCommonCursorPagingMetadata>;
-  modifiers?: Maybe<Array<Maybe<RestaurantsMenusItemModifierV1Modifier>>>;
-};
-
-export type RestaurantsMenusItemModifierV1MaskedModifierInput = {
-  /** Explicit list of fields to update */
-  mask?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  /** Modifier to be updated */
-  modifier?: InputMaybe<RestaurantsMenusItemModifierV1ModifierInput>;
-};
-
-export type RestaurantsMenusItemModifierV1Modifier = {
-  __typename?: 'RestaurantsMenusItemModifierV1Modifier';
-  /** Represents the time this Modifier was created */
-  createdDate?: Maybe<Scalars['String']['output']>;
-  /** Modifier ID */
-  id?: Maybe<Scalars['String']['output']>;
-  /** Modifier Inventory */
-  inventory?: Maybe<RestaurantsMenusItemModifierV1Inventory>;
-  /** Modifier Name */
-  name?: Maybe<Scalars['String']['output']>;
-  /** Represents the current state of an item. Each time the item is modified, its `revision` changes by the server. for an update operation to succeed, you MUST pass the latest revision */
-  revision?: Maybe<Scalars['Int']['output']>;
-  /** The type of the modifier */
-  type?: Maybe<RestaurantsMenusItemModifierV1ModifierType>;
-  /** Represents the time this Modifier was last updated */
-  updatedDate?: Maybe<Scalars['String']['output']>;
-};
-
-export type RestaurantsMenusItemModifierV1ModifierInput = {
-  /** Represents the time this Modifier was created */
-  createdDate?: InputMaybe<Scalars['String']['input']>;
-  /** Modifier ID */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /** Modifier Inventory */
-  inventory?: InputMaybe<RestaurantsMenusItemModifierV1InventoryInput>;
-  /** Modifier Name */
-  name?: InputMaybe<Scalars['String']['input']>;
-  /** Represents the current state of an item. Each time the item is modified, its `revision` changes by the server. for an update operation to succeed, you MUST pass the latest revision */
-  revision?: InputMaybe<Scalars['Int']['input']>;
-  /** The type of the modifier */
-  type?: InputMaybe<RestaurantsMenusItemModifierV1ModifierType>;
-  /** Represents the time this Modifier was last updated */
-  updatedDate?: InputMaybe<Scalars['String']['input']>;
-};
-
-export enum RestaurantsMenusItemModifierV1ModifierType {
-  Modifier = 'MODIFIER',
-  UnknownVariationAndModifier = 'UNKNOWN_VARIATION_AND_MODIFIER',
-  Variant = 'VARIANT'
-}
-
-export type RestaurantsMenusItemModifierV1QueryModifiersRequestInput = {
-  query?: InputMaybe<RestaurantsMenusItemModifierV1UpstreamCommonCursorQueryInput>;
-};
-
-export type RestaurantsMenusItemModifierV1QueryModifiersResponse = {
-  __typename?: 'RestaurantsMenusItemModifierV1QueryModifiersResponse';
-  /** Query results */
-  items?: Maybe<Array<Maybe<RestaurantsMenusItemModifierV1Modifier>>>;
-  /** Pagination data */
-  pageInfo?: Maybe<PageInfo>;
-};
-
-export type RestaurantsMenusItemModifierV1UpdateModifierRequestInput = {
-  mask?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  /** Modifier to be updated, may be partial */
-  modifier?: InputMaybe<RestaurantsMenusItemModifierV1ModifierInput>;
-};
-
-export type RestaurantsMenusItemModifierV1UpdateModifierResponse = {
-  __typename?: 'RestaurantsMenusItemModifierV1UpdateModifierResponse';
-  /** The updated Modifier */
-  modifier?: Maybe<RestaurantsMenusItemModifierV1Modifier>;
-};
-
-export type RestaurantsMenusItemModifierV1UpstreamCommonCursorPagingInput = {
-  /**
-   * Pointer to the next or previous page in the list of results.
-   *
-   * You can get the relevant cursor token
-   * from the `pagingMetadata` object in the previous call's response.
-   * Not relevant for the first request.
-   */
-  cursor?: InputMaybe<Scalars['String']['input']>;
-  /** Number of items to load. */
-  limit?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type RestaurantsMenusItemModifierV1UpstreamCommonCursorPagingMetadata = {
-  __typename?: 'RestaurantsMenusItemModifierV1UpstreamCommonCursorPagingMetadata';
-  /** Number of items returned in the response. */
-  count?: Maybe<Scalars['Int']['output']>;
-  /** Offset that was requested. */
-  cursors?: Maybe<RestaurantsMenusItemModifierV1UpstreamCommonCursors>;
-  /**
-   * Indicates if there are more results after the current page.
-   * If `true`, another page of results can be retrieved.
-   * If `false`, this is the last page.
-   */
-  hasNext?: Maybe<Scalars['Boolean']['output']>;
-};
-
-export type RestaurantsMenusItemModifierV1UpstreamCommonCursorQueryInput = {
-  /** Cursor token pointing to a page of results. Not used in the first request. Following requests use the cursor token and not `filter` or `sort`. */
-  cursorPaging?: InputMaybe<RestaurantsMenusItemModifierV1UpstreamCommonCursorPagingInput>;
-  /**
-   * Filter object in the following format:
-   * `"filter" : {
-   * "fieldName1": "value1",
-   * "fieldName2":{"$operator":"value2"}
-   * }`
-   * Example of operators: `$eq`, `$ne`, `$lt`, `$lte`, `$gt`, `$gte`, `$in`, `$hasSome`, `$hasAll`, `$startsWith`, `$contains`
-   */
-  filter?: InputMaybe<Scalars['JSON']['input']>;
-  /**
-   * Sort object in the following format:
-   * `[{"fieldName":"sortField1","order":"ASC"},{"fieldName":"sortField2","order":"DESC"}]`
-   */
-  sort?: InputMaybe<Array<InputMaybe<CommonSortingInput>>>;
-};
-
-export type RestaurantsMenusItemModifierV1UpstreamCommonCursors = {
-  __typename?: 'RestaurantsMenusItemModifierV1UpstreamCommonCursors';
-  /** Cursor pointing to next page in the list of results. */
-  next?: Maybe<Scalars['String']['output']>;
-  /** Cursor pointing to previous page in the list of results. */
-  prev?: Maybe<Scalars['String']['output']>;
-};
-
-export type RestaurantsMenusItemV1BulkCreateItemResult = {
-  __typename?: 'RestaurantsMenusItemV1BulkCreateItemResult';
-  item?: Maybe<RestaurantsMenusItemV1Item>;
-  itemMetadata?: Maybe<CommonItemMetadata>;
-};
-
-export type RestaurantsMenusItemV1BulkCreateItemsRequestInput = {
-  items?: InputMaybe<Array<InputMaybe<RestaurantsMenusItemV1ItemInput>>>;
-  returnEntity?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type RestaurantsMenusItemV1BulkCreateItemsResponse = {
-  __typename?: 'RestaurantsMenusItemV1BulkCreateItemsResponse';
-  bulkActionMetadata?: Maybe<CommonBulkActionMetadata>;
-  results?: Maybe<Array<Maybe<RestaurantsMenusItemV1BulkCreateItemResult>>>;
-};
-
-export type RestaurantsMenusItemV1BulkDeleteItemResult = {
-  __typename?: 'RestaurantsMenusItemV1BulkDeleteItemResult';
-  itemMetadata?: Maybe<CommonItemMetadata>;
-};
-
-export type RestaurantsMenusItemV1BulkDeleteItemsRequestInput = {
-  ids?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-};
-
-export type RestaurantsMenusItemV1BulkDeleteItemsResponse = {
-  __typename?: 'RestaurantsMenusItemV1BulkDeleteItemsResponse';
-  bulkActionMetadata?: Maybe<CommonBulkActionMetadata>;
-  results?: Maybe<Array<Maybe<RestaurantsMenusItemV1BulkDeleteItemResult>>>;
-};
-
-export type RestaurantsMenusItemV1BulkUpdateItemRequestInput = {
-  /** Items to be updated. */
-  items?: InputMaybe<Array<InputMaybe<RestaurantsMenusItemV1BulkUpdateItemRequestMaskedItemInput>>>;
-  /** set to `true` if you wish to receive back the created items in the response */
-  returnEntity?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type RestaurantsMenusItemV1BulkUpdateItemRequestMaskedItemInput = {
-  /** Item to be updated, may be partial */
-  item?: InputMaybe<RestaurantsMenusItemV1ItemInput>;
-  /** Explicit list of fields to update. */
-  mask?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-};
-
-export type RestaurantsMenusItemV1BulkUpdateItemResponse = {
-  __typename?: 'RestaurantsMenusItemV1BulkUpdateItemResponse';
-  bulkActionMetadata?: Maybe<CommonBulkActionMetadata>;
-  results?: Maybe<Array<Maybe<RestaurantsMenusItemV1BulkUpdateItemResponseBulkItemResult>>>;
-};
-
-export type RestaurantsMenusItemV1BulkUpdateItemResponseBulkItemResult = {
-  __typename?: 'RestaurantsMenusItemV1BulkUpdateItemResponseBulkItemResult';
-  /** Only exists if `returnEntity` was set to true in the request */
-  item?: Maybe<RestaurantsMenusItemV1Item>;
-  itemMetadata?: Maybe<CommonItemMetadata>;
-};
-
-export type RestaurantsMenusItemV1CreateItemRequestInput = {
-  /** Item to be created */
-  item?: InputMaybe<RestaurantsMenusItemV1ItemInput>;
-};
-
-export type RestaurantsMenusItemV1CreateItemResponse = {
-  __typename?: 'RestaurantsMenusItemV1CreateItemResponse';
-  /** The created Item */
-  item?: Maybe<RestaurantsMenusItemV1Item>;
-};
-
-export type RestaurantsMenusItemV1DeleteItemRequestInput = {
-  /** Id of the Item to delete */
-  itemId?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type RestaurantsMenusItemV1Item = {
-  __typename?: 'RestaurantsMenusItemV1Item';
-  /** Item additional images */
-  additionalImages?: Maybe<Array<Maybe<RestaurantsMenusItemV1UpstreamCommonImage>>>;
-  /** Represents the time this Item was created */
-  createdDate?: Maybe<Scalars['String']['output']>;
-  /** Item description */
-  description?: Maybe<Scalars['String']['output']>;
-  /** Extended fields */
-  extendedFields?: Maybe<CommonDataDataextensionsExtendedFields>;
-  /** Item ID */
-  id?: Maybe<Scalars['String']['output']>;
-  /** Item primary image */
-  image?: Maybe<RestaurantsMenusItemV1UpstreamCommonImage>;
-  /** Item labels */
-  labels?: Maybe<Array<Maybe<RestaurantsMenusItemV1Label>>>;
-  /** Modifier Groups */
-  modifierGroups?: Maybe<Array<Maybe<RestaurantsMenusItemV1ModifierGroup>>>;
-  /** Item name */
-  name?: Maybe<Scalars['String']['output']>;
-  /** Online order settings */
-  orderSettings?: Maybe<RestaurantsMenusItemV1OrderSettings>;
-  price?: Maybe<Scalars['String']['output']>;
-  priceVariants?: Maybe<RestaurantsMenusItemV1PriceVariants>;
-  /** Represents the current state of an item. Each time the item is modified, its `revision` changes by the server. for an update operation to succeed, you MUST pass the latest revision */
-  revision?: Maybe<Scalars['Int']['output']>;
-  sectionsVirtualReference?: Maybe<RestaurantsMenusSectionV1QuerySectionsResponse>;
-  /** Represents the time this Item was last updated */
-  updatedDate?: Maybe<Scalars['String']['output']>;
-  /** Is visible */
-  visible?: Maybe<Scalars['Boolean']['output']>;
-};
-
-
-export type RestaurantsMenusItemV1ItemSectionsVirtualReferenceArgs = {
-  query?: InputMaybe<RestaurantsMenusSectionV1QuerySectionsRequestInput>;
-};
-
-export type RestaurantsMenusItemV1ItemInput = {
-  /** Item additional images */
-  additionalImages?: InputMaybe<Array<InputMaybe<RestaurantsMenusItemV1UpstreamCommonImageInput>>>;
-  /** Represents the time this Item was created */
-  createdDate?: InputMaybe<Scalars['String']['input']>;
-  /** Item description */
-  description?: InputMaybe<Scalars['String']['input']>;
-  /** Extended fields */
-  extendedFields?: InputMaybe<CommonDataDataextensionsExtendedFieldsInput>;
-  /** Item ID */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /** Item primary image */
-  image?: InputMaybe<RestaurantsMenusItemV1UpstreamCommonImageInput>;
-  /** Item labels */
-  labels?: InputMaybe<Array<InputMaybe<RestaurantsMenusItemV1LabelInput>>>;
-  /** Modifier Groups */
-  modifierGroups?: InputMaybe<Array<InputMaybe<RestaurantsMenusItemV1ModifierGroupInput>>>;
-  /** Item name */
-  name?: InputMaybe<Scalars['String']['input']>;
-  /** Online order settings */
-  orderSettings?: InputMaybe<RestaurantsMenusItemV1OrderSettingsInput>;
-  price?: InputMaybe<Scalars['String']['input']>;
-  priceVariants?: InputMaybe<RestaurantsMenusItemV1PriceVariantsInput>;
-  /** Represents the current state of an item. Each time the item is modified, its `revision` changes by the server. for an update operation to succeed, you MUST pass the latest revision */
-  revision?: InputMaybe<Scalars['Int']['input']>;
-  /** Represents the time this Item was last updated */
-  updatedDate?: InputMaybe<Scalars['String']['input']>;
-  /** Is visible */
-  visible?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type RestaurantsMenusItemV1Label = {
-  __typename?: 'RestaurantsMenusItemV1Label';
-  id?: Maybe<Scalars['String']['output']>;
-  label?: Maybe<RestaurantsMenusItemLabelsV1Label>;
-};
-
-export type RestaurantsMenusItemV1LabelInput = {
-  id?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type RestaurantsMenusItemV1ListItemsRequestInput = {
-  itemIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  paging?: InputMaybe<RestaurantsMenusItemV1UpstreamCommonCursorPagingInput>;
-};
-
-export type RestaurantsMenusItemV1ListItemsResponse = {
-  __typename?: 'RestaurantsMenusItemV1ListItemsResponse';
-  items?: Maybe<Array<Maybe<RestaurantsMenusItemV1Item>>>;
-  pagingMetadata?: Maybe<RestaurantsMenusItemV1UpstreamCommonCursorPagingMetadata>;
-};
-
-export type RestaurantsMenusItemV1ModifierAdditionalCost = {
-  __typename?: 'RestaurantsMenusItemV1ModifierAdditionalCost';
-  /** modifier additional cost. Can be 0 to represent free. */
-  additionalCost?: Maybe<Scalars['String']['output']>;
-  /** Modifier id */
-  modifier?: Maybe<RestaurantsMenusItemModifierV1Modifier>;
-  /** Modifier id */
-  modifierId?: Maybe<Scalars['String']['output']>;
-};
-
-export type RestaurantsMenusItemV1ModifierAdditionalCostInput = {
-  /** modifier additional cost. Can be 0 to represent free. */
-  additionalCost?: InputMaybe<Scalars['String']['input']>;
-  /** Modifier id */
-  modifierId?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type RestaurantsMenusItemV1ModifierGroup = {
-  __typename?: 'RestaurantsMenusItemV1ModifierGroup';
-  /** Modifier Group Id */
-  id?: Maybe<Scalars['String']['output']>;
-  /** Modifier additional prices. */
-  modifierAdditionalCost?: Maybe<Array<Maybe<RestaurantsMenusItemV1ModifierAdditionalCost>>>;
-  /** Modifier Group Id */
-  modifierGroup?: Maybe<RestaurantsMenusV1ModifierGroup>;
-};
-
-export type RestaurantsMenusItemV1ModifierGroupInput = {
-  /** Modifier Group Id */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /** Modifier additional prices. */
-  modifierAdditionalCost?: InputMaybe<Array<InputMaybe<RestaurantsMenusItemV1ModifierAdditionalCostInput>>>;
-};
-
-export type RestaurantsMenusItemV1OrderSettings = {
-  __typename?: 'RestaurantsMenusItemV1OrderSettings';
-  /** Whether a customer can add a special request when ordering this item. Defaults to `true`. */
-  acceptSpecialRequests?: Maybe<Scalars['Boolean']['output']>;
-  /** Whether the item is out of stock. */
-  outOfStock?: Maybe<Scalars['Boolean']['output']>;
-  /** E-com defined tax group for the product */
-  taxGroupId?: Maybe<Scalars['String']['output']>;
-};
-
-export type RestaurantsMenusItemV1OrderSettingsInput = {
-  /** Whether a customer can add a special request when ordering this item. Defaults to `true`. */
-  acceptSpecialRequests?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Whether the item is out of stock. */
-  outOfStock?: InputMaybe<Scalars['Boolean']['input']>;
-  /** E-com defined tax group for the product */
-  taxGroupId?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type RestaurantsMenusItemV1PriceVariant = {
-  __typename?: 'RestaurantsMenusItemV1PriceVariant';
-  modifier?: Maybe<RestaurantsMenusItemModifierV1Modifier>;
-  modifierId?: Maybe<Scalars['String']['output']>;
-  price?: Maybe<Scalars['String']['output']>;
-};
-
-export type RestaurantsMenusItemV1PriceVariantInput = {
-  modifierId?: InputMaybe<Scalars['String']['input']>;
-  price?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type RestaurantsMenusItemV1PriceVariants = {
-  __typename?: 'RestaurantsMenusItemV1PriceVariants';
-  priceVariants?: Maybe<Array<Maybe<RestaurantsMenusItemV1PriceVariant>>>;
-};
-
-export type RestaurantsMenusItemV1PriceVariantsInput = {
-  priceVariants?: InputMaybe<Array<InputMaybe<RestaurantsMenusItemV1PriceVariantInput>>>;
-};
-
-export type RestaurantsMenusItemV1QueryItemsRequestInput = {
-  query?: InputMaybe<RestaurantsMenusItemV1UpstreamCommonCursorQueryInput>;
-};
-
-export type RestaurantsMenusItemV1QueryItemsResponse = {
-  __typename?: 'RestaurantsMenusItemV1QueryItemsResponse';
-  /** Query results */
-  items?: Maybe<Array<Maybe<RestaurantsMenusItemV1Item>>>;
-  /** Pagination data */
-  pageInfo?: Maybe<PageInfo>;
-};
-
-export type RestaurantsMenusItemV1UpdateItemRequestInput = {
-  /** Item to be updated, may be partial */
-  item?: InputMaybe<RestaurantsMenusItemV1ItemInput>;
-  /** Explicit list of fields to update */
-  mask?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-};
-
-export type RestaurantsMenusItemV1UpdateItemResponse = {
-  __typename?: 'RestaurantsMenusItemV1UpdateItemResponse';
-  /** The updated Item */
-  item?: Maybe<RestaurantsMenusItemV1Item>;
-};
-
-export type RestaurantsMenusItemV1UpstreamCommonCursorPagingInput = {
-  /**
-   * Pointer to the next or previous page in the list of results.
-   *
-   * You can get the relevant cursor token
-   * from the `pagingMetadata` object in the previous call's response.
-   * Not relevant for the first request.
-   */
-  cursor?: InputMaybe<Scalars['String']['input']>;
-  /** Number of items to load. */
-  limit?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type RestaurantsMenusItemV1UpstreamCommonCursorPagingMetadata = {
-  __typename?: 'RestaurantsMenusItemV1UpstreamCommonCursorPagingMetadata';
-  /** Number of items returned in the response. */
-  count?: Maybe<Scalars['Int']['output']>;
-  /** Offset that was requested. */
-  cursors?: Maybe<RestaurantsMenusItemV1UpstreamCommonCursors>;
-  /**
-   * Indicates if there are more results after the current page.
-   * If `true`, another page of results can be retrieved.
-   * If `false`, this is the last page.
-   */
-  hasNext?: Maybe<Scalars['Boolean']['output']>;
-};
-
-export type RestaurantsMenusItemV1UpstreamCommonCursorQueryInput = {
-  /** Cursor token pointing to a page of results. Not used in the first request. Following requests use the cursor token and not `filter` or `sort`. */
-  cursorPaging?: InputMaybe<RestaurantsMenusItemV1UpstreamCommonCursorPagingInput>;
-  /**
-   * Filter object in the following format:
-   * `"filter" : {
-   * "fieldName1": "value1",
-   * "fieldName2":{"$operator":"value2"}
-   * }`
-   * Example of operators: `$eq`, `$ne`, `$lt`, `$lte`, `$gt`, `$gte`, `$in`, `$hasSome`, `$hasAll`, `$startsWith`, `$contains`
-   */
-  filter?: InputMaybe<Scalars['JSON']['input']>;
-  /**
-   * Sort object in the following format:
-   * `[{"fieldName":"sortField1","order":"ASC"},{"fieldName":"sortField2","order":"DESC"}]`
-   */
-  sort?: InputMaybe<Array<InputMaybe<CommonSortingInput>>>;
-};
-
-export type RestaurantsMenusItemV1UpstreamCommonCursors = {
-  __typename?: 'RestaurantsMenusItemV1UpstreamCommonCursors';
-  /** Cursor pointing to next page in the list of results. */
-  next?: Maybe<Scalars['String']['output']>;
-  /** Cursor pointing to previous page in the list of results. */
-  prev?: Maybe<Scalars['String']['output']>;
-};
-
-export type RestaurantsMenusItemV1UpstreamCommonImage = {
-  __typename?: 'RestaurantsMenusItemV1UpstreamCommonImage';
-  /** Image alt text. */
-  altText?: Maybe<Scalars['String']['output']>;
-  /** Image filename. */
-  filename?: Maybe<Scalars['String']['output']>;
-  /** Original image height. */
-  height?: Maybe<Scalars['Int']['output']>;
-  /** WixMedia image ID. */
-  id?: Maybe<Scalars['String']['output']>;
-  /** Image size in bytes. */
-  sizeInBytes?: Maybe<Scalars['String']['output']>;
-  /** Image URL. */
-  url?: Maybe<Scalars['String']['output']>;
-  /** Image URL expiration date (when relevant). */
-  urlExpirationDate?: Maybe<Scalars['String']['output']>;
-  /** Original image width. */
-  width?: Maybe<Scalars['Int']['output']>;
-};
-
-export type RestaurantsMenusItemV1UpstreamCommonImageInput = {
-  /** Image alt text. */
-  altText?: InputMaybe<Scalars['String']['input']>;
-  /** Image filename. */
-  filename?: InputMaybe<Scalars['String']['input']>;
-  /** Original image height. */
-  height?: InputMaybe<Scalars['Int']['input']>;
-  /** WixMedia image ID. */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /** Image size in bytes. */
-  sizeInBytes?: InputMaybe<Scalars['String']['input']>;
-  /** Image URL. */
-  url?: InputMaybe<Scalars['String']['input']>;
-  /** Image URL expiration date (when relevant). */
-  urlExpirationDate?: InputMaybe<Scalars['String']['input']>;
-  /** Original image width. */
-  width?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type RestaurantsMenusMenuV1BulkCreateMenuResult = {
-  __typename?: 'RestaurantsMenusMenuV1BulkCreateMenuResult';
-  menu?: Maybe<RestaurantsMenusMenuV1Menu>;
-  menuMetadata?: Maybe<CommonItemMetadata>;
-};
-
-export type RestaurantsMenusMenuV1BulkCreateMenusRequestInput = {
-  menus?: InputMaybe<Array<InputMaybe<RestaurantsMenusMenuV1MenuInput>>>;
-  returnEntity?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type RestaurantsMenusMenuV1BulkCreateMenusResponse = {
-  __typename?: 'RestaurantsMenusMenuV1BulkCreateMenusResponse';
-  bulkActionMetadata?: Maybe<CommonBulkActionMetadata>;
-  results?: Maybe<Array<Maybe<RestaurantsMenusMenuV1BulkCreateMenuResult>>>;
-};
-
-export type RestaurantsMenusMenuV1BulkUpdateMenuRequestInput = {
-  /** Menus to be updated. */
-  menus?: InputMaybe<Array<InputMaybe<RestaurantsMenusMenuV1BulkUpdateMenuRequestMaskedMenuInput>>>;
-  /** set to `true` if you wish to receive back the created menus in the response */
-  returnEntity?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type RestaurantsMenusMenuV1BulkUpdateMenuRequestMaskedMenuInput = {
-  /** Explicit list of fields to update. */
-  mask?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  /** Menu to be updated, may be partial */
-  menu?: InputMaybe<RestaurantsMenusMenuV1MenuInput>;
-};
-
-export type RestaurantsMenusMenuV1BulkUpdateMenuResponse = {
-  __typename?: 'RestaurantsMenusMenuV1BulkUpdateMenuResponse';
-  bulkActionMetadata?: Maybe<CommonBulkActionMetadata>;
-  results?: Maybe<Array<Maybe<RestaurantsMenusMenuV1BulkUpdateMenuResponseBulkMenuResult>>>;
-};
-
-export type RestaurantsMenusMenuV1BulkUpdateMenuResponseBulkMenuResult = {
-  __typename?: 'RestaurantsMenusMenuV1BulkUpdateMenuResponseBulkMenuResult';
-  /** Only exists if `returnEntity` was set to true in the request */
-  menu?: Maybe<RestaurantsMenusMenuV1Menu>;
-  menuMetadata?: Maybe<CommonItemMetadata>;
-};
-
-export type RestaurantsMenusMenuV1CreateMenuRequestInput = {
-  /** Menu to be created */
-  menu?: InputMaybe<RestaurantsMenusMenuV1MenuInput>;
-};
-
-export type RestaurantsMenusMenuV1CreateMenuResponse = {
-  __typename?: 'RestaurantsMenusMenuV1CreateMenuResponse';
-  /** The created Menu */
-  menu?: Maybe<RestaurantsMenusMenuV1Menu>;
-};
-
-export type RestaurantsMenusMenuV1DeleteMenuRequestInput = {
-  /** Id of the Menu to delete */
-  menuId?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type RestaurantsMenusMenuV1DeleteOrphanSectionsInput = {
-  menuId?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type RestaurantsMenusMenuV1ListMenusRequestInput = {
-  menuIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  paging?: InputMaybe<RestaurantsMenusMenuV1UpstreamCommonCursorPagingInput>;
-};
-
-export type RestaurantsMenusMenuV1ListMenusResponse = {
-  __typename?: 'RestaurantsMenusMenuV1ListMenusResponse';
-  menus?: Maybe<Array<Maybe<RestaurantsMenusMenuV1Menu>>>;
-  pagingMetadata?: Maybe<RestaurantsMenusMenuV1UpstreamCommonCursorPagingMetadata>;
-};
-
-export type RestaurantsMenusMenuV1Menu = {
-  __typename?: 'RestaurantsMenusMenuV1Menu';
-  /** Represents the time this Menu was created */
-  createdDate?: Maybe<Scalars['String']['output']>;
-  /** Menu description */
-  description?: Maybe<Scalars['String']['output']>;
-  /** Data extension */
-  extendedFields?: Maybe<CommonDataDataextensionsExtendedFields>;
-  /** Menu ID */
-  id?: Maybe<Scalars['String']['output']>;
-  /** Menu name */
-  name?: Maybe<Scalars['String']['output']>;
-  /** Order index */
-  orderIdx?: Maybe<Scalars['Int']['output']>;
-  /** Represents the current state of a menu. Each time the menu is modified, its `revision` changes by the server. for an update operation to succeed, you MUST pass the latest revision */
-  revision?: Maybe<Scalars['Int']['output']>;
-  /** Section ids */
-  sectionIds?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  /** Section ids */
-  sections?: Maybe<RestaurantsMenusSectionV1QuerySectionsResponse>;
-  /** Represents the time this Menu was last updated */
-  updatedDate?: Maybe<Scalars['String']['output']>;
-  /** URL query param for displaying the menu in the livesite */
-  urlQueryParam?: Maybe<Scalars['String']['output']>;
-  /** Is visible */
-  visible?: Maybe<Scalars['Boolean']['output']>;
-};
-
-
-export type RestaurantsMenusMenuV1MenuSectionsArgs = {
-  query?: InputMaybe<RestaurantsMenusSectionV1QuerySectionsRequestInput>;
-};
-
-export type RestaurantsMenusMenuV1MenuInput = {
-  /** Represents the time this Menu was created */
-  createdDate?: InputMaybe<Scalars['String']['input']>;
-  /** Menu description */
-  description?: InputMaybe<Scalars['String']['input']>;
-  /** Data extension */
-  extendedFields?: InputMaybe<CommonDataDataextensionsExtendedFieldsInput>;
-  /** Menu ID */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /** Menu name */
-  name?: InputMaybe<Scalars['String']['input']>;
-  /** Order index */
-  orderIdx?: InputMaybe<Scalars['Int']['input']>;
-  /** Represents the current state of a menu. Each time the menu is modified, its `revision` changes by the server. for an update operation to succeed, you MUST pass the latest revision */
-  revision?: InputMaybe<Scalars['Int']['input']>;
-  /** Section ids */
-  sectionIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  /** Represents the time this Menu was last updated */
-  updatedDate?: InputMaybe<Scalars['String']['input']>;
-  /** URL query param for displaying the menu in the livesite */
-  urlQueryParam?: InputMaybe<Scalars['String']['input']>;
-  /** Is visible */
-  visible?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type RestaurantsMenusMenuV1QueryMenusRequestInput = {
-  query?: InputMaybe<RestaurantsMenusMenuV1UpstreamCommonCursorQueryInput>;
-};
-
-export type RestaurantsMenusMenuV1QueryMenusResponse = {
-  __typename?: 'RestaurantsMenusMenuV1QueryMenusResponse';
-  /** Query results */
-  items?: Maybe<Array<Maybe<RestaurantsMenusMenuV1Menu>>>;
-  /** Pagination data */
-  pageInfo?: Maybe<PageInfo>;
-};
-
-export type RestaurantsMenusMenuV1UpdateExtendedFieldsResponse = {
-  __typename?: 'RestaurantsMenusMenuV1UpdateExtendedFieldsResponse';
-  namespace?: Maybe<Scalars['String']['output']>;
-  /** only data from UpdateExtendedFieldsRequest namespace_data */
-  namespaceData?: Maybe<Scalars['JSON']['output']>;
-};
-
-export type RestaurantsMenusMenuV1UpdateMenuRequestInput = {
-  /** Explicit list of fields to update */
-  mask?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  /** Menu to be updated, may be partial */
-  menu?: InputMaybe<RestaurantsMenusMenuV1MenuInput>;
-};
-
-export type RestaurantsMenusMenuV1UpdateMenuResponse = {
-  __typename?: 'RestaurantsMenusMenuV1UpdateMenuResponse';
-  /** The updated Menu */
-  menu?: Maybe<RestaurantsMenusMenuV1Menu>;
-};
-
-export type RestaurantsMenusMenuV1UpstreamCommonCursorPagingInput = {
-  /**
-   * Pointer to the next or previous page in the list of results.
-   *
-   * You can get the relevant cursor token
-   * from the `pagingMetadata` object in the previous call's response.
-   * Not relevant for the first request.
-   */
-  cursor?: InputMaybe<Scalars['String']['input']>;
-  /** Number of items to load. */
-  limit?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type RestaurantsMenusMenuV1UpstreamCommonCursorPagingMetadata = {
-  __typename?: 'RestaurantsMenusMenuV1UpstreamCommonCursorPagingMetadata';
-  /** Number of items returned in the response. */
-  count?: Maybe<Scalars['Int']['output']>;
-  /** Offset that was requested. */
-  cursors?: Maybe<RestaurantsMenusMenuV1UpstreamCommonCursors>;
-  /**
-   * Indicates if there are more results after the current page.
-   * If `true`, another page of results can be retrieved.
-   * If `false`, this is the last page.
-   */
-  hasNext?: Maybe<Scalars['Boolean']['output']>;
-};
-
-export type RestaurantsMenusMenuV1UpstreamCommonCursorQueryInput = {
-  /** Cursor token pointing to a page of results. Not used in the first request. Following requests use the cursor token and not `filter` or `sort`. */
-  cursorPaging?: InputMaybe<RestaurantsMenusMenuV1UpstreamCommonCursorPagingInput>;
-  /**
-   * Filter object in the following format:
-   * `"filter" : {
-   * "fieldName1": "value1",
-   * "fieldName2":{"$operator":"value2"}
-   * }`
-   * Example of operators: `$eq`, `$ne`, `$lt`, `$lte`, `$gt`, `$gte`, `$in`, `$hasSome`, `$hasAll`, `$startsWith`, `$contains`
-   */
-  filter?: InputMaybe<Scalars['JSON']['input']>;
-  /**
-   * Sort object in the following format:
-   * `[{"fieldName":"sortField1","order":"ASC"},{"fieldName":"sortField2","order":"DESC"}]`
-   */
-  sort?: InputMaybe<Array<InputMaybe<CommonSortingInput>>>;
-};
-
-export type RestaurantsMenusMenuV1UpstreamCommonCursors = {
-  __typename?: 'RestaurantsMenusMenuV1UpstreamCommonCursors';
-  /** Cursor pointing to next page in the list of results. */
-  next?: Maybe<Scalars['String']['output']>;
-  /** Cursor pointing to previous page in the list of results. */
-  prev?: Maybe<Scalars['String']['output']>;
-};
-
-export type RestaurantsMenusSectionV1BulkCreateSectionResult = {
-  __typename?: 'RestaurantsMenusSectionV1BulkCreateSectionResult';
-  item?: Maybe<RestaurantsMenusSectionV1Section>;
-  itemMetadata?: Maybe<CommonItemMetadata>;
-};
-
-export type RestaurantsMenusSectionV1BulkCreateSectionsRequestInput = {
-  returnEntity?: InputMaybe<Scalars['Boolean']['input']>;
-  sections?: InputMaybe<Array<InputMaybe<RestaurantsMenusSectionV1SectionInput>>>;
-};
-
-export type RestaurantsMenusSectionV1BulkCreateSectionsResponse = {
-  __typename?: 'RestaurantsMenusSectionV1BulkCreateSectionsResponse';
-  bulkActionMetadata?: Maybe<CommonBulkActionMetadata>;
-  results?: Maybe<Array<Maybe<RestaurantsMenusSectionV1BulkCreateSectionResult>>>;
-};
-
-export type RestaurantsMenusSectionV1BulkDeleteSectionResult = {
-  __typename?: 'RestaurantsMenusSectionV1BulkDeleteSectionResult';
-  itemMetadata?: Maybe<CommonItemMetadata>;
-};
-
-export type RestaurantsMenusSectionV1BulkDeleteSectionsRequestInput = {
-  ids?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-};
-
-export type RestaurantsMenusSectionV1BulkDeleteSectionsResponse = {
-  __typename?: 'RestaurantsMenusSectionV1BulkDeleteSectionsResponse';
-  bulkActionMetadata?: Maybe<CommonBulkActionMetadata>;
-  results?: Maybe<Array<Maybe<RestaurantsMenusSectionV1BulkDeleteSectionResult>>>;
-};
-
-export type RestaurantsMenusSectionV1BulkUpdateSectionRequestInput = {
-  /** set to `true` if you wish to receive back the created sections in the response */
-  returnEntity?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Sections to be updated. */
-  sections?: InputMaybe<Array<InputMaybe<RestaurantsMenusSectionV1BulkUpdateSectionRequestMaskedSectionInput>>>;
-};
-
-export type RestaurantsMenusSectionV1BulkUpdateSectionRequestMaskedSectionInput = {
-  /** Explicit list of fields to update. */
-  mask?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  /** Section to be updated, may be partial */
-  section?: InputMaybe<RestaurantsMenusSectionV1SectionInput>;
-};
-
-export type RestaurantsMenusSectionV1BulkUpdateSectionResponse = {
-  __typename?: 'RestaurantsMenusSectionV1BulkUpdateSectionResponse';
-  bulkActionMetadata?: Maybe<CommonBulkActionMetadata>;
-  results?: Maybe<Array<Maybe<RestaurantsMenusSectionV1BulkUpdateSectionResponseBulkSectionResult>>>;
-};
-
-export type RestaurantsMenusSectionV1BulkUpdateSectionResponseBulkSectionResult = {
-  __typename?: 'RestaurantsMenusSectionV1BulkUpdateSectionResponseBulkSectionResult';
-  /** Only exists if `returnEntity` was set to true in the request */
-  section?: Maybe<RestaurantsMenusSectionV1Section>;
-  sectionMetadata?: Maybe<CommonItemMetadata>;
-};
-
-export type RestaurantsMenusSectionV1CreateSectionRequestInput = {
-  /** Section to be created */
-  section?: InputMaybe<RestaurantsMenusSectionV1SectionInput>;
-};
-
-export type RestaurantsMenusSectionV1CreateSectionResponse = {
-  __typename?: 'RestaurantsMenusSectionV1CreateSectionResponse';
-  /** The created Section */
-  section?: Maybe<RestaurantsMenusSectionV1Section>;
-};
-
-export type RestaurantsMenusSectionV1DeleteOrphanItemsInput = {
-  sectionId?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type RestaurantsMenusSectionV1DeleteSectionRequestInput = {
-  /** Id of the Section to delete */
-  sectionId?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type RestaurantsMenusSectionV1ListSectionsRequestInput = {
-  paging?: InputMaybe<RestaurantsMenusSectionV1UpstreamCommonCursorPagingInput>;
-  sectionIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-};
-
-export type RestaurantsMenusSectionV1ListSectionsResponse = {
-  __typename?: 'RestaurantsMenusSectionV1ListSectionsResponse';
-  pagingMetadata?: Maybe<RestaurantsMenusSectionV1UpstreamCommonCursorPagingMetadata>;
-  sections?: Maybe<Array<Maybe<RestaurantsMenusSectionV1Section>>>;
-};
-
-export type RestaurantsMenusSectionV1QuerySectionsRequestInput = {
-  query?: InputMaybe<RestaurantsMenusSectionV1UpstreamCommonCursorQueryInput>;
-};
-
-export type RestaurantsMenusSectionV1QuerySectionsResponse = {
-  __typename?: 'RestaurantsMenusSectionV1QuerySectionsResponse';
-  /** Query results */
-  items?: Maybe<Array<Maybe<RestaurantsMenusSectionV1Section>>>;
-  /** Pagination data */
-  pageInfo?: Maybe<PageInfo>;
-};
-
-export type RestaurantsMenusSectionV1Section = {
-  __typename?: 'RestaurantsMenusSectionV1Section';
-  /** Section additional images */
-  additionalImages?: Maybe<Array<Maybe<RestaurantsMenusSectionV1UpstreamCommonImage>>>;
-  /** Represents the time this Section was created */
-  createdDate?: Maybe<Scalars['String']['output']>;
-  /** Section description */
-  description?: Maybe<Scalars['String']['output']>;
-  /** Section ID */
-  id?: Maybe<Scalars['String']['output']>;
-  /** Section primary image */
-  image?: Maybe<RestaurantsMenusSectionV1UpstreamCommonImage>;
-  /** Item ids */
-  itemIds?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  /** Item ids */
-  items?: Maybe<RestaurantsMenusItemV1QueryItemsResponse>;
-  menusVirtualReference?: Maybe<RestaurantsMenusMenuV1QueryMenusResponse>;
-  /** Section name */
-  name?: Maybe<Scalars['String']['output']>;
-  /** Represents the current state of a section. Each time the section is modified, its `revision` changes by the server. for an update operation to succeed, you MUST pass the latest revision */
-  revision?: Maybe<Scalars['Int']['output']>;
-  /** Represents the time this Section was last updated */
-  updatedDate?: Maybe<Scalars['String']['output']>;
-};
-
-
-export type RestaurantsMenusSectionV1SectionItemsArgs = {
-  query?: InputMaybe<RestaurantsMenusItemV1QueryItemsRequestInput>;
-};
-
-
-export type RestaurantsMenusSectionV1SectionMenusVirtualReferenceArgs = {
-  query?: InputMaybe<RestaurantsMenusMenuV1QueryMenusRequestInput>;
-};
-
-export type RestaurantsMenusSectionV1SectionInput = {
-  /** Section additional images */
-  additionalImages?: InputMaybe<Array<InputMaybe<RestaurantsMenusSectionV1UpstreamCommonImageInput>>>;
-  /** Represents the time this Section was created */
-  createdDate?: InputMaybe<Scalars['String']['input']>;
-  /** Section description */
-  description?: InputMaybe<Scalars['String']['input']>;
-  /** Section ID */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /** Section primary image */
-  image?: InputMaybe<RestaurantsMenusSectionV1UpstreamCommonImageInput>;
-  /** Item ids */
-  itemIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  /** Section name */
-  name?: InputMaybe<Scalars['String']['input']>;
-  /** Represents the current state of a section. Each time the section is modified, its `revision` changes by the server. for an update operation to succeed, you MUST pass the latest revision */
-  revision?: InputMaybe<Scalars['Int']['input']>;
-  /** Represents the time this Section was last updated */
-  updatedDate?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type RestaurantsMenusSectionV1UpdateSectionRequestInput = {
-  /** Explicit list of fields to update */
-  mask?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  /** Section to be updated, may be partial */
-  section?: InputMaybe<RestaurantsMenusSectionV1SectionInput>;
-};
-
-export type RestaurantsMenusSectionV1UpdateSectionResponse = {
-  __typename?: 'RestaurantsMenusSectionV1UpdateSectionResponse';
-  /** The updated Section */
-  section?: Maybe<RestaurantsMenusSectionV1Section>;
-};
-
-export type RestaurantsMenusSectionV1UpstreamCommonCursorPagingInput = {
-  /**
-   * Pointer to the next or previous page in the list of results.
-   *
-   * You can get the relevant cursor token
-   * from the `pagingMetadata` object in the previous call's response.
-   * Not relevant for the first request.
-   */
-  cursor?: InputMaybe<Scalars['String']['input']>;
-  /** Number of items to load. */
-  limit?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type RestaurantsMenusSectionV1UpstreamCommonCursorPagingMetadata = {
-  __typename?: 'RestaurantsMenusSectionV1UpstreamCommonCursorPagingMetadata';
-  /** Number of items returned in the response. */
-  count?: Maybe<Scalars['Int']['output']>;
-  /** Offset that was requested. */
-  cursors?: Maybe<RestaurantsMenusSectionV1UpstreamCommonCursors>;
-  /**
-   * Indicates if there are more results after the current page.
-   * If `true`, another page of results can be retrieved.
-   * If `false`, this is the last page.
-   */
-  hasNext?: Maybe<Scalars['Boolean']['output']>;
-};
-
-export type RestaurantsMenusSectionV1UpstreamCommonCursorQueryInput = {
-  /** Cursor token pointing to a page of results. Not used in the first request. Following requests use the cursor token and not `filter` or `sort`. */
-  cursorPaging?: InputMaybe<RestaurantsMenusSectionV1UpstreamCommonCursorPagingInput>;
-  /**
-   * Filter object in the following format:
-   * `"filter" : {
-   * "fieldName1": "value1",
-   * "fieldName2":{"$operator":"value2"}
-   * }`
-   * Example of operators: `$eq`, `$ne`, `$lt`, `$lte`, `$gt`, `$gte`, `$in`, `$hasSome`, `$hasAll`, `$startsWith`, `$contains`
-   */
-  filter?: InputMaybe<Scalars['JSON']['input']>;
-  /**
-   * Sort object in the following format:
-   * `[{"fieldName":"sortField1","order":"ASC"},{"fieldName":"sortField2","order":"DESC"}]`
-   */
-  sort?: InputMaybe<Array<InputMaybe<CommonSortingInput>>>;
-};
-
-export type RestaurantsMenusSectionV1UpstreamCommonCursors = {
-  __typename?: 'RestaurantsMenusSectionV1UpstreamCommonCursors';
-  /** Cursor pointing to next page in the list of results. */
-  next?: Maybe<Scalars['String']['output']>;
-  /** Cursor pointing to previous page in the list of results. */
-  prev?: Maybe<Scalars['String']['output']>;
-};
-
-export type RestaurantsMenusSectionV1UpstreamCommonImage = {
-  __typename?: 'RestaurantsMenusSectionV1UpstreamCommonImage';
-  /** Image alt text. */
-  altText?: Maybe<Scalars['String']['output']>;
-  /** Image filename. */
-  filename?: Maybe<Scalars['String']['output']>;
-  /** Original image height. */
-  height?: Maybe<Scalars['Int']['output']>;
-  /** WixMedia image ID. */
-  id?: Maybe<Scalars['String']['output']>;
-  /** Image size in bytes. */
-  sizeInBytes?: Maybe<Scalars['String']['output']>;
-  /** Image URL. */
-  url?: Maybe<Scalars['String']['output']>;
-  /** Image URL expiration date (when relevant). */
-  urlExpirationDate?: Maybe<Scalars['String']['output']>;
-  /** Original image width. */
-  width?: Maybe<Scalars['Int']['output']>;
-};
-
-export type RestaurantsMenusSectionV1UpstreamCommonImageInput = {
-  /** Image alt text. */
-  altText?: InputMaybe<Scalars['String']['input']>;
-  /** Image filename. */
-  filename?: InputMaybe<Scalars['String']['input']>;
-  /** Original image height. */
-  height?: InputMaybe<Scalars['Int']['input']>;
-  /** WixMedia image ID. */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /** Image size in bytes. */
-  sizeInBytes?: InputMaybe<Scalars['String']['input']>;
-  /** Image URL. */
-  url?: InputMaybe<Scalars['String']['input']>;
-  /** Image URL expiration date (when relevant). */
-  urlExpirationDate?: InputMaybe<Scalars['String']['input']>;
-  /** Original image width. */
-  width?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type RestaurantsMenusV1BulkCreateModifierGroupsRequestInput = {
-  modifierGroups?: InputMaybe<Array<InputMaybe<RestaurantsMenusV1ModifierGroupInput>>>;
-  returnEntity?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type RestaurantsMenusV1BulkCreateModifierGroupsResponse = {
-  __typename?: 'RestaurantsMenusV1BulkCreateModifierGroupsResponse';
-  bulkActionMetadata?: Maybe<CommonBulkActionMetadata>;
-  results?: Maybe<Array<Maybe<RestaurantsMenusV1BulkCreateModifierGroupsResult>>>;
-};
-
-export type RestaurantsMenusV1BulkCreateModifierGroupsResult = {
-  __typename?: 'RestaurantsMenusV1BulkCreateModifierGroupsResult';
-  itemMetadata?: Maybe<CommonItemMetadata>;
-  modifierGroup?: Maybe<RestaurantsMenusV1ModifierGroup>;
-};
-
-export type RestaurantsMenusV1BulkUpdateModifierGroupsRequestInput = {
-  modifierGroups?: InputMaybe<Array<InputMaybe<RestaurantsMenusV1MaskedModifierGroupInput>>>;
-  returnEntity?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type RestaurantsMenusV1BulkUpdateModifierGroupsResponse = {
-  __typename?: 'RestaurantsMenusV1BulkUpdateModifierGroupsResponse';
-  bulkActionMetadata?: Maybe<CommonBulkActionMetadata>;
-  results?: Maybe<Array<Maybe<RestaurantsMenusV1BulkUpdateModifierGroupsResult>>>;
-};
-
-export type RestaurantsMenusV1BulkUpdateModifierGroupsResult = {
-  __typename?: 'RestaurantsMenusV1BulkUpdateModifierGroupsResult';
-  itemMetadata?: Maybe<CommonItemMetadata>;
-  modifierGroup?: Maybe<RestaurantsMenusV1ModifierGroup>;
-};
-
-export type RestaurantsMenusV1CreateModifierGroupRequestInput = {
-  /** ModifierGroup to be created */
-  modifierGroup?: InputMaybe<RestaurantsMenusV1ModifierGroupInput>;
-};
-
-export type RestaurantsMenusV1CreateModifierGroupResponse = {
-  __typename?: 'RestaurantsMenusV1CreateModifierGroupResponse';
-  /** The created ModifierGroup */
-  modifierGroup?: Maybe<RestaurantsMenusV1ModifierGroup>;
-};
-
-export type RestaurantsMenusV1DeleteModifierGroupRequestInput = {
-  /** Id of the ModifierGroup to delete */
-  modifierGroupId?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type RestaurantsMenusV1ListModifierGroupRequestInput = {
-  modifierGroupIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  paging?: InputMaybe<RestaurantsMenusV1UpstreamCommonCursorPagingInput>;
-};
-
-export type RestaurantsMenusV1ListModifierGroupResponse = {
-  __typename?: 'RestaurantsMenusV1ListModifierGroupResponse';
-  metadata?: Maybe<RestaurantsMenusV1UpstreamCommonCursorPagingMetadata>;
-  modifierGroups?: Maybe<Array<Maybe<RestaurantsMenusV1ModifierGroup>>>;
-};
-
-export type RestaurantsMenusV1MaskedModifierGroupInput = {
-  /** Explicit list of fields to update */
-  mask?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  /** ModifierGroup to be updated */
-  modifierGroup?: InputMaybe<RestaurantsMenusV1ModifierGroupInput>;
-};
-
-export type RestaurantsMenusV1Modifier = {
-  __typename?: 'RestaurantsMenusV1Modifier';
-  /** Modifier additional charge. Can be 0 to represent free. */
-  additionalCharge?: Maybe<Scalars['String']['output']>;
-  /** Modifier ID */
-  id?: Maybe<Scalars['String']['output']>;
-  /** Modifier ID */
-  modifier?: Maybe<RestaurantsMenusItemModifierV1Modifier>;
-};
-
-export type RestaurantsMenusV1ModifierGroup = {
-  __typename?: 'RestaurantsMenusV1ModifierGroup';
-  /** Represents the time this ModifierGroup was created */
-  createdDate?: Maybe<Scalars['String']['output']>;
-  /** ModifierGroup ID */
-  id?: Maybe<Scalars['String']['output']>;
-  /** Modifiers */
-  modifiers?: Maybe<Array<Maybe<RestaurantsMenusV1Modifier>>>;
-  /** Modifier group name */
-  name?: Maybe<Scalars['String']['output']>;
-  /** Represents the current state of an item. Each time the item is modified, its `revision` changes by the server. for an update operation to succeed, you MUST pass the latest revision */
-  revision?: Maybe<Scalars['Int']['output']>;
-  rule?: Maybe<RestaurantsMenusV1Rule>;
-  /** Represents the time this ModifierGroup was last updated */
-  updatedDate?: Maybe<Scalars['String']['output']>;
-};
-
-export type RestaurantsMenusV1ModifierGroupInput = {
-  /** Represents the time this ModifierGroup was created */
-  createdDate?: InputMaybe<Scalars['String']['input']>;
-  /** ModifierGroup ID */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /** Modifiers */
-  modifiers?: InputMaybe<Array<InputMaybe<RestaurantsMenusV1ModifierInput>>>;
-  /** Modifier group name */
-  name?: InputMaybe<Scalars['String']['input']>;
-  /** Represents the current state of an item. Each time the item is modified, its `revision` changes by the server. for an update operation to succeed, you MUST pass the latest revision */
-  revision?: InputMaybe<Scalars['Int']['input']>;
-  rule?: InputMaybe<RestaurantsMenusV1RuleInput>;
-  /** Represents the time this ModifierGroup was last updated */
-  updatedDate?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type RestaurantsMenusV1ModifierInput = {
-  /** Modifier additional charge. Can be 0 to represent free. */
-  additionalCharge?: InputMaybe<Scalars['String']['input']>;
-  /** Modifier ID */
-  id?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type RestaurantsMenusV1QueryModifierGroupsRequestInput = {
-  query?: InputMaybe<RestaurantsMenusV1UpstreamCommonCursorQueryInput>;
-};
-
-export type RestaurantsMenusV1QueryModifierGroupsResponse = {
-  __typename?: 'RestaurantsMenusV1QueryModifierGroupsResponse';
-  /** Query results */
-  items?: Maybe<Array<Maybe<RestaurantsMenusV1ModifierGroup>>>;
-  /** Pagination data */
-  pageInfo?: Maybe<PageInfo>;
-};
-
-export type RestaurantsMenusV1Rule = {
-  __typename?: 'RestaurantsMenusV1Rule';
-  /** Whether user required to choose modifier */
-  mandatory?: Maybe<Scalars['Boolean']['output']>;
-  /** Modifier that customers can add to a dish. For example a topping. Customers can add multiple extras per dish. */
-  multiSelectOptions?: Maybe<RestaurantsMenusV1RuleMultiSelect>;
-  /** One modifier that customers can select. For example a dish size. Customers can choose only a single selection per dish. */
-  singleSelectOptions?: Maybe<Scalars['Void']['output']>;
-  /** type of the rule - selection method */
-  type?: Maybe<RestaurantsMenusV1RuleType>;
-};
-
-export type RestaurantsMenusV1RuleInput = {
-  /** Whether user required to choose modifier */
-  mandatory?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Modifier that customers can add to a dish. For example a topping. Customers can add multiple extras per dish. */
-  multiSelectOptions?: InputMaybe<RestaurantsMenusV1RuleMultiSelectInput>;
-  /** One modifier that customers can select. For example a dish size. Customers can choose only a single selection per dish. */
-  singleSelectOptions?: InputMaybe<Scalars['Void']['input']>;
-  /** type of the rule - selection method */
-  type?: InputMaybe<RestaurantsMenusV1RuleType>;
-};
-
-export type RestaurantsMenusV1RuleMultiSelect = {
-  __typename?: 'RestaurantsMenusV1RuleMultiSelect';
-  /** Number of selections given to the customer for free. */
-  freeSelections?: Maybe<Scalars['Int']['output']>;
-  /** Maximum number of extras a customer can choose. Must be greater than or equal to the value of `minSelections`. */
-  maxSelections?: Maybe<Scalars['Int']['output']>;
-  /** Minimum number of extras a customer must choose. Defaults to `0`. Must be lower or equal to the available modifiers in the group */
-  minSelections?: Maybe<Scalars['Int']['output']>;
-};
-
-export type RestaurantsMenusV1RuleMultiSelectInput = {
-  /** Number of selections given to the customer for free. */
-  freeSelections?: InputMaybe<Scalars['Int']['input']>;
-  /** Maximum number of extras a customer can choose. Must be greater than or equal to the value of `minSelections`. */
-  maxSelections?: InputMaybe<Scalars['Int']['input']>;
-  /** Minimum number of extras a customer must choose. Defaults to `0`. Must be lower or equal to the available modifiers in the group */
-  minSelections?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export enum RestaurantsMenusV1RuleType {
-  MultiSelect = 'MULTI_SELECT',
-  SingleSelect = 'SINGLE_SELECT',
-  UnspecifiedRule = 'UNSPECIFIED_RULE'
-}
-
-export type RestaurantsMenusV1UpdateModifierGroupRequestInput = {
-  mask?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  /** ModifierGroup to be updated, may be partial */
-  modifierGroup?: InputMaybe<RestaurantsMenusV1ModifierGroupInput>;
-};
-
-export type RestaurantsMenusV1UpdateModifierGroupResponse = {
-  __typename?: 'RestaurantsMenusV1UpdateModifierGroupResponse';
-  /** The updated ModifierGroup */
-  modifierGroup?: Maybe<RestaurantsMenusV1ModifierGroup>;
-};
-
-export type RestaurantsMenusV1UpstreamCommonCursorPagingInput = {
-  /**
-   * Pointer to the next or previous page in the list of results.
-   *
-   * You can get the relevant cursor token
-   * from the `pagingMetadata` object in the previous call's response.
-   * Not relevant for the first request.
-   */
-  cursor?: InputMaybe<Scalars['String']['input']>;
-  /** Number of items to load. */
-  limit?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type RestaurantsMenusV1UpstreamCommonCursorPagingMetadata = {
-  __typename?: 'RestaurantsMenusV1UpstreamCommonCursorPagingMetadata';
-  /** Number of items returned in the response. */
-  count?: Maybe<Scalars['Int']['output']>;
-  /** Offset that was requested. */
-  cursors?: Maybe<RestaurantsMenusV1UpstreamCommonCursors>;
-  /**
-   * Indicates if there are more results after the current page.
-   * If `true`, another page of results can be retrieved.
-   * If `false`, this is the last page.
-   */
-  hasNext?: Maybe<Scalars['Boolean']['output']>;
-};
-
-export type RestaurantsMenusV1UpstreamCommonCursorQueryInput = {
-  /** Cursor token pointing to a page of results. Not used in the first request. Following requests use the cursor token and not `filter` or `sort`. */
-  cursorPaging?: InputMaybe<RestaurantsMenusV1UpstreamCommonCursorPagingInput>;
-  /**
-   * Filter object in the following format:
-   * `"filter" : {
-   * "fieldName1": "value1",
-   * "fieldName2":{"$operator":"value2"}
-   * }`
-   * Example of operators: `$eq`, `$ne`, `$lt`, `$lte`, `$gt`, `$gte`, `$in`, `$hasSome`, `$hasAll`, `$startsWith`, `$contains`
-   */
-  filter?: InputMaybe<Scalars['JSON']['input']>;
-  /**
-   * Sort object in the following format:
-   * `[{"fieldName":"sortField1","order":"ASC"},{"fieldName":"sortField2","order":"DESC"}]`
-   */
-  sort?: InputMaybe<Array<InputMaybe<CommonSortingInput>>>;
-};
-
-export type RestaurantsMenusV1UpstreamCommonCursors = {
-  __typename?: 'RestaurantsMenusV1UpstreamCommonCursors';
-  /** Cursor pointing to next page in the list of results. */
-  next?: Maybe<Scalars['String']['output']>;
-  /** Cursor pointing to previous page in the list of results. */
-  prev?: Maybe<Scalars['String']['output']>;
 };
 
 export type RichContentV1AnchorData = {
@@ -21291,6 +21503,17 @@ export type SpectaQlOption = {
   value: Scalars['String']['input'];
 };
 
+export type StoresCollectionsV1CollectionRequestInput = {
+  /** Requested collection ID. */
+  id?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type StoresProductsV1ProductRequestInput = {
+  id: Scalars['ID']['input'];
+  /** Whether merchant specific data, such as cost and profit data, should be included in the response. Requires permissions to manage products. */
+  includeMerchantSpecificData?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
 export type ValidationErrorFieldViolation = {
   __typename?: 'ValidationErrorFieldViolation';
   data?: Maybe<Scalars['JSON']['output']>;
@@ -21336,6 +21559,11 @@ export type GetOAuthAppsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetOAuthAppsQuery = { __typename?: 'Query', authManagementOAuthAppsV1OAuthApps?: { __typename?: 'HeadlessV1QueryOAuthAppsResponse', items?: Array<{ __typename?: 'HeadlessV1OAuthApp', id?: string | null, name?: string | null } | null> | null } | null };
 
+export type GetMembersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMembersQuery = { __typename?: 'Query', membersMembersV1Members?: { __typename?: 'MembersQueryMembersResponse', items?: Array<{ __typename?: 'MembersMember', id?: string | null, profile?: { __typename?: 'MembersProfile', nickname?: string | null } | null } | null> | null } | null };
+
 export class TypedDocumentString<TResult, TVariables>
   extends String
   implements DocumentTypeDecoration<TResult, TVariables>
@@ -21361,6 +21589,18 @@ export const GetOAuthAppsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetOAuthAppsQuery, GetOAuthAppsQueryVariables>;
+export const GetMembersDocument = new TypedDocumentString(`
+    query GetMembers {
+  membersMembersV1Members {
+    items {
+      id
+      profile {
+        nickname
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetMembersQuery, GetMembersQueryVariables>;
 
 /**
  * @param resolver a function that accepts a captured request and may return a mocked response.
@@ -21375,5 +21615,21 @@ export const GetOAuthAppsDocument = new TypedDocumentString(`
 export const mockGetOAuthAppsQuery = (resolver: Parameters<typeof graphql.query<GetOAuthAppsQuery, GetOAuthAppsQueryVariables>>[1]) =>
   graphql.query<GetOAuthAppsQuery, GetOAuthAppsQueryVariables>(
     'GetOAuthApps',
+    resolver
+  )
+
+/**
+ * @param resolver a function that accepts a captured request and may return a mocked response.
+ * @see https://mswjs.io/docs/basics/response-resolver
+ * @example
+ * mockGetMembersQuery((req, res, ctx) => {
+ *   return res(
+ *     ctx.data({ membersMembersV1Members })
+ *   )
+ * })
+ */
+export const mockGetMembersQuery = (resolver: Parameters<typeof graphql.query<GetMembersQuery, GetMembersQueryVariables>>[1]) =>
+  graphql.query<GetMembersQuery, GetMembersQueryVariables>(
+    'GetMembers',
     resolver
   )

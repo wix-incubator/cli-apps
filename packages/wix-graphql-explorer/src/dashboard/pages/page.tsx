@@ -12,7 +12,7 @@ import withLayout from '../layout';
 
 export default withLayout(function Index() {
 	const { fetcher, fetcherWixIdentity, setFetcherWixIdentity } =
-    useGraphQLFetcher();
+		useGraphQLFetcher();
 
 	const [sidePanelOpen, setSidePanelOpen] = React.useState(false);
 
@@ -26,10 +26,12 @@ export default withLayout(function Index() {
 						fetcherWixIdentity && (
 							<div className="space-x-4">
 								<Badge type="solid">
-                  Identity:{' '}
+									Identity:{' '}
 									{fetcherWixIdentity.type === 'User'
 										? 'Logged In User'
-										: `Visitor (OAuth App: ${fetcherWixIdentity?.appName})`}
+										: fetcherWixIdentity.type === 'Member'
+											? `Member (Member: ${fetcherWixIdentity.memberNickname}, OAuth App: ${fetcherWixIdentity.appName})`
+											: `Visitor (OAuth App: ${fetcherWixIdentity?.appName})`}
 								</Badge>
 								<IconButton
 									onClick={() => {
@@ -66,7 +68,7 @@ function useGraphQLFetcher() {
 	const wix = useWix();
 
 	const [fetcherWixIdentity, setFetcherWixIdentity] =
-    React.useState<WixIdentity | null>(null);
+		React.useState<WixIdentity | null>(null);
 
 	return {
 		setFetcherWixIdentity,
@@ -78,13 +80,28 @@ function useGraphQLFetcher() {
 					async fetch(input, init) {
 						const headers = new Headers(init?.headers);
 						if (fetcherWixIdentity?.type === 'Visitor') {
-							const { headers: authHeaders } = await createClient({
+							const { accessToken } = await createClient({
 								auth: OAuthStrategy({ clientId: fetcherWixIdentity.clientId }),
-							}).auth.getAuthHeaders();
-							headers.set('Authorization', authHeaders.Authorization);
+							}).auth.generateVisitorTokens();
+							headers.set('Authorization', accessToken.value);
 						} else if (fetcherWixIdentity?.type === 'User') {
 							const { headers: authHeaders } = await wix.auth.getAuthHeaders();
 							headers.set('Authorization', authHeaders.Authorization);
+						} else if (fetcherWixIdentity?.type === 'Member') {
+							const res = await wix.fetch('/oauth2/token', {
+								method: 'POST',
+								headers: {
+									'Content-Type': 'application/json',
+								},
+								body: JSON.stringify({
+									client_id: fetcherWixIdentity.clientId,
+									grant_type: 'authorized_client',
+									scope: 'offline_access',
+									memberId: fetcherWixIdentity.memberId,
+								}),
+							});
+							const { access_token } = await res.json();
+							headers.set('Authorization', access_token);
 						}
 						// @ts-expect-error fetch types from DOM and node are not compatible
 						return fetch(input, { ...init, headers });

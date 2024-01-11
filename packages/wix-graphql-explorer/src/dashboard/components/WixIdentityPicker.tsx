@@ -12,31 +12,20 @@ export type WixIdentity =
 	}
 	| {
 		type: 'User';
+	} | {
+		type: 'Member';
+		clientId: string;
+		appName: string;
+		memberId: string;
+		memberNickname: string;
 	};
 
 export function WixIdentityPicker(props: {
 	value: WixIdentity | null;
 	onChange: (value: WixIdentity | null) => void;
 }) {
-	const wix = useWix();
-
-	const oauthApps = useQuery(['oauthApps'], () =>
-		wix.graphql(
-			graphql(`
-        query GetOAuthApps {
-          authManagementOAuthAppsV1OAuthApps {
-            items {
-              id
-              name
-            }
-          }
-        }
-      `)
-		)
-	);
-
 	const [selectedIdentityType, setSelectedIdentityType] = React.useState<
-		'Visitor' | 'User' | null
+		'Visitor' | 'Member' | 'User' | null
 	>(props.value?.type ?? null);
 
 	return (
@@ -58,27 +47,43 @@ export function WixIdentityPicker(props: {
 					}
 				/>
 				{selectedIdentityType === 'Visitor' && (
-					<Dropdown
-						status={oauthApps.isLoading ? 'loading' : undefined}
-						placeholder="Please select an OAuth app"
-						onSelect={(option) => {
+					<OAuthAppPicker
+						onChange={(value) => {
 							props.onChange({
 								type: 'Visitor',
-								clientId: option.id as string,
-								appName: option.value as string,
+								clientId: value.id,
+								appName: value.name,
 							});
 						}}
-						className="mt-5"
-						inContainer
-						options={
-							oauthApps.data?.data?.authManagementOAuthAppsV1OAuthApps?.items?.map(
-								(oAuthApp) => ({
-									id: oAuthApp!.id!,
-									value: oAuthApp!.name!,
-								})
-							) ?? []
-						}
 					/>
+				)}
+			</Card>
+			<Card>
+				<Radio
+					checked={selectedIdentityType === 'Member'}
+					onChange={() => {
+						setSelectedIdentityType('Member');
+						props.onChange(null);
+					}}
+					label={
+						<Box direction="vertical" className="items-start">
+							<Heading size="small">Member</Heading>
+							<Text size="small" secondary>
+								Access and acf on behald of a specific member
+							</Text>
+						</Box>
+					}
+				/>
+				{selectedIdentityType === 'Member' && (
+					<MemberPicker onChange={(value) => {
+						props.onChange({
+							type: 'Member',
+							clientId: value.clientId,
+							appName: value.appName,
+							memberId: value.memberId,
+							memberNickname: value.memberNickname,
+						});
+					}} />
 				)}
 			</Card>
 			<Card>
@@ -105,5 +110,106 @@ export function WixIdentityPicker(props: {
 				)}
 			</Card>
 		</Layout>
+	);
+}
+
+export function MemberPicker(props: {
+	value?: { clientId: string; appName: string; memberId: string; memberNickname: string };
+	onChange?: (value: { clientId: string; appName: string; memberId: string; memberNickname: string }) => void;
+}) {
+	const wix = useWix();
+	const [selectedMember, setSelectedMember] = React.useState<{ id: string; nickname: string } | null>(
+		props.value ? { id: props.value.memberId, nickname: props.value.memberNickname } : null
+	);
+
+	const members = useQuery(['members'], () =>
+		wix.graphql(
+			graphql(`
+		query GetMembers {
+			membersMembersV1Members {
+				items {
+					id
+					profile {
+						nickname
+					}
+				}
+			}
+		}
+	  `)
+		)
+	);
+
+	return (
+		<>
+			<Dropdown
+				status={members.isLoading ? 'loading' : undefined}
+				placeholder="Please select a member"
+				onSelect={(option) => {
+					setSelectedMember({ id: option.id as string, nickname: option.value as string });
+				}}
+				className="mt-5"
+				inContainer
+				options={
+					members.data?.data?.membersMembersV1Members?.items?.map((member) => ({
+						id: member!.id!,
+						value: member!.profile!.nickname!,
+					})) ?? []
+				}
+			/>
+			{selectedMember && (
+				<OAuthAppPicker
+					onChange={(value) => {
+						props.onChange?.({
+							clientId: value.id,
+							appName: value.name,
+							memberId: selectedMember.id,
+							memberNickname: selectedMember.nickname,
+						});
+					}}
+				/>
+			)}
+		</>
+	);
+}
+
+export function OAuthAppPicker(props: {
+	value?: { id: string; name: string };
+	onChange?: (value: { id: string; name: string }) => void;
+}) {
+	const wix = useWix();
+
+	const oauthApps = useQuery(['oauthApps'], () =>
+		wix.graphql(
+			graphql(`
+		query GetOAuthApps {
+		  authManagementOAuthAppsV1OAuthApps {
+			items {
+			  id
+			  name
+			}
+		  }
+		}
+	  `)
+		)
+	);
+
+	return (
+		<Dropdown
+			status={oauthApps.isLoading ? 'loading' : undefined}
+			placeholder="Please select an OAuth app"
+			onSelect={(option) => {
+				props.onChange?.({ id: option.id as string, name: option.value as string });
+			}}
+			className="mt-5"
+			inContainer
+			options={
+				oauthApps.data?.data?.authManagementOAuthAppsV1OAuthApps?.items?.map(
+					(oAuthApp) => ({
+						id: oAuthApp!.id!,
+						value: oAuthApp!.name!,
+					})
+				) ?? []
+			}
+		/>
 	);
 }
