@@ -1,4 +1,4 @@
-<img style="margin-bottom: -50px" src="docs/images/rectangle-logo.png" alt="contentful-wix.png" width="100"/><br>
+<img src="docs/images/rectangle-logo.png" alt="contentful-wix.png" width="100"/><br>
 ## Contentful Integration with Wix
 This application facilitates the seamless connection between your Wix site and Contentful account, allowing you to utilize the content created in Contentful to populate your Wix site effortlessly.
 
