@@ -41,43 +41,59 @@ To use the new Contentful data in your Wix site:
 
 This process adds a dataset into your page and integrates specific data sections into your site. You can repeat these steps as needed to include additional Contentful content within your Wix site.
 
-## Dynamic Pages
+## Create dynamic pages
 
-Dynamic pages are a type of web page designed to showcase content from a CMS collection. They enable the creation of websites capable of efficiently managing extensive content while maintaining a consistent design and user experience.<br>
-You can add dynamic pages to your Wix site by following Wix documentation [here](https://support.wix.com/en/article/cms-about-dynamic-pages).<br>
-In order to create dynamic pages in Wix, with the ability to present list of items and a dedicated page for each item, you will need to follow the steps below.<br>
-1. Within your content model, define a Slug field:
-   1. create a "Text" field (Symbol), name it `Slug` with the id `slug`.<br>
-      <img alt="Slug field details" src="docs/images/slug-field-details.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
-   2.  Set its appearance to "Slug" in the Appearance section.<br>
-      <img alt="Slug field appearance" src="docs/images/slug-field-appearance.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
-   3. Populate the field with a url friendly unique value for each entry (i.e. `"winter-2023-blue-dress"`).<br>
-2. In the Wix editor, you can now add a dynamic page to the collection - list page and item page
-   1. Select `Databases` from the left menu in the editor
-      -. If you don't see it, make sure [Dev Mode](https://dev.wix.com/docs/develop-websites/articles/getting-started/resources/about-velo-by-wix#to-enable-velo-on-your-site) is enabled in your site.
-   2. Select the collection and select the `Add Dynamic page` option from the actions menu.<br>
-   <img alt="add-dynamic-page.png" src="docs/images/add-dynamic-page.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
-   3. Add an item page, by selecting the relevant option and clicking `Add to Site`<br>
-   <img alt="add-dynamic-page.png" src="docs/images/dynamic-page-select-type.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
-   4. Repeat steps 2 and 3 for the list page.<br>
-   5. In the list page, click the link/button you would like to link to the item page in any of the items and select Connect with CMS<br>
-   <img alt="add-dynamic-page.png" src="docs/images/dynamic-page-connect-with-cms.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
-   6. Select the item page you created in step 3.<br>
-    <img alt="add-dynamic-page.png" src="docs/images/dynamic-page-select-item-page.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
+Dynamic pages are a type of web page designed to showcase content from a Wix CMS collection. They enable the creation of websites capable of efficiently managing extensive content while maintaining a consistent design and user experience. To learn more about adding dynamic pages to your Wix site, see [CMS: About Dynamic Pages](https://support.wix.com/en/article/cms-about-dynamic-pages).
+
+In order to create Wix dynamic pages with the ability to present list of items and a dedicated page for each item, follow these steps:
+
+1. Within your Contentful model:
+   
+   1. Define a text field with the **Name** "Slug" and the **Field ID** of "slug".
+
+         <img alt="Slug field details" src="docs/images/slug-field-details.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
+   
+   1.  In the **Appearance** section, set the field appearance to "Slug".
+          
+         <img alt="Slug field appearance" src="docs/images/slug-field-appearance.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
+   
+   1. Populate the field with a url friendly unique value for each entry (i.e. `"winter-2023-blue-dress"`).
+
+1. In the Wix editor, you can now add a dynamic list page and item page. To do so, follow these steps:
+
+   1. From the left menu in the Wix Editor, select **Databases**. If you don't see it, make sure [Dev Mode](https://dev.wix.com/docs/develop-websites/articles/getting-started/resources/about-velo-by-wix#to-enable-velo-on-your-site) is enabled in your site.
+
+   1. Select the collection and, from the actions menu, select **Add Dynamic page**. Then, select **Item page** and **Add to Site**.
+
+      <img alt="add-dynamic-page.png" src="docs/images/add-dynamic-page.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
+   
+   1. Repeat the previous step to add a **List page**.
+
+       <img alt="add-dynamic-page.png" src="docs/images/dynamic-page-select-type.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
+
+   1. In the list page, click the link or button to link to the item page in any of the items and select **Connect with CMS**.
+   
+      <img alt="add-dynamic-page.png" src="docs/images/dynamic-page-connect-with-cms.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
+
+   1. Then, select the item page that you created in the previous steps.
+   
+      <img alt="add-dynamic-page.png" src="docs/images/dynamic-page-select-item-page.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
 
 ## Known Limitations
 
-1. You can connect only one Contentful account to your Wix site. If you require additional connections, please contact us at spartans@wix.com.
-2. Currently, only one language is supported at a time. Contentful supports multiple languages. Multilingual support is in our roadmap.
-   1. You can choose the language you want to connect to your Wix site during the connection process.
-3. Multi-reference fields between different content types are not supported at the moment but are on our roadmap.
-4. Embedded entries in rich text fields are not supported. If you need this feature, please contact us.
-5. In cases a media field contains mixed types, the field type in Wix will be determined by the type of the first item in the data. It is advisable to separate fields in Contentful based on media type.
-6. If a reference field contains mixed types in the data, the field type in Wix will be determined by the type of the first item in the data. It is recommended to segregate fields in Contentful based on reference type.
-7. Altering the connection settings in the editor may break the integration. In such cases, you will need to reconnect the site to Contentful.
-8. Only published entries will be accessible in Wix; drafts will not be available.
-9. It is not possible to add, update, or delete data stored in Contentful using Wix CMS. All data manipulation should be done in Contentful.
+The following list covers known limitations of the Contentful Integration with Wix app:
+
+* You can only connect one Contentful account to your Wix site. If you require additional connections, please contact us at spartans@wix.com.
+* Currently, only one language is supported at a time. Contentful supports multiple languages. Multilingual support is in our roadmap. For now, be sure to choose the language you want to connect to your Wix site during the [installation](#installation) process.
+* Multi-reference fields between different content types are not supported, but are on our roadmap.
+* Embedded entries in rich text fields are not supported. If you need this feature, please contact us at spartans@wix.com.
+* In cases a media field contains mixed types, the field type in Wix will be determined by the type of the first item in the data. It is advisable to separate fields in Contentful based on media type.
+* If a reference field contains mixed types in the data, the field type in Wix will be determined by the type of the first item in the data. It is recommended to segregate fields in Contentful based on reference type.
+* Altering the connection settings in the editor may break the integration. In such cases, you will need to reconnect the site to Contentful.
+* Only published entries will be accessible in Wix; drafts will not be available.
+* It is not possible to add, update, or delete data stored in Contentful using Wix CMS. All data manipulation should be done in Contentful.
 
 ## Integrating other CMS providers with Wix CMS
+
 Contentful on Wix server is running on Wix Velo, In order to provide a reference as of how can you create similar integrations with external CMS providers, we have created a reference implementation of a Velo app that connects to Contentful.
 The code is available [here](velo-app-code) and the creation of external connections in Wix is described in the [external-connection-api service](velo-app-code/velo-code/backend/services/external-connection-api.js).
