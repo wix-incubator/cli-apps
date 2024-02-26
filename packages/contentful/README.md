@@ -13,10 +13,10 @@ This guide explains how to link your Contentful account with your Wix site using
 
     <img alt="contentful-on-wix-config.png" src="docs/images/contentful-on-wix-config.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
 
-    * **Space**: The Contentful space to connect to your Wix site. A space is a workspace that contains all content and media for a project. 
-    * **Environment**: The Contentful environment to connect to your Wix site. Environments are container entities within a space that allow you to create and maintain multiple versions of your content types, and make changes to them in isolation.
+    * **Space**: The Contentful space to connect to your Wix site. A space is a workspace that contains all content for a project. 
+    * **Environment**: The Contentful environment to connect to your Wix site. Environments are like containers in your space where you can create and manage different versions of your content types separately.
     * **Language**: The language to with your Wix site. Contentful supports multiple languages for localization.
-    * **API Key** (Optional): A Contentful API Key, which helps improve performance and stability. This value is optional but recommended. For more information, see [Technical Limits](https://www.contentful.com/developers/docs/technical-limits/). To learn how to create a Contenful API key, see [Creating and managing API keys](https://training.contentful.com/student/page/1050378-creating-and-managing-api-keys). The value that you need is the **Content Delivery API - access token**:
+    * **API Key** (Optional): A Contentful API key. This value is optional but recommended to help improve performance and stability. For more information, see [Technical Limits](https://www.contentful.com/developers/docs/technical-limits/). To learn how to create a Contenful API key, see [Creating and managing API keys](https://training.contentful.com/student/page/1050378-creating-and-managing-api-keys). The value that you need is the **Content Delivery API - access token**.
 
        <img alt="contentful-api-key.png" src="docs/images/contentful-api-key.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
 
@@ -41,43 +41,47 @@ To use the new Contentful data in your Wix site:
 
 This process adds a dataset into your page and integrates specific data sections into your site. You can repeat these steps as needed to include additional Contentful content within your Wix site.
 
-## Create dynamic pages
+## Build dynamic pages in Wix for Contentful data
 
 Dynamic pages are a type of web page designed to showcase content from a Wix CMS collection. They enable the creation of websites capable of efficiently managing extensive content while maintaining a consistent design and user experience. To learn more about adding dynamic pages to your Wix site, see [CMS: About Dynamic Pages](https://support.wix.com/en/article/cms-about-dynamic-pages).
 
-In order to create Wix dynamic pages with the ability to present list of items and a dedicated page for each item, follow these steps:
+The following sections explain how to create Wix dynamic pages with the ability to present a list of items and a dedicated page for each item.
 
-1. Within your Contentful model:
-   
-   1. Define a text field with the **Name** "Slug" and the **Field ID** of "slug".
+### Configure your Contentful model
 
-         <img alt="Slug field details" src="docs/images/slug-field-details.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
-   
-   1.  In the **Appearance** section, set the field appearance to "Slug".
+You Contentful model needs to have a field that allows for creating custom URLs for each dyanmic list item. To configure the model, follow these steps:
+
+1. Define a text field with the **Name** "Slug" and the **Field ID** of "slug".
+
+      <img alt="Slug field details" src="docs/images/slug-field-details.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
+
+1.  In the **Appearance** section, set the field appearance to "Slug".
           
-         <img alt="Slug field appearance" src="docs/images/slug-field-appearance.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
+      <img alt="Slug field appearance" src="docs/images/slug-field-appearance.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
    
-   1. Populate the field with a url friendly unique value for each entry (i.e. `"winter-2023-blue-dress"`).
+1. Populate the field with a url friendly unique value for each entry (i.e. `"winter-2023-blue-dress"`).
 
-1. In the Wix editor, you can now add a dynamic list page and item page. To do so, follow these steps:
+### Add dynamic list and item pages in Wix
 
-   1. From the left menu in the Wix Editor, select **Databases**. If you don't see it, make sure [Dev Mode](https://dev.wix.com/docs/develop-websites/articles/getting-started/resources/about-velo-by-wix#to-enable-velo-on-your-site) is enabled in your site.
+Now, in Wix, you can add a dynamic list page with a dedicated dyanmic page for each list item. To do so, follow these steps:
 
-   1. Select the collection and, from the actions menu, select **Add Dynamic page**. Then, select **Item page** and **Add to Site**.
+1. From the left menu in the Wix Editor, select **Databases**. If you don't see it, make sure [Dev Mode](https://dev.wix.com/docs/develop-websites/articles/getting-started/resources/about-velo-by-wix#to-enable-velo-on-your-site) is enabled in your site.
 
-      <img alt="add-dynamic-page.png" src="docs/images/add-dynamic-page.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
-   
-   1. Repeat the previous step to add a **List page**.
+1. Select the collection and, from the actions menu, select **Add Dynamic page**. Then, select **Item page** and **Add to Site**.
 
-       <img alt="add-dynamic-page.png" src="docs/images/dynamic-page-select-type.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
+   <img alt="add-dynamic-page.png" src="docs/images/add-dynamic-page.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
 
-   1. In the list page, click the link or button to link to the item page in any of the items and select **Connect with CMS**.
-   
-      <img alt="add-dynamic-page.png" src="docs/images/dynamic-page-connect-with-cms.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
+1. Repeat the previous step to add a **List page**.
 
-   1. Then, select the item page that you created in the previous steps.
-   
-      <img alt="add-dynamic-page.png" src="docs/images/dynamic-page-select-item-page.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
+    <img alt="add-dynamic-page.png" src="docs/images/dynamic-page-select-type.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
+
+1. In the list page, click the link or button to link to the item page in any of the items and select **Connect with CMS**.
+
+   <img alt="add-dynamic-page.png" src="docs/images/dynamic-page-connect-with-cms.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
+
+1. Then, select the item page that you created in the previous steps.
+
+   <img alt="add-dynamic-page.png" src="docs/images/dynamic-page-select-item-page.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
 
 ## Known Limitations
 
