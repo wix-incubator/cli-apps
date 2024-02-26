@@ -84,16 +84,15 @@ In order to create Wix dynamic pages with the ability to present list of items a
 The following list covers known limitations of the Contentful Integration with Wix app:
 
 * You can only connect one Contentful account to your Wix site. If you require additional connections, please contact us at spartans@wix.com.
-* Currently, only one language is supported at a time. Contentful supports multiple languages. Multilingual support is in our roadmap. For now, be sure to choose the language you want to connect to your Wix site during the [installation](#installation) process.
-* Multi-reference fields between different content types are not supported, but are on our roadmap.
-* Embedded entries in rich text fields are not supported. If you need this feature, please contact us at spartans@wix.com.
-* In cases a media field contains mixed types, the field type in Wix will be determined by the type of the first item in the data. It is advisable to separate fields in Contentful based on media type.
-* If a reference field contains mixed types in the data, the field type in Wix will be determined by the type of the first item in the data. It is recommended to segregate fields in Contentful based on reference type.
+* Currently, only one language is supported at a time in Wix even though Contentful supports multiple languages. Multilingual support is in our roadmap. For now, be sure to choose the language you want to connect to your Wix site during the [installation](#installation) process.
+* Multi-reference fields between different content types aren't supported but are on our roadmap.
+* Embedded entries in rich text fields aren't supported. If you need this feature, please contact us at spartans@wix.com.
+* In case a media field contains mixed types, the field type in Wix will be determined by the type of the first item in the data. We recommend separating fields in Contentful based on media type.
+* If a reference field contains mixed types in the data, the field type in Wix will be determined by the type of the first item in the data. We recommend segregating fields in Contentful based on reference type.
 * Altering the connection settings in the editor may break the integration. In such cases, you will need to reconnect the site to Contentful.
-* Only published entries will be accessible in Wix; drafts will not be available.
-* It is not possible to add, update, or delete data stored in Contentful using Wix CMS. All data manipulation should be done in Contentful.
+* Only published entries will be accessible in Wix. Drafts will not be available.
+* It's not possible to add, update, or delete data stored in Contentful using Wix CMS. All data manipulation should be done in Contentful.
 
-## Integrating other CMS providers with Wix CMS
+## Integrate other CMS providers with Wix CMS
 
-Contentful on Wix server is running on Wix Velo, In order to provide a reference as of how can you create similar integrations with external CMS providers, we have created a reference implementation of a Velo app that connects to Contentful.
-The code is available [here](velo-app-code) and the creation of external connections in Wix is described in the [external-connection-api service](velo-app-code/velo-code/backend/services/external-connection-api.js).
+Contentful on Wix server is running on Wix Velo. In order to provide a reference as to how you can you create similar integrations with external CMS providers, we created a reference implementation of a Velo app that connects to Contentful. The code is available in the [velo-app-code](velo-app-code) folder of this repo, and the creation of external connections in Wix is described in the [external-connection-api service](velo-app-code/velo-code/backend/services/external-connection-api.js).
