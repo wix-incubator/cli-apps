@@ -1,7 +1,9 @@
 <img src="docs/images/rectangle-logo.png" alt="contentful-wix.png" width="100"/><br>
 # Contentful Integration with Wix
 
-This guide explains how to link your Contentful account with your Wix site using the Contentful Integration with Wix application. This application makes it possible to populate your Wix site with data directly from Contentful, transforming Contentful models into Wix collections. In this guide, you'll learn how to intall the app, grant essential permissions for each platform, and effectively use Contentful models within your Wix site.
+Contentful Integration with Wix is an application designed to link your Contentful account with your Wix site. It enables you to effortlessly populate your Wix site with data directly from Contentful, essentially converting Contentful models into Wix collections. The app offers a 14-day free trial period. Once the trial expires, you must upgrade your subscription to maintain access to Contentful data on your Wix site.
+
+In this guide, you'll learn how to intall the app, grant essential permissions for each platform, and use Contentful models within your Wix site, including creating dynamic lists with a dedicated dynamic page for each item in the list.
 
 ## Installation
 
