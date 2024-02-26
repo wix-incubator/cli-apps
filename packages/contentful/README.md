@@ -1,31 +1,48 @@
 <img src="docs/images/rectangle-logo.png" alt="contentful-wix.png" width="100"/><br>
-## Contentful Integration with Wix
-This application facilitates the seamless connection between your Wix site and Contentful account, allowing you to utilize the content created in Contentful to populate your Wix site effortlessly.
+# Contentful Integration with Wix
+
+This guide explains how to link your Contentful account with your Wix site using the Contentful Integration with Wix application. This application makes it possible to populate your Wix site with data directly from Contentful, transforming Contentful models into Wix collections. In this guide, you'll learn how to intall the app, grant essential permissions for each platform, and effectively use Contentful models within your Wix site.
 
 ## Installation
-1. [Enable dev mode](https://dev.wix.com/docs/develop-websites/articles/getting-started/resources/about-velo-by-wix#to-enable-velo-on-your-site) in your Wix site.
-2. Install the application and establish the connection between your Contentful account and Wix site:   
-   1. Open [Wix App Market](https://www.wix.com/app-market/search-result?query=contentful) and search for "Contentful"
-   2. Follow the steps in the wizard to connect your Contentful account to your Wix site.
-   3. Select the space, language and environment you want to connect to your Wix site.
-   4. Optionally - add a Contentful [API key](https://training.contentful.com/student/page/1050378-creating-and-managing-api-keys) to improve performance and stability.
-      - Copy `Content Delivery API - access token` from Contentful<br>
-   <img alt="contentful-api-key.png" src="docs/images/contentful-api-key.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
-   5. Click "Connect" to complete the connection.<br>
-   <img alt="contentful-on-wix-config.png" src="docs/images/contentful-on-wix-config.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
-   <br>*Note:* Using [API Key](https://www.contentful.com/blog/api-key/) is not mandatory, but it's recommended for better performance and stability. Check https://www.contentful.com/developers/docs/technical-limits/ for more details.
-3. Navigate to the CMS tab in your business manager. Under "External Collections," you will find a new namespace named "contentful-on-wix," housing all your content models and data.<br>
-   <img alt="cms-external-connections.png" src="docs/images/cms-external-connections.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
 
-## Using the models in your site (Datasets)
-1. Open Wix Editor
-2. Add dataset to your page
-   1. Open Wix Editor "Add Panel" and click "CMS" followed by the + sign next to "Datasets"<br>
+1. In your Wix site, [enable dev mode](https://dev.wix.com/docs/develop-websites/articles/getting-started/resources/about-velo-by-wix#to-enable-velo-on-your-site).
+1. Open the [Wix App Market](https://www.wix.com/app-market/search-result?query=contentful) and search for "Contentful".
+1. Select the **Contentful Integration** app, and then click **Add to Site**. Then, select the Wix Site to which you want to connect your Contentful account.
+1. When prompted to grant permissions to the app, select **Agree & Add**.
+1. To establish the connection between your Contentful account and Wix site, provide the following information:
+
+    <img alt="contentful-on-wix-config.png" src="docs/images/contentful-on-wix-config.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
+
+    * **Space**: The Contentful space to connect to your Wix site. A space is a workspace that contains all content and media for a project. 
+    * **Environment**: The Contentful environment to connect to your Wix site. Environments are container entities within a space that allow you to create and maintain multiple versions of your content types, and make changes to them in isolation.
+    * **Language**: The language to with your Wix site. Contentful supports multiple languages for localization.
+    * **API Key** (Optional): A Contentful API Key, which helps improve performance and stability. This value is optional but recommended. For more information, see [Technical Limits](https://www.contentful.com/developers/docs/technical-limits/). To learn how to create a Contenful API key, see [Creating and managing API keys](https://training.contentful.com/student/page/1050378-creating-and-managing-api-keys). The value that you need is the **Content Delivery API - access token**:
+
+       <img alt="contentful-api-key.png" src="docs/images/contentful-api-key.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
+
+1. Click **Connect**.
+
+The connection between Contentful and Wix is now complete. To see your Contentful data in Wix, go to the **CMS** tab in your business manager. Under **External Collections**, you'll find a new namespace named **contentful-on-wix**, which contains all your content models and data.
+
+<img alt="cms-external-connections.png" src="docs/images/cms-external-connections.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
+
+## Use Contentful models in your Wix site
+
+To use the new Contentful data in your Wix site:
+
+1. Open the Wix Editor.
+1. Click **Add Panel**.
+1. Within the panel options, select **CMS**. Then, click the **+** sign next to **Datasets**.
+
    <img alt="add-data-set.png" src="docs/images/add-data-set.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
-   2. Choose one of the models you have in Contentful
-3. Bind fields from your dataset to elements on your page.
+
+1. Choose from the available models within your Contentful account.
+1. Connect relevant fields from your dataset to elements present on your website page.
+
+This process adds a dataset into your page and integrates specific data sections into your site. You can repeat these steps as needed to include additional Contentful content within your Wix site.
 
 ## Dynamic Pages
+
 Dynamic pages are a type of web page designed to showcase content from a CMS collection. They enable the creation of websites capable of efficiently managing extensive content while maintaining a consistent design and user experience.<br>
 You can add dynamic pages to your Wix site by following Wix documentation [here](https://support.wix.com/en/article/cms-about-dynamic-pages).<br>
 In order to create dynamic pages in Wix, with the ability to present list of items and a dedicated page for each item, you will need to follow the steps below.<br>
