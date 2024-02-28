@@ -7,23 +7,27 @@ In this guide, you'll learn how to intall the app, grant essential permissions f
 
 ## Installation
 
-You can either trigger the installation from the Wix app market or Contentful marketplace.<br>
-Installing the app from the Wix app market would allow you to connect any space and environment associated with your account, while installing from the Contentful marketplace would allow you to connect only the space and environment on which the app is installed, unless using account level API key. See [Technical Limits](https://www.contentful.com/developers/docs/technical-limits/). To learn how to create a Contentful API key, see [Creating and managing API keys](https://training.contentful.com/student/page/1050378-creating-and-managing-api-keys).
-You will be able to grant the Wix app access to the entire account from the Wix business manager after the installation.
+You can install the the app from the Wix App Market or the Contentful Marketplace.
+
+To connect all spaces and environments across your account, we recommend installing the app from the Wix App Market. If you install from the Contentful Marketplace, it connects only to the specific space and environment where the app is installed, unless you use an account-level API key. For more information, see [Technical Limits](https://www.contentful.com/developers/docs/technical-limits/). To learn how to create a Contentful API key, see [Creating and managing API keys](https://training.contentful.com/student/page/1050378-creating-and-managing-api-keys). However, after installation, you can grant the app access to your entire account via the Wix Business Manager.
+
+To install the app:
 
 1. In your Wix site, [enable dev mode](https://dev.wix.com/docs/develop-websites/articles/getting-started/resources/about-velo-by-wix#to-enable-velo-on-your-site).
-1. Install the app (use one of the options below)
-   1. Wix App market 
-      1. Open the [Wix App Market](https://www.wix.com/app-market/search-result?query=contentful) and search for "Contentful".
-      2. Select the **Contentful Integration** app, and then click **Add to Site**. Then, select the Wix Site to which you want to connect your Contentful account.
-   2. Contentful Marketplace
-      1. Open the [Wix](https://app.contentful.com/deeplink?link=apps&id=5oytqBOh7xKU40F5c28zQE) application in Contentful marketplace.
-      2. Select the space and environment to connect to your Wix site. Then, click **Continue**.
-      2. If prompted, click **Authorize Access** to grant the app access to your Contentful space.
-      3. When presented with the App Configuration page, click **Install to selected environments**.
-      4. Click **Connect Account** to connect your Wix account to Contentful.
-      5. Select the site you wish to connect to and click **Connect**.
-      5. This will initiate the installation of the app in your Wix site.
+1. Install the app from either the Wix App Marketplace or the Contentful Marketplace:
+
+      * **Wix App Marketplace:**
+          1. Open the [Wix App Market](https://www.wix.com/app-market/search-result?query=contentful) and search for "Contentful".
+          1. Select the **Contentful Integration** app, and then click **Add to Site**. Then, select the Wix Site to which you want to connect your Contentful account.
+
+      * **Contentful Marketplace:**
+          1. Open the [Wix app](https://app.contentful.com/deeplink?link=apps&id=5oytqBOh7xKU40F5c28zQE) in Contentful Marketplace.
+          2. Select the space and environment to connect to your Wix site. Then, click **Continue**.
+          2. If prompted, click **Authorize Access** to grant the app access to your Contentful space.
+          3. When presented with the app configuration page, click **Install to selected environments**.
+          4. Click **Connect Account** to connect your Wix account to Contentful.
+          5. Select the site you wish to connect and click **Connect**.
+
 1. When prompted to grant permissions to the app, select **Agree & Add**.
 1. To establish the connection between your Contentful account and Wix site, provide the following information:
 
