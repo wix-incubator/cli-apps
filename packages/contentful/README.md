@@ -7,9 +7,27 @@ In this guide, you'll learn how to intall the app, grant essential permissions f
 
 ## Installation
 
+You can install the the app from the Wix App Market or the Contentful Marketplace.
+
+When you install the app from the Wix App Market, you can connect any space and environment associated with your account. Whereas when you install the app from the Contentful Marketplace, you can only connect to the specific space and environment on which the app is installed, unless you use an account-level API key. For more information, see [Technical Limits](https://www.contentful.com/developers/docs/technical-limits/). To learn how to create a Contentful API key, see [Creating and managing API keys](https://training.contentful.com/student/page/1050378-creating-and-managing-api-keys). After installation, you can grant the app access to your entire account via the Wix Business Manager.
+
+To install the app:
+
 1. In your Wix site, [enable dev mode](https://dev.wix.com/docs/develop-websites/articles/getting-started/resources/about-velo-by-wix#to-enable-velo-on-your-site).
-1. Open the [Wix App Market](https://www.wix.com/app-market/search-result?query=contentful) and search for "Contentful".
-1. Select the **Contentful Integration** app, and then click **Add to Site**. Then, select the Wix Site to which you want to connect your Contentful account.
+1. Install the app from either the Wix App Marketplace or the Contentful Marketplace:
+
+      * **Wix App Marketplace:**
+          1. Open the [Wix App Market](https://www.wix.com/app-market/search-result?query=contentful) and search for "Contentful".
+          1. Select the **Contentful Integration** app, and then click **Add to Site**. Then, select the Wix Site to which you want to connect your Contentful account.
+
+      * **Contentful Marketplace:**
+          1. Open the [Wix app](https://app.contentful.com/deeplink?link=apps&id=5oytqBOh7xKU40F5c28zQE) in Contentful Marketplace.
+          1. Select the space and environment to connect to your Wix site. Then, click **Continue**.
+          1. If prompted, click **Authorize Access** to grant the app access to your Contentful space.
+          1. When presented with the app configuration page, click **Install to selected environments**.
+          1. Click **Connect Account** to connect your Wix account to Contentful.
+          1. Select the site you wish to connect and click **Connect**.
+
 1. When prompted to grant permissions to the app, select **Agree & Add**.
 1. To establish the connection between your Contentful account and Wix site, provide the following information:
 
@@ -18,7 +36,7 @@ In this guide, you'll learn how to intall the app, grant essential permissions f
     * **Space**: The Contentful space to connect to your Wix site. A space is a workspace that contains all content for a project. 
     * **Environment**: The Contentful environment to connect to your Wix site. Environments are like containers in your space where you can create and manage different versions of your content types separately.
     * **Language**: The language to with your Wix site. Contentful supports multiple languages for localization.
-    * **API Key** (Optional): A Contentful API key. This value is optional but recommended to help improve performance and stability. For more information, see [Technical Limits](https://www.contentful.com/developers/docs/technical-limits/). To learn how to create a Contenful API key, see [Creating and managing API keys](https://training.contentful.com/student/page/1050378-creating-and-managing-api-keys). The value that you need is the **Content Delivery API - access token**.
+    * **API Key** (Optional): A Contentful API key. This value is optional but recommended to help improve performance and stability. For more information, see [Technical Limits](https://www.contentful.com/developers/docs/technical-limits/). To learn how to create a Contentful API key, see [Creating and managing API keys](https://training.contentful.com/student/page/1050378-creating-and-managing-api-keys). The value that you need is the **Content Delivery API - access token**.
 
        <img alt="contentful-api-key.png" src="docs/images/contentful-api-key.png" style="margin-top: 16px; box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;"/>
 
