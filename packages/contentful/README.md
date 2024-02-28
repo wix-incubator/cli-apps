@@ -9,7 +9,7 @@ In this guide, you'll learn how to intall the app, grant essential permissions f
 
 You can install the the app from the Wix App Market or the Contentful Marketplace.
 
-To connect all spaces and environments across your account, we recommend installing the app from the Wix App Market. If you install from the Contentful Marketplace, it connects only to the specific space and environment where the app is installed, unless you use an account-level API key. For more information, see [Technical Limits](https://www.contentful.com/developers/docs/technical-limits/). To learn how to create a Contentful API key, see [Creating and managing API keys](https://training.contentful.com/student/page/1050378-creating-and-managing-api-keys). However, after installation, you can grant the app access to your entire account via the Wix Business Manager.
+When you install the app from the Wix App Market, you can connect any space and environment associated with your account. Whereas when you install the app from the Contentful Marketplace, you can only connect to the specific space and environment on which the app is installed, unless you use an account-level API key. For more information, see [Technical Limits](https://www.contentful.com/developers/docs/technical-limits/). To learn how to create a Contentful API key, see [Creating and managing API keys](https://training.contentful.com/student/page/1050378-creating-and-managing-api-keys). After installation, you can grant the app access to your entire account via the Wix Business Manager.
 
 To install the app:
 
