@@ -22,11 +22,11 @@ To install the app:
 
       * **Contentful Marketplace:**
           1. Open the [Wix app](https://app.contentful.com/deeplink?link=apps&id=5oytqBOh7xKU40F5c28zQE) in Contentful Marketplace.
-          2. Select the space and environment to connect to your Wix site. Then, click **Continue**.
-          2. If prompted, click **Authorize Access** to grant the app access to your Contentful space.
-          3. When presented with the app configuration page, click **Install to selected environments**.
-          4. Click **Connect Account** to connect your Wix account to Contentful.
-          5. Select the site you wish to connect and click **Connect**.
+          1. Select the space and environment to connect to your Wix site. Then, click **Continue**.
+          1. If prompted, click **Authorize Access** to grant the app access to your Contentful space.
+          1. When presented with the app configuration page, click **Install to selected environments**.
+          1. Click **Connect Account** to connect your Wix account to Contentful.
+          1. Select the site you wish to connect and click **Connect**.
 
 1. When prompted to grant permissions to the app, select **Agree & Add**.
 1. To establish the connection between your Contentful account and Wix site, provide the following information:
