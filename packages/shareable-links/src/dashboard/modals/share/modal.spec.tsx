@@ -1,15 +1,17 @@
 import { describe, it, expect } from 'vitest';
 import { waitFor } from '@testing-library/react';
 import { ModalDriver } from './modal.driver';
-import { MOCK_HEADLESS_SHORT_URL, MOCK_SHORT_URL } from '../../../../test/wix-apis-mock-server';
-
+import {
+	MOCK_HEADLESS_SHORT_URL,
+	MOCK_SHORT_URL,
+} from '../../../../test/wix-apis-mock-server';
 
 describe('Modal', () => {
 	it('should render title', async () => {
 		const driver = new ModalDriver();
 		driver.render();
 		await waitFor(async () => {
-			expect(await driver.get.modal().getTitleText()).toBe('links-page.title');
+			expect(await driver.get.modal().getTitleText()).toBe('links-modal.title');
 		});
 	});
 
@@ -27,7 +29,9 @@ describe('Modal', () => {
 		driver.render();
 		await waitFor(async () => {
 			expect(await driver.get.input().exists()).toBe(false);
-			expect(await driver.get.publishMessage().getText()).toBe('links-page.site-not-published');
+			expect(await driver.get.publishMessage().getText()).toBe(
+				'links-modal.site-not-published',
+			);
 		});
 	});
 
