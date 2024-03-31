@@ -22,8 +22,10 @@
     "@typescript-eslint/parser": "^6.11.0",
     "@wix/cli": "^1.1.8",
     "@wix/cli-app": "^1.1.8",
+    "eslint-plugin-prettier": "^5.1.3",
     "eslint-plugin-react": "^7.33.2",
     "jsdom": "^24.0.0",
+    "prettier": "^3.2.5",
     "react": "16.14.0",
     "react-dom": "16.14.0",
     "typescript": "^5.3.3"

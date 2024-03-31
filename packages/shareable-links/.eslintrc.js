@@ -34,6 +34,7 @@ module.exports = {
     'plugins': [
         '@typescript-eslint',
         'react',
+        'prettier'
     ],
     'rules': {
         'indent': [
