@@ -20,13 +20,13 @@
     "@types/react": "^16.0.0",
     "@typescript-eslint/eslint-plugin": "^6.11.0",
     "@typescript-eslint/parser": "^6.11.0",
-    "@wix/cli": "^1.1.8",
-    "@wix/cli-app": "^1.1.8",
+    "@wix/cli": "^1.1.170",
+    "@wix/cli-app": "^1.1.170",
     "eslint-plugin-react": "^7.33.2",
     "jsdom": "^24.0.0",
     "react": "16.14.0",
     "react-dom": "16.14.0",
-    "typescript": "^5.3.3"
+    "typescript": ">=5.5.0 <5.9.0"
   },
   "scripts": {
     "lint": "eslint . --ext .ts,.tsx",
